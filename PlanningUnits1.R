@@ -3,7 +3,7 @@ library(sf)
 library(rgdal)
 
 #calling shape file; converting to sf object and transforming it to mollweide projection
-po_pu1<-readOGR(dsn="~/GitHub/PacificProject/data/World_High_Seas_v1/High_Seas_v1.shp",layer="High_Seas_v1") %>% 
+po_pu1<-readOGR(dsn="~/GitHub/PacificProject_data/data/World_High_Seas_v1/High_Seas_v1.shp",layer="High_Seas_v1") %>% 
   st_as_sf() %>% 
   st_transform(crs="+proj=robin +lon_0=-100 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
 
