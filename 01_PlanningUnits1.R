@@ -27,6 +27,10 @@ library(rnaturalearthdata)
 library(fasterize)
 library(ggplot2)
 
+
+rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
+longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
 #########################################################
 # Create a land shapefile Pacific centered and projected  
 #########################################################
@@ -46,7 +50,7 @@ world2 <- world %>%
   st_difference(polygon)
 # Perform transformation on modified version of world dataset
 world_robinson <- world2 %>% 
-  st_transform(crs = '+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+  st_transform(crs = rob_pacific)
 # Check the plot if just in case
 ggplot() +
   geom_sf(data = world_robinson) 
@@ -80,7 +84,7 @@ land <- world
 # Creating a empty raster at 0.5° resolution (you can increase the resolution to get a better border precision)
 rs <- raster(ncol = 720, nrow = 360) 
 rs[] <- 1:ncell(rs)
-geo.prj <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+geo.prj <- longlat
 crs(rs) <- CRS(geo.prj)
 # Fasterize the land object
 land_rs <- fasterize(land, rs)
@@ -134,7 +138,7 @@ abnj <- abnj_pol_sf %>%
   st_difference(polygon)
 # Perform transformation
 abnj_robinson <- abnj %>% 
-  st_transform(crs = '+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs')
+  st_transform(crs = rob_pacific)
 # We can plot the object to see if it is correct
 ggplot() +
   geom_sf(data = abnj_robinson) # Looks weird abd also there is some lines due the Split process
@@ -203,19 +207,18 @@ fCreate_PlanningUnits <- function(Bndry, LandMass, CellArea, Shape){
 
 #first we need to get the xy coordinates of the boundaries of IATTC and WCPFC (130E, 70W; 50N, 60S)
 library(proj4)
-test<-cbind(c(-70,130),c(-60,50))
-print(test)
-project(test,proj="+proj=robin +lon_0=180 +datum=WGS84 +units=m +no_defs")
+test<-cbind(c(130, -70, -70, 130), #TopLeft, TopRight, BottomRight, BottomLeft
+            c( 50, 50, -60, -60))
+Cnr <- project(test, proj = rob_pacific)
+print(Cnr)
 
-#then we plug in the coordinates in these codes
-Bndry <- tibble(x = seq(-4099823, 8299414, by = 1), y = 5326896) %>% # Start with N boundary (-20N)
-  bind_rows(tibble(x = 8299414, y = seq(5326896, -6336039, by = -1))) %>% # Then bind to E boundary (160E)
-  bind_rows(tibble(x = seq(8299414, -4099823, by = -1), y = -6336039)) %>% # Then S boundary (-40N) - reverse y order
-  bind_rows(tibble(x = -4099823, y = seq(-6336039, 5326896, by = 1))) %>% # Then W boundary (140E) - reverse x order
+Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (50N)
+  bind_rows(as_tibble(project(as.matrix(tibble(x = -70, y = seq(50, -60, by = -1))), proj = rob_pacific))) %>% # Then bind to E boundary (-70E)
+  bind_rows(as_tibble(project(as.matrix(tibble(x = 130, y = seq(-60, 50, by = 1))), proj = rob_pacific))) %>% # Then W boundary (130E) - reverse x order
   as.matrix() %>%
   list() %>%
   st_polygon() %>%
-  st_sfc(crs = "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
+  st_sfc(crs = rob_pacific)
 
 LandMass <- abnj_robinson
 
