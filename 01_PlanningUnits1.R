@@ -27,7 +27,6 @@ library(rnaturalearthdata)
 library(fasterize)
 library(ggplot2)
 
-
 rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
 longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
@@ -165,7 +164,7 @@ ggplot() +
 # Create equal-size grids (adapted from Jase's Code)
 ##########################################################################################
 
-#load Create_Planning Units function from Jase (modified by Tin)
+#load Create_Planning Units function from Jase (modified by Tin; modifications found within the function itself)
 fCreate_PlanningUnits <- function(Bndry, LandMass, CellArea, Shape){
   
   if(Shape %in% c("hexagon", "Hexagon")){
@@ -205,16 +204,20 @@ fCreate_PlanningUnits <- function(Bndry, LandMass, CellArea, Shape){
   return(PUs)
 }
 
-#first we need to get the xy coordinates of the boundaries of IATTC and WCPFC (130E, 70W; 50N, 60S)
+#first we need to get the xy coordinates of the boundaries of the study area
+#for me it will be the areal boundaries of the tuna-fisheries RFMOs: IATTC and WCPFC (140E, 78W; 51N, 60S)
 library(proj4)
-test<-cbind(c(130, -70, -70, 130), #TopLeft, TopRight, BottomRight, BottomLeft
-            c( 50, 50, -60, -60))
+test<-cbind(c(140, -78, -78, 140), #TopLeft, TopRight, BottomRight, BottomLeft
+            c( 51, 51, -60, -60))
 Cnr <- project(test, proj = rob_pacific)
 print(Cnr)
 
-Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (50N)
-  bind_rows(as_tibble(project(as.matrix(tibble(x = -70, y = seq(50, -60, by = -1))), proj = rob_pacific))) %>% # Then bind to E boundary (-70E)
-  bind_rows(as_tibble(project(as.matrix(tibble(x = 130, y = seq(-60, 50, by = 1))), proj = rob_pacific))) %>% # Then W boundary (130E) - reverse x order
+#then we create the parameters for the function fCreate_PlanningUnits (Bndry, LandMass, CellArea, Shape)
+
+#make sure that the boundary limits are in line with the current projection
+Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (51N)
+  bind_rows(as_tibble(project(as.matrix(tibble(x = -78, y = seq(51, -60, by = -1))), proj = rob_pacific))) %>% # Then bind to E boundary (-78E)
+  bind_rows(as_tibble(project(as.matrix(tibble(x = 140, y = seq(-60, 51, by = 1))), proj = rob_pacific))) %>% # Then W boundary (140E) - reverse x order
   as.matrix() %>%
   list() %>%
   st_polygon() %>%
@@ -222,20 +225,34 @@ Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (
 
 LandMass <- abnj_robinson
 
+#check if the boundary is positioned right
 ggplot() +
-  geom_sf(data = LandMass, colour = "red", fill = NA, size = 0.2, show.legend = "line") +
-  geom_sf(data = Bndry, colour = "black", fill = NA, size = 0.3, show.legend = "line")
+  geom_sf(data = world_robinson, colour = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
+  geom_sf(data = LandMass, colour = "grey66", fill = "grey66", size = 0.2, show.legend = "line") +
+  geom_sf(data = Bndry, colour = "black", fill = NA, size = 0.3, show.legend = "line") +
+  ggsave("pdfs/PacificABNJBoundaries.jpg", width = 20, height = 15, dpi = 300)
+  
+#size of hexagons in km^2
+#approximately 0.1 deg = 11.1km
+#get the approximate area using the apothem (r) in https://www.omnicalculator.com/math/hexagon
+#0.25 deg resolution == 669.9 km^2
+#0.50 deg resolution == 2667.6 km^2
+#0.10 deg resolution == 10670.0 km^2
 
-CellArea <- 1000 # kms2
+CellArea <- 2667.6 # kms2 for 0.5 degree resolution
 Shape = "Hexagon" # Hexagon or Square
 
 PUsPac <- fCreate_PlanningUnits(Bndry, LandMass, CellArea, Shape)
+#print(PUsPac) #to know how many features/polygons
 
+#plotting the study area with the planning units
 ggplot() +
-  geom_sf(data = LandMass, colour = "red", fill = NA, size = 0.2, show.legend = "line") +
+  geom_sf(data = LandMass, colour = NA, fill = NA, size = 0.2, show.legend = "line") +
+  geom_sf(data = world_robinson, color = "grey20", fill="grey20", size=0.1, show.legend="line") +
   geom_sf(data = PUsPac, colour = "black", fill = NA, size = 0.1, show.legend = "line") + 
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
-           expand = TRUE) 
+           expand = TRUE) +
+  ggsave("pdfs/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)
 
 
