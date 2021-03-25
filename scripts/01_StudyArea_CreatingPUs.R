@@ -26,7 +26,9 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(fasterize)
 library(ggplot2)
+library(proj4) #needed for creating Bndry
 
+#projections used
 rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
 longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
@@ -72,7 +74,7 @@ world_robinson[crosses,] %<>%
 ggplot() +
   geom_sf(data = world_robinson) # OK now looks better!
 # Save the object
-# st_write(world_robinson, dsn = "files/PacificCenterLand", driver = "ESRI Shapefile")
+# st_write(world_robinson, dsn = "files/shapefiles/PacificCenterLand", driver = "ESRI Shapefile")
 
 
 ##########################################################################################
@@ -91,7 +93,7 @@ land_rs[] <- ifelse(is.na(land_rs[]), 1, NA) # only ocean cells!
 land_rs <- setValues(raster(land_rs), land_rs[])
 
 # Reading EEZ
-eez <- st_read("files/World_EEZ_v11_20191118/eez_v11.shp") %>% 
+eez <- st_read("files/shapefiles/World_EEZ_v11_20191118/eez_v11.shp") %>% 
   filter(SOVEREIGN1 != "Antarctica") # Antarctica HAS EEZs so we must exclude the EEZ region from the shp data
 eez_sp <- as(eez, "Spatial")
 # Creating the final raster
@@ -140,7 +142,7 @@ abnj_robinson <- abnj %>%
   st_transform(crs = rob_pacific)
 # We can plot the object to see if it is correct
 ggplot() +
-  geom_sf(data = abnj_robinson) # Looks weird abd also there is some lines due the Split process
+  geom_sf(data = abnj_robinson) # Looks weird and also there is some lines due the Split process
 
 # To fix it the same code as above
 bbox2 <-  st_bbox(abnj_robinson)
@@ -158,7 +160,7 @@ abnj_robinson[crosses2, ] %<>%
 ggplot() +
   geom_sf(data = abnj_robinson) # Looks better
 # Save the object
-# st_write(abnj_robinson, dsn = "files/PacificCenterABNJ", driver = "ESRI Shapefile")
+# st_write(abnj_robinson, dsn = "files/shapefiles/PacificCenterABNJ", driver = "ESRI Shapefile")
 
 ##########################################################################################
 # Create equal-size grids (adapted from Jase's Code)
@@ -206,7 +208,6 @@ fCreate_PlanningUnits <- function(Bndry, LandMass, CellArea, Shape){
 
 #first we need to get the xy coordinates of the boundaries of the study area
 #for me it will be the areal boundaries of the tuna-fisheries RFMOs: IATTC and WCPFC (140E, 78W; 51N, 60S)
-library(proj4)
 test<-cbind(c(140, -78, -78, 140), #TopLeft, TopRight, BottomRight, BottomLeft
             c( 51, 51, -60, -60))
 Cnr <- project(test, proj = rob_pacific)
@@ -243,6 +244,7 @@ CellArea <- 2667.6 # kms2 for 0.5 degree resolution
 Shape = "Hexagon" # Hexagon or Square
 
 PUsPac <- fCreate_PlanningUnits(Bndry, LandMass, CellArea, Shape)
+st_write(PUsPac, dsn = "files/shapefiles/PacificABNJGrid_05deg", driver = "ESRI Shapefile") #saving the study area
 #print(PUsPac) #to know how many features/polygons
 
 #plotting the study area with the planning units
@@ -252,7 +254,5 @@ ggplot() +
   geom_sf(data = PUsPac, colour = "black", fill = NA, size = 0.1, show.legend = "line") + 
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
-           expand = TRUE) +
-  ggsave("pdfs/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)
-
-
+           expand = TRUE) #+
+#  ggsave("pdfs/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)
