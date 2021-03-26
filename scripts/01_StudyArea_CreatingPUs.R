@@ -93,7 +93,7 @@ land_rs[] <- ifelse(is.na(land_rs[]), 1, NA) # only ocean cells!
 land_rs <- setValues(raster(land_rs), land_rs[])
 
 # Reading EEZ
-eez <- st_read("files/shapefiles/World_EEZ_v11_20191118/eez_v11.shp") %>% 
+eez <- st_read("inputs/shapefiles/World_EEZ_v11_20191118/eez_v11.shp") %>% 
   filter(SOVEREIGN1 != "Antarctica") # Antarctica HAS EEZs so we must exclude the EEZ region from the shp data
 eez_sp <- as(eez, "Spatial")
 # Creating the final raster
@@ -160,7 +160,7 @@ abnj_robinson[crosses2, ] %<>%
 ggplot() +
   geom_sf(data = abnj_robinson) # Looks better
 # Save the object
-# st_write(abnj_robinson, dsn = "files/shapefiles/PacificCenterABNJ", driver = "ESRI Shapefile")
+st_write(abnj_robinson, dsn = "inputs/shapefiles/PacificCenterABNJ", driver = "ESRI Shapefile", append = TRUE)
 
 ##########################################################################################
 # Create equal-size grids (adapted from Jase's Code)
@@ -231,6 +231,7 @@ ggplot() +
   geom_sf(data = world_robinson, colour = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
   geom_sf(data = LandMass, colour = "grey66", fill = "grey66", size = 0.2, show.legend = "line") +
   geom_sf(data = Bndry, colour = "black", fill = NA, size = 0.3, show.legend = "line") +
+  ggsave("pdfs/PacificABNJBoundaries.pdf", width = 20, height = 15, dpi = 300) + 
   ggsave("pdfs/PacificABNJBoundaries.jpg", width = 20, height = 15, dpi = 300)
   
 #size of hexagons in km^2
@@ -244,7 +245,9 @@ CellArea <- 2667.6 # kms2 for 0.5 degree resolution
 Shape = "Hexagon" # Hexagon or Square
 
 PUsPac <- fCreate_PlanningUnits(Bndry, LandMass, CellArea, Shape)
-st_write(PUsPac, dsn = "files/shapefiles/PacificABNJGrid_05deg", driver = "ESRI Shapefile") #saving the study area
+#saving the study area
+st_write(PUsPac, dsn = "inputs/shapefiles/PacificABNJGrid_05deg", driver = "ESRI Shapefile", append = TRUE)
+saveRDS(PUsPac, file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds")
 #print(PUsPac) #to know how many features/polygons
 
 #plotting the study area with the planning units
@@ -254,5 +257,5 @@ ggplot() +
   geom_sf(data = PUsPac, colour = "black", fill = NA, size = 0.1, show.legend = "line") + 
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
-           expand = TRUE) #+
-#  ggsave("pdfs/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)
+           expand = TRUE) +
+  ggsave("pdfs/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300)
