@@ -27,6 +27,7 @@ test01 <- aqua_start(path = "inputs/AQM",
 library(RColorBrewer)
 library(ggplot2)
 library(sf)
+library(patchwork)
 
 dt <- readRDS("outputs/AQM_wflow/02a_aqua_start/01_spp-richness_surface.rds")
 final <- dt %>%
@@ -48,8 +49,11 @@ st_crs(world_sf) <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WG
 
 world_abnj <- st_read("inputs/shapefiles/PacificCenterABNJ/PacificCenterABNJ.shp")
 st_crs(world_abnj) <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # just in case...
+
+world_eez <- st_read("inputs/shapefiles/PacificCenterEEZ/PacificCenterEEZ.shp")
+st_crs(world_eez) <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # just in case...
 Boundary = "EEZ"
-world_abnj <- cbind(world_abnj, Boundary)
+world_eez <- cbind(world_eez,Boundary)
 
 # Plotting the figures
 # Bndry parameter from 01_StudyArea_CreatingPUs.R
@@ -61,22 +65,53 @@ p <- ggplot() +
                        breaks = seq(1, 7, 1),
                        labels = cv_rich) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
-  geom_sf(data = world_abnj, size = 1, aes(color = Boundary), fill = NA) +
-  scale_color_manual(breaks = c("EEZ"),
-                     values=c("coral3")) +
+  geom_sf(data = world_eez, size = 1, aes(color = Boundary), fill = NA, show.legend = FALSE) +
+  scale_color_manual(values = "grey30") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
-           expand = TRUE)
+           expand = TRUE) +
+  theme(panel.background = element_rect(fill = "grey80",
+                                        colour = "grey80",
+                                        size = 0.5, linetype = "solid"),
+        panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+                                        colour = "white"), 
+        panel.border = element_rect(colour = "white", fill=NA, size=1))
 
-p + 
-  theme(
-      panel.background = element_rect(fill = "grey90",
-                                      colour = "grey90",
-                                      size = 0.5, linetype = "solid"),
-      panel.grid.major = element_line(size = 0.5, linetype = 'solid',
-                                      colour = "white"), 
-      panel.border = element_rect(colour = "black", fill=NA, size=1)
-    ) +
-  labs(title = "Richness of species present within ABNJ of Pacific Ocean", subtitle = "ABNJ: areas outside the boundaries of EEZ", caption = "Data from AquaMaps (2019)") + 
-  ggsave("pdfs/PacificRichness_01.pdf", width = 20, height = 10, dpi = 300)
+p1 <- ggplot() +
+  geom_sf(data = final, aes(fill = rich_categ), color = NA) +
+  scale_fill_gradientn(name = "Richness",
+                       colours = pal_rich,
+                       limits = c(1, 7),
+                       breaks = seq(1, 7, 1),
+                       labels = cv_rich) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  geom_sf(data = world_eez, size = 1, aes(color = Boundary), fill = "grey69") +
+  scale_color_manual(values = "grey30") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  theme(panel.background = element_rect(fill = "grey80",
+                                             colour = "grey80",
+                                             size = 0.5, linetype = "solid"),
+        panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+                                             colour = "white"), 
+        panel.border = element_rect(colour = "white", fill=NA, size=1))
 
+#arranging plots, adding labels
+plots <- p + p1 + 
+  plot_layout(guides = 'collect') +
+  plot_annotation(
+    title = "Richness of species present within ABNJ of Pacific Ocean",
+    subtitle = "ABNJ: areas outside the boundaries of EEZ",
+    caption = "Data from AquaMaps (2019)"
+  )
+plots
+
+#saving plot
+plots +
+  ggsave("pdfs/PacificRichness.pdf", width = 20, height = 10, dpi = 300) +
+  ggsave("pdfs/PacificRichness.jpg", width = 20, height = 10, dpi = 300)
+
+####################################################################################
+####### Plotting species distributions (Turtles)
+####################################################################################

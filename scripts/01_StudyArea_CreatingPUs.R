@@ -32,6 +32,26 @@ library(proj4) #needed for creating Bndry
 rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
 longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
+ocean_sf <- ne_download(scale = "large", category = "physical", type = "geography_marine_polys", returnclass = "sf") %>% 
+  filter(name %in% c("North Pacific Ocean", "South Pacific Ocean", "Philippine Sea", "Coral Sea", "Tasman Sea", "South China Sea", 
+                     "Sea of Japan", "Sea of Okhotsk", "Celebes Sea", "Sulu Sea", "Banda Sea", "Luzon Strait", "Java Sea", 
+                     "Yellow Sea", "East China Sea", "Arafura Sea", "Timor Sea", "Gulf of Thailand", "Gulf of Carpentaria", 
+                     "Bay of Plenty", "Molucca Sea", "Bismarck Sea", "Solomon Sea", "Gulf of Tonkin", "Strait of Singapore", 
+                     "Makassar Strait", "Ceram Sea", "Korea Strait", "Inner Sea", "Taiwan Strait", "Shelikhova Gulf", "Bo Hai", 
+                     "Great Barrier Reef", "Bering Sea", "Gulf of Alaska", "Kronotskiy Gulf", "Uda Bay", "Uchiura Bay", 
+                     "Tsugaru Strait", "Tatar Strait", "La Pérouse Strait", "East Korea Bay", "Qiongzhou Strait", "Cook Strait", 
+                     "Torres Strait", "Gulf of Papua", "Hangzhou Bay", "Karaginskiy Gulf", "Gulf of Kamchatka", "Joseph Bonaparte Gulf", 
+                     "Gulf of Sakhalin", "Bali Sea", "Davao Gulf", "Halmahera Sea", "Selat Bali", "Gulf of Tomini", "Flores Sea", 
+                     "Sibuyan Sea", "Selat Dampier", "Gulf of Buli", "Gulf of Kau", "Bohol Sea", "Surigao Strait", "Ragay Gulf", 
+                     "Samar Sea", "Tayabas Bay", "Leyte Gulf", "Visayan Sea", "Savu Sea", "Yangtze River", "Gulf of Anadyr'", 
+                     "Golfo de California", "Cook Inlet", "Queen Charlotte Sound", "Bristol Bay", "Dixon Entrance", "Norton Sound", 
+                     "Prince William Sound", "Smith Sound", "Queen Charlotte Strait", "Baird Inlet", "Hecate Strait", "Cordova Bay", "Columbia River",
+                     "Salish Sea", "Golfo de Panamá", "Golfo Corcovado", "Golfo de Penas", "Golfo de Guayaquil", "Golfo de Tehuantepec",
+                     "Dixon Entrance", "Smith Sound", "Queen Charlotte Strait", "Cordova Bay" ))
+
+# "Chukchi Sea""Gulf of Olen‘k""Chaun Bay", "Ozero Mogotoyevo","Guba Gusinaya", "Strait of Malacca"
+
+
 #########################################################
 # Create a land shapefile Pacific centered and projected  
 #########################################################
@@ -81,23 +101,21 @@ ggplot() +
 # Create HighSeas shapefile Pacific centered that could be used to create planning units
 ##########################################################################################
 # Land mask to inverted later
-land <- world
+ocean <- ocean_sf
 # Creating a empty raster at 0.5° resolution (you can increase the resolution to get a better border precision)
-rs <- raster(ncol = 720, nrow = 360) 
+rs <- raster(ncol = 360*2, nrow = 180*2) 
 rs[] <- 1:ncell(rs)
-geo.prj <- longlat
-crs(rs) <- CRS(geo.prj)
-# Fasterize the land object
-land_rs <- fasterize(land, rs)
-land_rs[] <- ifelse(is.na(land_rs[]), 1, NA) # only ocean cells!
-land_rs <- setValues(raster(land_rs), land_rs[])
+crs(rs) <- CRS(longlat)
+# Fasterize the ocean_sf object
+ocean_rs <- fasterize(ocean, rs)
+writeRaster(ocean_rs, "inputs/rasterfiles/PacificCentered_05deg", format = "GTiff", overwrite = TRUE)
 
 # Reading EEZ
 eez <- st_read("inputs/shapefiles/World_EEZ_v11_20191118/eez_v11.shp") %>% 
   filter(SOVEREIGN1 != "Antarctica") # Antarctica HAS EEZs so we must exclude the EEZ region from the shp data
 eez_sp <- as(eez, "Spatial")
 # Creating the final raster
-abnj_rs <- mask(land_rs, eez_sp, inverse = TRUE)
+abnj_rs <- mask(ocean_rs, eez_sp, inverse = TRUE)
 # We can plot the object to see if it is correct
 plot(abnj_rs) 
 # looks OK but there are some land pixels that should not be there 
@@ -120,19 +138,19 @@ abnj_rs2 <- abnj_clump
 abnj_rs2[abnj_rs2 %in% excludeID] <- NA
 # We can plot the object to see if it is correct
 plot(abnj_rs2)
+writeRaster(abnj_rs2, "inputs/rasterfiles/PacificCentredABNJ_05deg", format = "GTiff", overwrite = TRUE)
 
 # From Raster to Polygon
 abnj_pol <- as(abnj_rs2,  "SpatialPolygonsDataFrame")
 abnj_pol$layer <- seq(1, length(abnj_pol))
-abnj_pol <- spTransform(abnj_pol, CRS(geo.prj))
+abnj_pol <- spTransform(abnj_pol, CRS(longlat))
 # Now to a sf object and create ONE BIG polygon that we can use to populate with PUs
 abnj_pol_sf <- st_as_sf(abnj_pol) %>% 
-  select(layer) %>% 
+  dplyr::select(layer) %>% 
   summarise(total_layer = sum(layer, do_union = TRUE))
 # We can plot the object to see if it is correct
 ggplot() +
   geom_sf(data = abnj_pol_sf) # Looks GOOD!
-
 
 # Transform the High Seas object to a Pacific-centered projected shapefile  
 abnj <- abnj_pol_sf %>% 
@@ -161,6 +179,53 @@ ggplot() +
   geom_sf(data = abnj_robinson) # Looks better
 # Save the object
 st_write(abnj_robinson, dsn = "inputs/shapefiles/PacificCenterABNJ", driver = "ESRI Shapefile", append = TRUE)
+
+##########################################################################################
+# Creating Pacific-centered EEZs
+##########################################################################################
+eez_rs <- mask(ocean_rs, eez_sp, inverse = FALSE)
+plot(eez_rs)
+writeRaster(eez_rs, "inputs/rasterfiles/PacificCentredEEZ_05deg", format = "GTiff", overwrite = TRUE)
+
+# From Raster to Polygon
+eez_pol <- as(eez_rs,  "SpatialPolygonsDataFrame")
+eez_pol$layer <- seq(1, length(eez_pol))
+eez_pol <- spTransform(eez_pol, CRS(longlat))
+# Now to a sf object and create ONE BIG polygon that we can use to populate with PUs
+eez_pol_sf <- st_as_sf(eez_pol) %>% 
+  dplyr::select(layer) %>% 
+  summarise(total_layer = sum(layer, do_union = TRUE))
+# We can plot the object to see if it is correct
+ggplot() +
+  geom_sf(data = eez_pol_sf) # Looks GOOD!
+
+# Transform the High Seas object to a Pacific-centered projected shapefile  
+eez <- eez_pol_sf %>% 
+  st_difference(polygon)
+# Perform transformation
+eez_robinson <- eez %>% 
+  st_transform(crs = rob_pacific)
+# We can plot the object to see if it is correct
+ggplot() +
+  geom_sf(data = eez_robinson) # Looks weird and also there is some lines due the Split process
+
+# To fix it the same code as above
+bbox3 <-  st_bbox(eez_robinson)
+bbox3[c(1,3)]  <-  c(-1e-5,1e-5)
+polygon4 <- st_as_sfc(bbox3)
+crosses3 <- eez_robinson %>%
+  st_intersects(polygon4) %>%
+  sapply(length) %>%
+  as.logical %>%
+  which
+# Adding buffer 0
+eez_robinson[crosses3, ] %<>%
+  st_buffer(0) 
+# We can plot the object to see if it is correct
+ggplot() +
+  geom_sf(data = eez_robinson) # Looks better
+# Save the object
+st_write(eez_robinson, dsn = "inputs/shapefiles/PacificCenterEEZ", driver = "ESRI Shapefile", append = TRUE)
 
 ##########################################################################################
 # Create equal-size grids (adapted from Jase's Code)
@@ -210,7 +275,7 @@ fCreate_PlanningUnits <- function(Bndry, LandMass, CellArea, Shape){
 #for me it will be the areal boundaries of the tuna-fisheries RFMOs: IATTC and WCPFC (140E, 78W; 51N, 60S)
 test<-cbind(c(140, -78, -78, 140), #TopLeft, TopRight, BottomRight, BottomLeft
             c( 51, 51, -60, -60))
-Cnr <- project(test, proj = rob_pacific)
+Cnr <- proj4::project(test, proj = rob_pacific)
 print(Cnr)
 
 #then we create the parameters for the function fCreate_PlanningUnits (Bndry, LandMass, CellArea, Shape)
@@ -248,7 +313,7 @@ PUsPac <- fCreate_PlanningUnits(Bndry, LandMass, CellArea, Shape)
 #saving the study area
 st_write(PUsPac, dsn = "inputs/shapefiles/PacificABNJGrid_05deg", driver = "ESRI Shapefile", append = TRUE)
 saveRDS(PUsPac, file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds")
-#print(PUsPac) #to know how many features/polygons
+print(PUsPac) #to know how many features/polygons
 
 #plotting the study area with the planning units
 ggplot() +
@@ -258,4 +323,5 @@ ggplot() +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
-  ggsave("pdfs/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300)
+  ggsave("pdfs/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300) +
+  ggsave("pdfs/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)
