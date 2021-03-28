@@ -28,6 +28,11 @@ library(RColorBrewer)
 library(ggplot2)
 library(sf)
 library(patchwork)
+library(tidyverse)
+
+rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
+longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
 
 dt <- readRDS("outputs/AQM_wflow/02a_aqua_start/01_spp-richness_surface.rds")
 final <- dt %>%
@@ -38,20 +43,20 @@ final <- dt %>%
                                                   ifelse(richness_log > 1.69897 & richness_log <= 2, 4, 
                                                          ifelse(richness_log > 2 & richness_log <= 2.69897, 5, 
                                                                 ifelse(richness_log > 2.69897 & richness_log <= 3, 6, 7)))))))
-st_crs(final) <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # just in case...
+st_crs(final) <- rob_pacific # just in case...
 
 # Defining generalities
 pal_rich <- rev(brewer.pal(7, "RdYlBu"))
 cv_rich <- c("1", "1 - 10", "10 - 50", "50 - 100", "100 - 500", "500 - 1000", "> 1000")
 
 world_sf <- readRDS("inputs/rdsfiles/WorldPacificCentred/WorldPacificCentred.rds")
-st_crs(world_sf) <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # just in case...
+st_crs(world_sf) <- rob_pacific
 
 world_abnj <- st_read("inputs/shapefiles/PacificCenterABNJ/PacificCenterABNJ.shp")
-st_crs(world_abnj) <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # just in case...
+st_crs(world_abnj) <- rob_pacific
 
 world_eez <- st_read("inputs/shapefiles/PacificCenterEEZ/PacificCenterEEZ.shp")
-st_crs(world_eez) <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # just in case...
+st_crs(world_eez) <- rob_pacific
 Boundary = "EEZ"
 world_eez <- cbind(world_eez,Boundary)
 
@@ -70,12 +75,7 @@ p <- ggplot() +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
-  theme(panel.background = element_rect(fill = "grey80",
-                                        colour = "grey80",
-                                        size = 0.5, linetype = "solid"),
-        panel.grid.major = element_line(size = 0.5, linetype = 'solid',
-                                        colour = "white"), 
-        panel.border = element_rect(colour = "white", fill=NA, size=1))
+  theme_bw()
 
 p1 <- ggplot() +
   geom_sf(data = final, aes(fill = rich_categ), color = NA) +
@@ -90,12 +90,7 @@ p1 <- ggplot() +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
-  theme(panel.background = element_rect(fill = "grey80",
-                                             colour = "grey80",
-                                             size = 0.5, linetype = "solid"),
-        panel.grid.major = element_line(size = 0.5, linetype = 'solid',
-                                             colour = "white"), 
-        panel.border = element_rect(colour = "white", fill=NA, size=1))
+  theme_bw()
 
 #arranging plots, adding labels
 plots <- p + p1 + 
@@ -112,6 +107,3 @@ plots +
   ggsave("pdfs/PacificRichness.pdf", width = 20, height = 10, dpi = 300) +
   ggsave("pdfs/PacificRichness.jpg", width = 20, height = 10, dpi = 300)
 
-####################################################################################
-####### Plotting species distributions (Turtles)
-####################################################################################
