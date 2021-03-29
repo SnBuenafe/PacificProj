@@ -138,7 +138,7 @@ if(bycatch == "turtle") {
       ggsave("pdfs/PacificMammals3.pdf", width = 20, height = 10, dpi = 300)
   } else {print("fail")}
 }
-}
+
 
 ####################################################################################
 ####### Running function
