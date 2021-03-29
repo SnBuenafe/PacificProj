@@ -318,10 +318,13 @@ print(PUsPac) #to know how many features/polygons
 #plotting the study area with the planning units
 ggplot() +
   geom_sf(data = LandMass, colour = NA, fill = NA, size = 0.2, show.legend = "line") +
-  geom_sf(data = world_robinson, color = "grey20", fill="grey20", size=0.1, show.legend="line") +
-  geom_sf(data = PUsPac, colour = "black", fill = NA, size = 0.1, show.legend = "line") + 
+  geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
+  geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = TRUE) + 
+  scale_fill_manual(name = "Study Area",
+    values = c("ABNJ" = "coral3")) +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
+  theme_bw() +
   ggsave("pdfs/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300) +
   ggsave("pdfs/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)
