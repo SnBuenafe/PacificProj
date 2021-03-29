@@ -95,8 +95,17 @@ if(bycatch == "turtle") {
     
     plots[[i]] <- p
   } 
+  return(plots) #gahd this was the only line i needed for it to work :(; took 60438090321 hrs to figure it out...
+}
 
-  if (bycatch == "turtle") {
+
+####################################################################################
+####### Running function
+####################################################################################
+
+plots <- bycatch_distmap(path = "outputs/AQM_wflow/02b_bycatch", bycatch = "mammal")
+
+#plots for turtles
   turt_plot <- (plots[[1]]) + (plots[[2]]) + (plots[[3]]) + (plots[[4]]) + (plots[[5]]) + (plots[[6]]) +
     plot_layout(ncol = 3, nrow = 2)
   
@@ -106,43 +115,34 @@ if(bycatch == "turtle") {
                               caption = "Data from AquaMaps (2019)") +
     ggsave("pdfs/PacificTurtles.pdf", width = 20, height = 10, dpi = 300)
   
-  } else if(bycatch == "mammal") {
-    mam_plot1 <- (plots[[1]]) + (plots[[2]]) + (plots[[3]]) + (plots[[4]]) + (plots[[5]]) + (plots[[6]]) + (plots[[7]]) + (plots[[8]]) + (plots[[9]]) +
-      plot_layout(ncol = 3, nrow = 3)
-    
-    mam_plot1 + plot_annotation(tag_levels = "i",
-                                tag_suffix = ".",
-                                title = "Distribution of Marine Mammals in the Pacific Ocean ",
-                                subtitle = "1 of 3",
-                                caption = "Data from AquaMaps (2019)") +
-      ggsave("pdfs/PacificMammals1.pdf", width = 20, height = 10, dpi = 300)
-    
-    mam_plot2 <- (plots[[10]]) + (plots[[11]]) + (plots[[12]]) + (plots[[13]]) + (plots[[14]]) + (plots[[15]]) + (plots[[16]]) + (plots[[17]]) + (plots[[18]]) +
-      plot_layout(ncol = 3, nrow = 3)
-    
-    mam_plot2 + plot_annotation(tag_levels = "i",
-                                tag_suffix = ".",
-                                title = "Distribution of Marine Mammals in the Pacific Ocean ",
-                                subtitle = "2 of 3",
-                                caption = "Data from AquaMaps (2019)") +
-      ggsave("pdfs/PacificMammals2.pdf", width = 20, height = 10, dpi = 300)
-    
-    mam_plot3 <- (plots[[19]]) + (plots[[20]]) + (plots[[21]]) + (plots[[22]]) + (plots[[23]]) + (plots[[24]]) + (plots[[25]]) + (plots[[26]]) + (plots[[27]])
-      plot_layout(ncol = 3, nrow = 3)
-    
-    mam_plot3 + plot_annotation(tag_levels = "i",
-                                tag_suffix = ".",
-                                title = "Distribution of Marine Mammals in the Pacific Ocean ",
-                                subtitle = "3 of 3",
-                                caption = "Data from AquaMaps (2019)") +
-      ggsave("pdfs/PacificMammals3.pdf", width = 20, height = 10, dpi = 300)
-  } else {print("fail")}
-}
+#plots for mammals
+  mam_plot1 <- (plots[[1]]) + (plots[[2]]) + (plots[[3]]) + (plots[[4]]) + (plots[[5]]) + (plots[[6]]) + (plots[[7]]) + (plots[[8]]) + (plots[[9]]) +
+    plot_layout(ncol = 3, nrow = 3)
+  
+  mam_plot1 + plot_annotation(tag_levels = "i",
+                              tag_suffix = ".",
+                              title = "Distribution of Marine Mammals in the Pacific Ocean ",
+                              subtitle = "1 of 3",
+                              caption = "Data from AquaMaps (2019)") +
+    ggsave("pdfs/PacificMammals1.pdf", width = 20, height = 10, dpi = 300)
+  
+  mam_plot2 <- (plots[[10]]) + (plots[[11]]) + (plots[[12]]) + (plots[[13]]) + (plots[[14]]) + (plots[[15]]) + (plots[[16]]) + (plots[[17]]) + (plots[[18]]) +
+    plot_layout(ncol = 3, nrow = 3)
+  
+  mam_plot2 + plot_annotation(tag_levels = "i",
+                              tag_suffix = ".",
+                              title = "Distribution of Marine Mammals in the Pacific Ocean ",
+                              subtitle = "2 of 3",
+                              caption = "Data from AquaMaps (2019)") +
+    ggsave("pdfs/PacificMammals2.pdf", width = 20, height = 10, dpi = 300)
+  
+  mam_plot3 <- (plots[[19]]) + (plots[[20]]) + (plots[[21]]) + (plots[[22]]) + (plots[[23]]) + (plots[[24]]) + (plots[[25]]) + (plots[[26]]) + (plots[[27]])
+  plot_layout(ncol = 3, nrow = 3)
+  
+  mam_plot3 + plot_annotation(tag_levels = "i",
+                              tag_suffix = ".",
+                              title = "Distribution of Marine Mammals in the Pacific Ocean ",
+                              subtitle = "3 of 3",
+                              caption = "Data from AquaMaps (2019)") +
+    ggsave("pdfs/PacificMammals3.pdf", width = 20, height = 10, dpi = 300)
 
-
-####################################################################################
-####### Running function
-####################################################################################
-
-bycatch_distmap(path = "outputs/AQM_wflow/02b_bycatch",
-     bycatch = "mammal")
