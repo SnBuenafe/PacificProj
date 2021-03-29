@@ -1,6 +1,7 @@
 # This code was written by Tin Buenafe (2021)
 # email: tinbuenafe@gmail.com
 # Please do not distribute this code without permission.
+# There are no guarantees that this code will work perfectly.
 
 # This creates a RasterStack of all the bycatch species.
 # Inputs include the following:
