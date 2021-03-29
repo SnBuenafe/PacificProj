@@ -9,6 +9,9 @@
 # 3. olayer: surface
 # 4. outdir: directory where RasterStack will be saved
 
+# The following must also be defined prior to running the function.
+# rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
+
 bycatch_rasterstack <- function(path, bycatch, olayer, outdir, ...) {
 
   ####################################################################################
