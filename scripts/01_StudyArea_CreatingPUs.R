@@ -311,7 +311,7 @@ Shape = "Hexagon" # Hexagon or Square
 
 PUsPac <- fCreate_PlanningUnits(Bndry, LandMass, CellArea, Shape)
 #saving the study area
-st_write(PUsPac, dsn = "inputs/shapefiles/PacificABNJGrid_05deg", driver = "ESRI Shapefile", append = TRUE)
+st_write(PUsPac, dsn = "inputs/shapefiles/PacificABNJGrid_05deg", driver = "ESRI Shapefile", append = FALSE)
 saveRDS(PUsPac, file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds")
 print(PUsPac) #to know how many features/polygons
 
