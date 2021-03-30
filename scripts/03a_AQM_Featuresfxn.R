@@ -1,3 +1,5 @@
+# with some modifications by Tin Buenafe, 2021 (tinbuenafe@gmail.com)
+
 # This code was written by Isaac Brito-Morales (i.britomorales@uq.edu.au)
 # Please do not distribute this code without permission.
 # NO GUARANTEES THAT CODE IS CORRECT
@@ -30,17 +32,23 @@ features_pus <- function(path, outdir, pu_shp, olayer) {
   } else if (stringr::str_detect(string = pu_shp, pattern = ".shp") == TRUE) {
     shp_PU_sf <- st_read(pu_shp)
   }
-  # If no cellsID values were assinged to the original
-  if(colnames(shp_PU_sf) == "geometry") {
-    shp_PU_sf <- mutate(shp_PU_sf, cellsID = 1:nrow(shp_PU_sf))
-  } else{shp_PU_sf}
+  
+# If no cellsID values were assinged to the original
+#  if(colnames(shp_PU_sf) == "geometry") {
+#    shp_PU_sf <- mutate(shp_PU_sf, cellsID = 1:nrow(shp_PU_sf))
+#  } else{shp_PU_sf}
+  
+  shp_PU_sf <- mutate(shp_PU_sf, cellsID = 1:nrow(shp_PU_sf))
+  
   # To add more info [not sure about this so it can be delete it]
 #  col_ns <- colnames(shp_PU_sf)
 #  col_ns[2] <- ifelse(col_ns[2] != "cellsID", "cellsID", col_ns[2])
 #  colnames(shp_PU_sf) <- col_ns
-#  shp_PU_sf <- shp_PU_sf %>%
-#    dplyr::mutate (area_km2 = as.numeric(st_area(shp_PU_sf)/1e+06))
-#  pu_min_area <- min(shp_PU_sf$area_km2)
+  
+  shp_PU_sf <- shp_PU_sf %>%
+    dplyr::mutate(area_km2 = as.numeric(st_area(shp_PU_sf)/1e+06))
+  pu_min_area <- min(shp_PU_sf$area_km2)
+  
   # Reading conservation features .rds files (AquaMaps)
   dir <- path
   pattern1 <-  c(paste0("*", ".*.rds$"), paste0("*", ".*shp$"))
