@@ -144,7 +144,7 @@ run01 <- pu_by_provinces(pu_file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds",
                 province_file = "inputs/shapefiles/Longhurst/Longhurst_world_v4_2010.shp", 
                 prov_name = "Longhurst",
                 olayer = "surface",
-                outdir = "outputs/Provinces")
+                outdir = "outputs/Provinces/")
 run01
 
 library(RColorBrewer)

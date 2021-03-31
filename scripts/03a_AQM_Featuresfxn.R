@@ -95,7 +95,7 @@ features_pus <- function(path, outdir, pu_shp, olayer) {
   # Final sf with all species information and write that object (main object to develop marxan input files)
   PU_list_b <- do.call(rbind, PU_list)
   # Write the object
-  pu_rds <- paste(olayer, ".rds", sep = "")
+  pu_rds <- paste("bycatch_features_",olayer, ".rds", sep = "")
   saveRDS(PU_list_b, paste(outdir, pu_rds, sep = ""))
   return(PU_list_b)
 }
