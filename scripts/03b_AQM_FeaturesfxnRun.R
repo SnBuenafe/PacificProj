@@ -32,4 +32,3 @@ ggplot()+
   geom_sf(data = run01, color = "coral3") +
   theme_bw()# +
 #  ggsave("pdfs/features.pdf", width = 20, height = 10, dpi = 300)
-
