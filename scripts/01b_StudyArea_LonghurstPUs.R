@@ -4,11 +4,6 @@
 # There are no guarantees that this code will work perfectly.
 # most are modified from IBM's code.
 
-# This code was written by Isaac Brito-Morales (i.britomorales@uq.edu.au)
-# Please do not distribute this code without permission.
-# NO GUARANTEES THAT CODE IS CORRECT
-# Caveat Emptor!
-
 # This categorizes planning units according to their Longhurst Provinces.
 # creates a .csv file, .rds file and .shp files of the PUs.
 # Inputs include the following:
