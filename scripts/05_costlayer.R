@@ -142,11 +142,19 @@ Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (
 
 # Plotting
 
+library(RColorBrewer)
+library(patchwork)
+# Defining palette
+pal_rich <- rev(brewer.pal(9, "RdBu"))
+
 ggplot()+
   geom_sf(data = run01, aes(color = cost)) +
+  scale_color_gradientn(name = "cost (USD)",
+                        colours = pal_rich) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
-  theme_bw()
+  theme_bw() +
+  ggsave("pdfs/CostLayer.pdf", width = 20, height = 10, dpi = 300)
 
