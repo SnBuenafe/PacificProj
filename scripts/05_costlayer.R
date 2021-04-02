@@ -104,7 +104,7 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
         dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06)) %>% 
         ungroup()
       
-      # Saving RDS and shapefiles
+      # Saving RDS
       saveRDS(xx_list, paste0(outdir, "costlayer.rds"))
 
       return(xx_list)
