@@ -132,13 +132,18 @@ pu_by_provinces <- function(pu_file, province_file, prov_name, olayer, outdir) {
     st_as_sf()
 
   st_write(pu_region, dsn = "inputs/shapefiles/PacificABNJGrid_05deg_Longhurst", driver = "ESRI Shapefile", append = FALSE)
+  st_write(pu_region, dsn = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst", driver = "ESRI Shapefile", append = FALSE)
+  
   saveRDS(pu_region, file = "inputs/rdsfiles/PacificABNJGrid_05deg_Longhurst.rds")
+  saveRDS(pu_region, file = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst.rds")
   print("success!")
   
   return(pu_region)
 }
 
-#############################    
+#############################   
+# RUNNING THE FUNCTION #
+#############################
 
 run01 <- pu_by_provinces(pu_file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds",
                 province_file = "inputs/shapefiles/Longhurst/Longhurst_world_v4_2010.shp", 
