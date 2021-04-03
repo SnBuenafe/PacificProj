@@ -114,10 +114,10 @@ pu_by_provinces <- function(pu_file, province_file, prov_name, olayer, outdir) {
   pu_region$prov_descr <- pus_prov$ProvDescr[match(pu_region$geometry, pus_prov$geometry)]
   pu_region$province <- ifelse(is.na(pu_region$province), 
                                paste("non-categ", prov_name, sep = "_"), 
-                               paste(pu_region$province, prov_name, sep = "_"))
+                               paste(pu_region$province, sep = "_"))
   pu_region$prov_descr <- ifelse(is.na(pu_region$prov_descr), 
                                paste("non-categ", prov_name, sep = "_"), 
-                               paste(pu_region$province, prov_name, sep = "_"))
+                               paste(pu_region$prov_descr, sep = "_"))
   
   pu_region <- as.data.frame(pu_region)
   pu_csv <- paste(paste("pus", olayer, sep = "-"), prov_name, ".csv", sep = "_")
@@ -147,16 +147,19 @@ run01 <- pu_by_provinces(pu_file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds",
                 outdir = "outputs/Provinces/")
 run01
 
-library(RColorBrewer)
-
-pal_prov <- rev(brewer.pal(9, "Set3"))
+prov_code <- c("ANTA" = "#b2182b","ARCH" = "#ef8a62","CCAL" = "#fddbc7","CHIL" = "#d1e5f0","KURO" = "#67a9cf","non-categ_Longhurst" = "#2166ac",
+               "NPPF" = "#8c510a","NPSW" = "#d8b365","NPTG" = "#f6e8c3", "PEQD" = "#c7eae5","PNEC" = "#5ab4ac","PSAE" = "#01665e",
+               "PSAW" = "#762a83","SANT" = "#af8dc3","SPSG" = "#e7d4e8","SSTC" = "#d9f0d3","TASM" = "#7fbf7b","WARM" = "#1b7837")
 
 # the following must be defined:
 # 1. Bndry
 # 2. world_sf
 
-ggplot()+
-  geom_sf(data = run01, aes(color = province)) +
+longhurst <- ggplot()+
+  geom_sf(data = run01, aes(color = province), fill = NA) +
+  scale_color_manual(values = prov_code,
+                     aesthetics = c("color")
+                     ) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
