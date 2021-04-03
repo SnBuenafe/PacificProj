@@ -25,7 +25,6 @@ library(ggplot2)
 library(readxl)
 library(stringr)
 library(patchwork)
-library(ggfittext)
 library(sf)
 
 ####################################################################################
