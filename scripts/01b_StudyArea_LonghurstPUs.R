@@ -164,6 +164,23 @@ longhurst <- ggplot()+
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
-  labs(title = "Planning Units divided according to Longhurst Provinces") +
   theme_bw()
   
+# plotting with study area
+
+PUs <- ggplot() +
+  geom_sf(data = LandMass, colour = NA, fill = NA, size = 0.2, show.legend = "line") +
+  geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
+  geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = TRUE) + 
+  scale_fill_manual(name = "Study Area",
+                    values = c("ABNJ" = "coral3")) +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  theme_bw()
+
+library(patchwork)
+plot <- PUs + longhurst
+plot + plot_annotation(tag_levels = 'a', tag_suffix = ')',
+                       title = "Study Area") +
+  ggsave("pdfs/StudyArea.pdf", width = 20, height = 10, dpi = 300)  
