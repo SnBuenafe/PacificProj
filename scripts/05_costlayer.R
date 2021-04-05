@@ -127,7 +127,7 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
 ########################################
 # RUNNING THE FUNCTION #
 ########################################
-run01 <-  cost_pu(input = "inputs/rasterfiles/Costlayer/02-epipelagic_Cost_Raster_Sum.tif",
+run00 <-  cost_pu(input = "inputs/rasterfiles/Costlayer/02-epipelagic_Cost_Raster_Sum.tif",
           pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
           outdir = "outputs/cost_layer/"
           )
@@ -161,10 +161,10 @@ library(patchwork)
 # Defining palette
 pal_cost <- c("#2c7bb6","#abd9e9","lightgoldenrod1","#fdae61","#d7191c")
 categ <- c("0", "0 - 1", "1 - 2", "2 - 3", "3 - 4")
-  # rev(brewer.pal(6, "RdBu"))
+pal_cost1 <- rev(brewer.pal(5, "RdYlBu"))
 
 ggplot()+
-  geom_sf(data = run01, aes(color = cost_categ)) +
+  geom_sf(data = run00, aes(color = cost_categ)) +
   scale_color_gradientn(name = "log10(cost)",
                        colours = pal_cost,
                        limits = c(1, 5),
@@ -174,6 +174,7 @@ ggplot()+
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
-  theme_bw() #+
-#  ggsave("pdfs/CostLayer.pdf", width = 20, height = 10, dpi = 300)
+  labs(title = "Cost Layer") +
+  theme_bw() +
+  ggsave("pdfs/CostLayer.pdf", width = 20, height = 10, dpi = 300)
 

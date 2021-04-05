@@ -20,7 +20,10 @@ source("scripts/06a_climatefeaturesfxn.R")
 library(RColorBrewer)
 library(patchwork)
 # Defining palette
-pal_rich <- rev(brewer.pal(9, "RdBu"))
+pal <- c("#313695","#4575b4","#74add1","#abd9e9","#e0f3f8","#fee090","#fdae61","#f46d43","#d73027","#a50026")
+RCE_cat <- c("min","","","","","","","","","max")
+velo_cat <- c("< -50", "-50 to -20", "-20 to -10", "-10 to -5", "-5 to 5", "5 to 10", "10 to 20", "20 to 50", "50 to 100", "100 to 200", "> 200")
+pal1 <- rev(brewer.pal(11, "RdYlBu"))
 
 run01 <- layer_intersect(input = "RCE",
                 scenario = "SSP126",
@@ -33,9 +36,12 @@ run01
 
 # Plotting RCE SSP126
 p1 <- ggplot()+
-  geom_sf(data = run01, aes(color = value)) +
-  scale_color_gradientn(name = "RCE",
-                        colours = pal_rich) +
+  geom_sf(data = run01, aes(color = rce_categ)) +
+  scale_color_gradientn(name = "RCE index",
+                        colours = pal,
+                        limits = c(1, 10),
+                        breaks = seq(1, 10, 1),
+                        labels = RCE_cat) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -54,9 +60,12 @@ run02
 
 # Plotting RCE SSP245
 p2 <- ggplot()+
-  geom_sf(data = run02, aes(color = value)) +
-  scale_color_gradientn(name = "RCE",
-                        colours = pal_rich) +
+  geom_sf(data = run02, aes(color = rce_categ)) +
+  scale_color_gradientn(name = "RCE index",
+                        colours = pal,
+                        limits = c(1, 10),
+                        breaks = seq(1, 10, 1),
+                        labels = RCE_cat) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -75,9 +84,13 @@ run03
 
 # Plotting RCE SSP585
 p3 <- ggplot()+
-  geom_sf(data = run03, aes(color = value)) +
-  scale_color_gradientn(name = "RCE",
-                        colours = pal_rich) +
+  geom_sf(data = run03, aes(color = rce_categ)) +
+  scale_color_gradientn(name = "RCE index",
+                        colours = pal,
+                        limits = c(1, 10),
+                        breaks = seq(1, 10, 1),
+                        aesthetics = c("color","fill"),
+                        labels = RCE_cat) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -96,9 +109,13 @@ run04
 
 # Plotting Climate Velocity SSP126
 q1 <- ggplot()+
-  geom_sf(data = run04, aes(color = value)) +
-  scale_color_gradientn(name = "Climate Velocity",
-                        colours = pal_rich) +
+  geom_sf(data = run04, aes(color = velo_categ)) +
+  scale_color_gradientn(name = expression('Climate velocity (km decade'^"-1"*')'),
+                        colours = pal1,
+                        limits = c(1, 11),
+                        breaks = seq(1, 11, 1),
+                        aesthetics = c("color","fill"),
+                        labels = velo_cat) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -117,9 +134,13 @@ run05
 
 # Plotting Climate Velocity SSP245
 q2 <- ggplot()+
-  geom_sf(data = run05, aes(color = value)) +
-  scale_color_gradientn(name = "Climate Velocity",
-                        colours = pal_rich) +
+  geom_sf(data = run05, aes(color = velo_categ)) +
+  scale_color_gradientn(name = expression('Climate velocity (km decade'^"-1"*')'),
+                        colours = pal1,
+                        limits = c(1, 11),
+                        breaks = seq(1, 11, 1),
+                        aesthetics = c("color","fill"),
+                        labels = velo_cat) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -140,9 +161,13 @@ run06
 
 # Defining generalities
 q3 <- ggplot()+
-  geom_sf(data = run06, aes(color = value)) +
-  scale_color_gradientn(name = "Climate Velocity",
-                       colours = pal_rich) +
+  geom_sf(data = run06, aes(color = velo_categ)) +
+  scale_color_gradientn(name = expression('Climate velocity (km decade'^"-1"*')'),
+                        colours = pal1,
+                        limits = c(1, 11),
+                        breaks = seq(1, 11, 1),
+                        aesthetics = c("color","fill"),
+                        labels = velo_cat) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -155,6 +180,7 @@ q3 <- ggplot()+
 # Plotting RCE
 plot_RCE <- (p1 | p2 | p3)
 plot_RCE +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = 'i', tag_prefix = '(', tag_suffix = ')',
                   title = "RCE Plots") +
   ggsave("pdfs/RCE.pdf", width = 20, height = 10, dpi = 300)  
@@ -162,6 +188,7 @@ plot_RCE +
 # Plotting Climate Velocity
 plot_velo <- (q1 | q2 | q3)
 plot_velo +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = 'i', tag_prefix = '(', tag_suffix = ')',
                   title = "Climate Velocity Plots") +
   ggsave("pdfs/ClimateVelo.pdf", width = 20, height = 10, dpi = 300)  

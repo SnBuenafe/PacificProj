@@ -29,6 +29,7 @@ layer_intersect <- function(input, scenario, inpdir, outdir, pu, ...) {
   library(ggplot2)
   library(readr)
   library(proj4)
+  library(kader)
   
   # defining projections that will be used
   
@@ -101,6 +102,16 @@ layer_intersect <- function(input, scenario, inpdir, outdir, pu, ...) {
   single <- layer_robinson %>% 
     rename(value = xx)
   
+  if(input == "RCE") {
+  single <- single %>% 
+    dplyr::mutate(value = ifelse(is.na(value), median(filter(single, single$value!=0)$value), value)) %>% 
+    dplyr::mutate(value = kader:::cuberoot(value))
+  } else if(input == "velocity") {
+    single <- single %>% 
+      dplyr::mutate(value = ifelse(is.na(value), median(filter(single, single$value!=0)$value), value)) %>% 
+      dplyr::mutate(value = value*10)
+  }else{print("fail")}
+  
   # Intersects every cost with planning unit region
   pu_int <- st_intersection(shp_PU_sf, single) %>% 
     filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) # we want just the polygons/multi not extra geometries
@@ -113,9 +124,33 @@ layer_intersect <- function(input, scenario, inpdir, outdir, pu, ...) {
     dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06)) %>% 
     ungroup()
   
-  # Saving RDS
-  saveRDS(xx_list, paste0(outdir, input, scenario, ".rds"))
+  if(input == "RCE"){
+    xx_listf <- xx_list %>% dplyr::mutate(rce_categ = ifelse(value <= 0.2, 1,
+                                                      ifelse(value >0.2 & value <= 0.4, 2,
+                                                      ifelse(value >0.4 & value <= 0.6, 3,
+                                                      ifelse(value >0.6 & value <= 0.8, 4,
+                                                      ifelse(value >0.8 & value <= 1.1, 5,
+                                                      ifelse(value >1.1 & value <= 1.2, 6,
+                                                      ifelse(value >1.2 & value <= 1.5, 7,
+                                                      ifelse(value >1.5 & value <= 2, 8,
+                                                      ifelse(value >2 & value <= 4, 9,
+                                                      ifelse(value >4 & value <= 6, 10, 11)))))))))))
+  }else if(input == "velocity"){
+    xx_listf <- xx_list %>% dplyr::mutate(velo_categ = ifelse(value <= -50, 1,
+                                                       ifelse(value >-50 & value <= -20, 2,
+                                                       ifelse(value >-20 & value <= -10, 3,
+                                                       ifelse(value >-10 & value <= -5, 4,
+                                                       ifelse(value >-5 & value <= 5, 5,
+                                                       ifelse(value >5 & value <= 10, 6,
+                                                       ifelse(value >10 & value <= 20, 7,
+                                                       ifelse(value >20 & value <= 50, 8,
+                                                       ifelse(value >50 & value <= 100, 9,
+                                                       ifelse(value >100 & value <= 200, 10, 11)))))))))))
+  }else {print("fail; input N/A")}
   
-  return(xx_list)
+  # Saving RDS
+  saveRDS(xx_listf, paste0(outdir, input, scenario, ".rds"))
+  
+  return(xx_listf)
   
 }
