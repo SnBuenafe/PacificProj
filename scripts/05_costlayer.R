@@ -92,6 +92,9 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
       single <- epi_cost_robinson %>% 
         rename(cost = X02.epipelagic_Cost_Raster_Sum)
       
+      single <- single %>% 
+        dplyr::mutate(cost = ifelse(is.na(cost), 0, cost))
+      
       # Intersects every cost with planning unit region
       pu_int <- st_intersection(shp_PU_sf, single) %>% 
         filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) # we want just the polygons/multi not extra geometries
@@ -104,10 +107,21 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
         dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06)) %>% 
         ungroup()
       
+      xx_list <- xx_list %>% 
+        dplyr::mutate(cost_log = log10(cost + 1))
+      xx_list$cost_final <- ifelse(xx_list$cost_log == 0, median(filter(xx_list,xx_list$cost_log != 0)$cost),xx_list$cost_log)
+      
+      xx_listf <- xx_list %>% 
+        mutate(cost_categ = ifelse(cost_log == 0, 1,
+                                   ifelse(cost_log > 0 & cost_log <= 1, 2,
+                                   ifelse(cost_log > 1 & cost_log <= 2, 3,
+                                   ifelse(cost_log > 2 & cost_log <= 3, 4,
+                                   ifelse(cost_log > 3 & cost_log <= 4, 5, 6))))))
+      
       # Saving RDS
-      saveRDS(xx_list, paste0(outdir, "costlayer.rds"))
+      saveRDS(xx_listf, paste0(outdir, "costlayer.rds"))
 
-      return(xx_list)
+      return(xx_listf)
   }
   
 ########################################
@@ -145,16 +159,21 @@ Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (
 library(RColorBrewer)
 library(patchwork)
 # Defining palette
-pal_rich <- rev(brewer.pal(9, "RdBu"))
+pal_cost <- c("#2c7bb6","#abd9e9","lightgoldenrod1","#fdae61","#d7191c")
+categ <- c("0", "0 - 1", "1 - 2", "2 - 3", "3 - 4")
+  # rev(brewer.pal(6, "RdBu"))
 
 ggplot()+
-  geom_sf(data = run01, aes(color = cost)) +
-  scale_color_gradientn(name = "cost (USD)",
-                        colours = pal_rich) +
+  geom_sf(data = run01, aes(color = cost_categ)) +
+  scale_color_gradientn(name = "log10(cost)",
+                       colours = pal_cost,
+                       limits = c(1, 5),
+                       breaks = seq(1, 5, 1),
+                       labels = categ) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
-  theme_bw() +
-  ggsave("pdfs/CostLayer.pdf", width = 20, height = 10, dpi = 300)
+  theme_bw() #+
+#  ggsave("pdfs/CostLayer.pdf", width = 20, height = 10, dpi = 300)
 
