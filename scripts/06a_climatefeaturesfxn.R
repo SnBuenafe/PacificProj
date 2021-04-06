@@ -4,7 +4,7 @@
 # There are no guarantees that this code will work perfectly.
 # most are modified from IBM's code.
 
-# This code creates a function intersects the climate features (RCE and climate velocity values for different scenarios) and the study area (in PUs).
+# This code creates a function that intersects the climate features (RCE and climate velocity values for different scenarios) and the study area (in PUs).
 # creates a .rds file PUs x features layer.
 # Function is run in code 06b
 
