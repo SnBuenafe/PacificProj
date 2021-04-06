@@ -15,7 +15,7 @@ library(ggiraph)
 
 #Import Data Set
 # complete_new5 <- read.csv("~/R working directory/complete_new5.txt", sep="")
-complete_new5 <- read.csv("Processed/TunaData.txt", sep="")
+complete_new5 <- read.csv("inputs/mercer/TunaData.txt", sep="")
 complete_new5 <- na.omit(complete_new5)
 
 #Very high chlorophyll max
@@ -92,7 +92,7 @@ visreg(m5, "Dist2Coast", partial = FALSE)
 visreg(m5, "Chl", partial = FALSE)
 vis.gam(m5, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (oC)", 
         ylab = "Longitude", zlab = "\nPresence/Absence", color = "cm", theta = 45, phi = 10, r = 100) # also "grey"
-dev.copy2pdf(file = "YFT_Model.pdf", paper = "A4r")
+dev.copy2pdf(file = "pdfs/YFT_Model.pdf", paper = "A4r")
 summary(m5) # r2 = 13.6%
 
 # Plot m5 as a map
