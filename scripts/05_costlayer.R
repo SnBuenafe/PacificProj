@@ -95,6 +95,9 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
       single <- single %>% 
         dplyr::mutate(cost = ifelse(is.na(cost), 0, cost))
       
+      # replaced all the 0 cost values with the median of the global data?
+      single$cost <- ifelse(single$cost == 0, median(filter(single,single$cost != 0)$cost),single$cost)
+      
       # Intersects every cost with planning unit region
       pu_int <- st_intersection(shp_PU_sf, single) %>% 
         filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) # we want just the polygons/multi not extra geometries
@@ -102,14 +105,13 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
       xx_list <- st_join(x = shp_PU_sf, y = pu_int,  by = "cellsID") %>% 
         na.omit() %>% 
         dplyr::group_by(cellsID.x) %>% 
-        dplyr::summarise(cellsID = unique(cellsID.x), cost = mean(cost)) %>% 
+        dplyr::summarise(cellsID = unique(cellsID.x), cost = mean(cost)) %>%  #not sure if I should use mean() or median()
         dplyr::select(cellsID, geometry, cost) %>% 
         dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06)) %>% 
         ungroup()
       
       xx_list <- xx_list %>% 
         dplyr::mutate(cost_log = log10(cost + 1))
-      xx_list$cost_final <- ifelse(xx_list$cost_log == 0, median(filter(xx_list,xx_list$cost_log != 0)$cost),xx_list$cost_log)
       
       xx_listf <- xx_list %>% 
         mutate(cost_categ = ifelse(cost_log == 0, 1,
@@ -163,13 +165,18 @@ pal_cost <- c("#2c7bb6","#abd9e9","lightgoldenrod1","#fdae61","#d7191c")
 categ <- c("0", "0 - 1", "1 - 2", "2 - 3", "3 - 4")
 pal_cost1 <- rev(brewer.pal(5, "RdYlBu"))
 
+scale_fill_gradientn(name = "Richness",
+                     colours = pal_rich,
+                     limits = c(1, 7),
+                     breaks = seq(1, 7, 1),
+                     labels = cv_rich)
+
+myPalette <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))
+sc <- scale_colour_gradientn(name = "log10(cost)", colours = myPalette(100), limits=c(0, 4), aesthetics = c("color","fill"))
+
 ggplot()+
-  geom_sf(data = run00, aes(color = cost_categ)) +
-  scale_color_gradientn(name = "log10(cost)",
-                       colours = pal_cost,
-                       limits = c(1, 5),
-                       breaks = seq(1, 5, 1),
-                       labels = categ) +
+  geom_sf(data = run00, aes(color = cost_log, fill = cost_log)) +
+  sc +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -177,4 +184,3 @@ ggplot()+
   labs(title = "Cost Layer") +
   theme_bw() +
   ggsave("pdfs/CostLayer.pdf", width = 20, height = 10, dpi = 300)
-
