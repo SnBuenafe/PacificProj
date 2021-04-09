@@ -23,53 +23,10 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
       library(ggplot2)
       library(readr)
       library(proj4)
+      library(exactextractr)
       
       rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
       longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-      
-      # calling the raster layer of the cost layer
-      epi_cost <- readAll(raster(input))
-      
-      # Creating a empty raster at 0.5° resolution (you can increase the resolution to get a better border precision)
-      rs <- raster(ncol = 360*2, nrow = 180*2) 
-      rs[] <- 1:ncell(rs)
-      crs(rs) <- CRS(longlat)
-      
-      # Resampled to have the same resolution as study area (0.5 deg x 0.5 deg)
-      epi_cost1 <- resample(epi_cost, rs, resample = "ngb")
-      
-      # Converting into an sf spatial polygon dataframe
-      epi_cost2 <- as(epi_cost1, "SpatialPolygonsDataFrame")
-      epi_cost_sp <- spTransform(epi_cost2, CRS(longlat))
-      
-      # Transforming the cost layer into Robinson's Projection
-      # Define a long & slim polygon that overlaps the meridian line & set its CRS to match that of world
-      polygon <- st_polygon(x = list(rbind(c(-0.0001, 90),
-                                           c(0, 90),
-                                           c(0, -90),
-                                           c(-0.0001, -90),
-                                           c(-0.0001, 90)))) %>%
-        st_sfc() %>%
-        st_set_crs(longlat)
-      
-      # Transform the species distribution polygon object to a Pacific-centred projection polygon object
-      epi_cost_robinson <- epi_cost_sp %>% 
-        st_as_sf() %>% 
-        st_difference(polygon) %>% 
-        st_transform(crs = rob_pacific)
-      
-      # There is a line in the middle of Antarctica. This is because we have split the map after reprojection. We need to fix this:
-      bbox1 <-  st_bbox(epi_cost_robinson)
-      bbox1[c(1,3)]  <-  c(-1e-5,1e-5)
-      polygon1 <- st_as_sfc(bbox1)
-      crosses1 <- epi_cost_robinson %>%
-        st_intersects(polygon1) %>%
-        sapply(length) %>%
-        as.logical %>%
-        which
-      # Adding buffer 0
-      epi_cost_robinson[crosses1, ] %<>%
-        st_buffer(0)
       
       # Calling the PU shape file / .rds
       if(stringr::str_detect(string = pu_shp, pattern = ".rds") == TRUE) {
@@ -88,42 +45,31 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
         dplyr::select(cellsID, geometry)
       pu_min_area <- min(shp_PU_sf$area_km2)
       
-      # renaming cost layer
-      single <- epi_cost_robinson %>% 
-        rename(cost = X02.epipelagic_Cost_Raster_Sum)
+      # calling the raster layer of the cost layer
+      epi_cost <- readAll(raster(input))
+      crs(epi_cost) <- CRS(longlat)
+      weight_rs <- raster::area(epi_cost)
       
-      single <- single %>% 
-        dplyr::mutate(cost = ifelse(is.na(cost), 0, cost))
+      # Projecting the costs and weights into Robinson's (the same projection as the PUs)
+      cost_filef <- projectRaster(cost_file, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
+      weight_rsf <- projectRaster(weight_rs, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
       
-      # replaced all the 0 cost values with the median of the global data?
-      single$cost <- ifelse(single$cost == 0, median(filter(single,single$cost != 0)$cost),single$cost)
+      names(cost_filef) <- "layer"
       
-      # Intersects every cost with planning unit region
-      pu_int <- st_intersection(shp_PU_sf, single) %>% 
-        filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) # we want just the polygons/multi not extra geometries
-      
-      xx_list <- st_join(x = shp_PU_sf, y = pu_int,  by = "cellsID") %>% 
-        na.omit() %>% 
-        dplyr::group_by(cellsID.x) %>% 
-        dplyr::summarise(cellsID = unique(cellsID.x), cost = mean(cost)) %>%  #not sure if I should use mean() or median()
-        dplyr::select(cellsID, geometry, cost) %>% 
-        dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06)) %>% 
-        ungroup()
-      
-      xx_list <- xx_list %>% 
-        dplyr::mutate(cost_log = log10(cost + 1))
-      
-      xx_listf <- xx_list %>% 
+      # Getting cost value by planning unit
+      cost_bypu <- exact_extract(cost_filef, shp_PU_sf1, "weighted_mean", weights = weight_rsf)
+      pu_file <- shp_PU_sf1 %>% 
+        mutate(cost = cost_bypu, cost_log = log10(cost_bypu+1)) %>% 
         mutate(cost_categ = ifelse(cost_log == 0, 1,
                                    ifelse(cost_log > 0 & cost_log <= 1, 2,
-                                   ifelse(cost_log > 1 & cost_log <= 2, 3,
-                                   ifelse(cost_log > 2 & cost_log <= 3, 4,
-                                   ifelse(cost_log > 3 & cost_log <= 4, 5, 6))))))
+                                          ifelse(cost_log > 1 & cost_log <= 2, 3,
+                                                 ifelse(cost_log > 2 & cost_log <= 3, 4,
+                                                        ifelse(cost_log > 3 & cost_log <= 4, 5, 6))))))
       
       # Saving RDS
-      saveRDS(xx_listf, paste0(outdir, "costlayer.rds"))
-
-      return(xx_listf)
+      saveRDS(pu_file, paste0(outdir, "costlayer.rds"))
+      
+      return(pu_file)
   }
   
 ########################################
@@ -161,16 +107,6 @@ Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (
 library(RColorBrewer)
 library(patchwork)
 # Defining palette
-pal_cost <- c("#2c7bb6","#abd9e9","lightgoldenrod1","#fdae61","#d7191c")
-categ <- c("0", "0 - 1", "1 - 2", "2 - 3", "3 - 4")
-pal_cost1 <- rev(brewer.pal(5, "RdYlBu"))
-
-scale_fill_gradientn(name = "Richness",
-                     colours = pal_rich,
-                     limits = c(1, 7),
-                     breaks = seq(1, 7, 1),
-                     labels = cv_rich)
-
 myPalette <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))
 sc <- scale_colour_gradientn(name = "log10(cost)", colours = myPalette(100), limits=c(0, 4), aesthetics = c("color","fill"))
 
