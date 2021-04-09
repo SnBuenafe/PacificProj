@@ -14,6 +14,7 @@
 # inpdir: directory where the layer is found in .csv format
 # outdir: directory where to save raster layers (in .rds)
 # pu: PU .shp file; "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp"
+# prob_threshold: median of the predictions; everything else < the prob_threshold is not included in the data.
 
 commercial_feat <- function(input, inpdir, prob_threshold, PU, outdir, ...) {
 
