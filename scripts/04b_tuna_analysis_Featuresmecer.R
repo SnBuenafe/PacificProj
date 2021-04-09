@@ -31,11 +31,22 @@ commercial_feat <- function(input, inpdir, prob_threshold, PU, outdir, ...) {
   library(ggplot2)
   library(readr)
   library(proj4)
+  library(exactextractr)
 
   rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
   longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
-  prob_threshold <- prob_threshold #top 20 percentile of YFT
+  prob_threshold <- prob_threshold #median
+  
+  # Calling .shp file of PUs
+  shp_PU_sf <- st_read(PU) %>% 
+    st_transform(crs = rob_pacific)
+  
+  shp_PU_sf1 <- shp_PU_sf %>%
+    dplyr::mutate (cellsID = 1:nrow(shp_PU_sf), 
+                   area_km2 = as.numeric(st_area(shp_PU_sf)/1e+06)) %>% 
+    dplyr::select(cellsID, geometry)
+  pu_min_area <- min(shp_PU_sf1$area_km2)
 
   temp_sp <- read_csv(inpdir) %>% 
     dplyr::select(Latitude, Longitude, Preds) %>% 
@@ -45,74 +56,28 @@ commercial_feat <- function(input, inpdir, prob_threshold, PU, outdir, ...) {
     data.frame()
 
   sp_raster <- rasterFromXYZ(temp_sp)
-
-  # Creating a empty raster at 0.5° resolution (you can increase the resolution to get a better border precision)
-  rs <- raster(ncol = 360*2, nrow = 180*2) 
-  rs[] <- 1:ncell(rs)
-  crs(rs) <- CRS(longlat)
+  crs(sp_raster) <- CRS(longlat)
   
-  # Resampling to make sure that it's in the same resolution as sampling area
-  sp_raster <- resample(sp_raster, rs, resample = "ngb")
-
-  #converting into an sf spatial polygon dataframe
-  sp_raster1 <- as(sp_raster, "SpatialPolygonsDataFrame")
-  species_sp <- spTransform(sp_raster1, CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"))
-
-  # Define a long & slim polygon that overlaps the meridian line & set its CRS to match that of world
-  polygon <- st_polygon(x = list(rbind(c(-0.0001, 90),
-                                     c(0, 90),
-                                     c(0, -90),
-                                     c(-0.0001, -90),
-                                     c(-0.0001, 90)))) %>%
-    st_sfc() %>%
-    st_set_crs(longlat)
-
-  # Transform the species distribution polygon object to a Pacific-centred projection polygon object
-  sp_robinson <- species_sp %>% 
-    st_as_sf() %>% 
-    st_difference(polygon) %>% 
-    st_transform(crs = rob_pacific)
-
-  # There is a line in the middle of Antarctica. This is because we have split the map after reprojection. We need to fix this:
-  bbox1 <-  st_bbox(sp_robinson)
-  bbox1[c(1,3)]  <-  c(-1e-5,1e-5)
-  polygon1 <- st_as_sfc(bbox1)
-  crosses1 <- sp_robinson %>%
-    st_intersects(polygon1) %>%
-    sapply(length) %>%
-    as.logical %>%
-    which
-  # Adding buffer 0
-  sp_robinson[crosses1, ] %<>%
-    st_buffer(0)
-
-  shp_PU_sf <- st_read(PU) %>% 
-    st_transform(crs = rob_pacific)
-
-  shp_PU_sf <- shp_PU_sf %>%
-    dplyr::mutate (cellsID = 1:nrow(shp_PU_sf), 
-                 area_km2 = as.numeric(st_area(shp_PU_sf)/1e+06)) %>% 
-    dplyr::select(cellsID, geometry)
-  pu_min_area <- min(shp_PU_sf$area_km2)
-
-  single <- sp_robinson
-
-  # Intersects every conservation feature with planning unit region
-  pu_int <- st_intersection(shp_PU_sf, single) %>% 
-    filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) # we want just the polygons/multi not extra geometries
+  # Creating layer of weights
+  weight_rs <- raster::area(sp_raster)
   
-  xx_list <- st_join(x = shp_PU_sf, y = pu_int,  by = "cellsID") %>% 
-    na.omit() %>% 
-    dplyr::group_by(cellsID.x) %>% 
-    dplyr::summarise(cellsID = unique(cellsID.x), Prob = mean(Prob)) %>% 
-    dplyr::select(cellsID, geometry, Prob) %>% 
-    dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06)) %>% 
-    ungroup()
+  # Projecting the costs and weights into Robinson's (the same projection as the PUs)
+  sp_rasterf <- projectRaster(sp_raster, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
+  weight_rsf <- projectRaster(weight_rs, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
+
+  names(sp_rasterf) <- "layer"
+  
+  # Getting predictions for each planning unit
+  pred_bypu <- exact_extract(sp_rasterf, shp_PU_sf1, "weighted_mean", weights = weight_rsf)
+  pu_file <- shp_PU_sf1 %>% 
+    mutate(Prob = pred_bypu) %>% 
+    mutate(area_km2 = as.numeric(st_area(shp_PU_sf1)/1e+06)) %>% 
+    na.omit()
 
   # Saving RDS file of commercial species features
-  saveRDS(xx_list, paste0(outdir, input, ".rds"))
+  saveRDS(pu_file, paste0(outdir, input, ".rds"))
 
-return(xx_list)
+return(pu_file)
 }
 
 ###########################
