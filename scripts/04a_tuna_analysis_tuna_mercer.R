@@ -97,7 +97,7 @@ summary(m5) # r2 = 13.6%
 
 # Plot m5 as a map
 yft$Preds <- predict.gam(m5, type = "response")
-write_csv(yft, file = "yft.csv")
+write_csv(yft, file = "inputs/mercer/yft.csv")
 
 library(MBA) # Does bilinear interpolation
 library(reshape2) # For melt
@@ -122,7 +122,7 @@ p <- p + geom_map(data = WorldData, map = WorldData,
            aes(x = long, y = lat, group = group, map_id = region),
            fill = "grey", colour = "grey", size = 0.5)
 p 
-ggsave("YFT_map.png", p, dpi = 1200)
+ggsave("outputs/commercial/plots/YFT_map.png", p, dpi = 1200)
 
 ### Ant - Albacore ###
 # Look at the data by plotting a global map of Alba
@@ -191,8 +191,10 @@ vis.gam(m14, c("Latitude", "Longitude"), ticktype = "detailed", xlab = "\nLatitu
 summary(m14) # r2 = 29.3%
 
 dev.copy2pdf(file = "Alba_Model.pdf", paper = "A4r")
+
 # Plot m14 as a map
 alba$Preds <- predict.gam(m14, type = "response")
+write_csv(alba, file = "inputs/mercer/alba.csv")
 
 Surface <- mba.surf(alba[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
 
