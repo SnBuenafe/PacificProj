@@ -30,54 +30,12 @@ layer_intersect <- function(input, scenario, inpdir, outdir, pu, ...) {
   library(readr)
   library(proj4)
   library(kader)
+  library(exactextractr)
   
   # defining projections that will be used
   
   rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
   longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-  
-  # calling the raster file layer
-  layer_rs <- readAll(raster(inpdir))
-  
-  # Creating a empty raster at 0.5° resolution (you can increase the resolution to get a better border precision)
-  rs <- raster(ncol = 360*2, nrow = 180*2) 
-  rs[] <- 1:ncell(rs)
-  crs(rs) <- CRS(longlat)
-  
-  #resampled to ensure that we have the same resolution as study area
-  layer_rs1 <- resample(layer_rs, rs, resample = "ngb")
-  
-  #converting into an sf spatial polygon dataframe
-  layer_rs2 <- as(layer_rs1, "SpatialPolygonsDataFrame")
-  layer_sp <- spTransform(layer_rs2, CRS(longlat))
-  
-  # Define a long & slim polygon that overlaps the meridian line & set its CRS to match that of world
-  polygon <- st_polygon(x = list(rbind(c(-0.0001, 90),
-                                       c(0, 90),
-                                       c(0, -90),
-                                       c(-0.0001, -90),
-                                       c(-0.0001, 90)))) %>%
-    st_sfc() %>%
-    st_set_crs(longlat)
-  
-  # Transform the species distribution polygon object to a Pacific-centred projection polygon object
-  layer_robinson <- layer_sp %>% 
-    st_as_sf() %>% 
-    st_difference(polygon) %>% 
-    st_transform(crs = rob_pacific)
-  
-  # There is a line in the middle of Antarctica. This is because we have split the map after reprojection. We need to fix this:
-  bbox1 <-  st_bbox(layer_robinson)
-  bbox1[c(1,3)]  <-  c(-1e-5,1e-5)
-  polygon1 <- st_as_sfc(bbox1)
-  crosses1 <- layer_robinson %>%
-    st_intersects(polygon1) %>%
-    sapply(length) %>%
-    as.logical %>%
-    which
-  # Adding buffer 0
-  layer_robinson[crosses1, ] %<>%
-    st_buffer(0)
   
   # calling PU shapefile
   
@@ -91,66 +49,73 @@ layer_intersect <- function(input, scenario, inpdir, outdir, pu, ...) {
   shp_PU_sf <- shp_PU_sf %>% 
     st_transform(crs = rob_pacific)
   
-  shp_PU_sf <- shp_PU_sf %>%
+  shp_PU_sf1 <- shp_PU_sf %>%
     dplyr::mutate (cellsID = 1:nrow(shp_PU_sf), 
                    area_km2 = as.numeric(st_area(shp_PU_sf)/1e+06)) %>% 
     dplyr::select(cellsID, geometry)
-  pu_min_area <- min(shp_PU_sf$area_km2)
+  pu_min_area <- min(shp_PU_sf1$area_km2)
   
-  names(layer_robinson)[1] <- "xx"
+  # calling the raster file layer
+  layer_rs <- readAll(raster(inpdir))
+  crs(layer_rs) <- CRS(longlat)
   
-  single <- layer_robinson %>% 
-    rename(value = xx)
+  # Creating layer of weights.
+  weight_rs <- raster::area(layer_rs)
   
+  # Projecting the costs and weights into Robinson's (the same projection as the PUs)
+  layer_rsf <- projectRaster(layer_rs, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
+  weight_rsf <- projectRaster(weight_rs, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
+
+  names(layer_rsf) <- "value"
+  
+  # Getting cost value by planning unit
+  value_bypu <- exact_extract(layer_rsf, shp_PU_sf1, "weighted_mean", weights = weight_rsf)
+  
+  # Assigning weighted (by area) RCE/Velocity values per planning unit.
   if(input == "RCE") {
-  single <- single %>% 
-    dplyr::mutate(value = ifelse(is.na(value), median(filter(single, single$value!=0)$value), value)) %>% 
-    dplyr::mutate(value = kader:::cuberoot(value))
+    pu_file <- shp_PU_sf1 %>% 
+      dplyr::mutate(value = value_bypu)
+    pu_file <- pu_file %>% 
+      dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06)) %>% 
+      dplyr::mutate(value = ifelse(is.na(value), median(filter(pu_file, pu_file$value!=0)$value),value)) %>% 
+      dplyr::mutate(trans_value = kader:::cuberoot(value))
   } else if(input == "velocity") {
-    single <- single %>% 
-      dplyr::mutate(value = ifelse(is.na(value), median(filter(single, single$value!=0)$value), value)) %>% 
-      dplyr::mutate(value = value*10)
-  }else{print("fail")}
+    pu_file <- shp_PU_sf1 %>% 
+      dplyr::mutate(value = value_bypu)
+    pu_file <- pu_file %>% 
+      dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06)) %>% 
+      dplyr::mutate(value = ifelse(is.na(value), median(filter(pu_file, pu_file$value!=0)$value),value)) %>% 
+      dplyr::mutate(trans_value = value*10)
+  }
   
-  # Intersects every cost with planning unit region
-  pu_int <- st_intersection(shp_PU_sf, single) %>% 
-    filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) # we want just the polygons/multi not extra geometries
-  
-  xx_list <- st_join(x = shp_PU_sf, y = pu_int,  by = "cellsID") %>% 
-    na.omit() %>% 
-    dplyr::group_by(cellsID.x) %>% 
-    dplyr::summarise(cellsID = unique(cellsID.x), value = mean(value)) %>% 
-    dplyr::select(cellsID, geometry, value) %>% 
-    dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06)) %>% 
-    ungroup()
-  
+  # Assigning categories.
   if(input == "RCE"){
-    xx_listf <- xx_list %>% dplyr::mutate(rce_categ = ifelse(value <= 0.2, 1,
-                                                      ifelse(value >0.2 & value <= 0.4, 2,
-                                                      ifelse(value >0.4 & value <= 0.6, 3,
-                                                      ifelse(value >0.6 & value <= 0.8, 4,
-                                                      ifelse(value >0.8 & value <= 1.1, 5,
-                                                      ifelse(value >1.1 & value <= 1.2, 6,
-                                                      ifelse(value >1.2 & value <= 1.5, 7,
-                                                      ifelse(value >1.5 & value <= 2, 8,
-                                                      ifelse(value >2 & value <= 4, 9,
-                                                      ifelse(value >4 & value <= 6, 10, 11)))))))))))
+    pu_filef <- pu_file %>% dplyr::mutate(rce_categ = ifelse(trans_value <= 0.2, 1,
+                                                      ifelse(trans_value >0.2 & trans_value <= 0.4, 2,
+                                                      ifelse(trans_value >0.4 & trans_value <= 0.6, 3,
+                                                      ifelse(trans_value >0.6 & trans_value <= 0.8, 4,
+                                                      ifelse(trans_value >0.8 & trans_value <= 1.1, 5,
+                                                      ifelse(trans_value >1.1 & trans_value <= 1.2, 6,
+                                                      ifelse(trans_value >1.2 & trans_value <= 1.5, 7,
+                                                      ifelse(trans_value >1.5 & trans_value <= 2, 8,
+                                                      ifelse(trans_value >2 & trans_value <= 4, 9,
+                                                      ifelse(trans_value >4 & trans_value <= 6, 10, 11)))))))))))
   }else if(input == "velocity"){
-    xx_listf <- xx_list %>% dplyr::mutate(velo_categ = ifelse(value <= -50, 1,
-                                                       ifelse(value >-50 & value <= -20, 2,
-                                                       ifelse(value >-20 & value <= -10, 3,
-                                                       ifelse(value >-10 & value <= -5, 4,
-                                                       ifelse(value >-5 & value <= 5, 5,
-                                                       ifelse(value >5 & value <= 10, 6,
-                                                       ifelse(value >10 & value <= 20, 7,
-                                                       ifelse(value >20 & value <= 50, 8,
-                                                       ifelse(value >50 & value <= 100, 9,
-                                                       ifelse(value >100 & value <= 200, 10, 11)))))))))))
+    pu_filef <- pu_file %>% dplyr::mutate(velo_categ = ifelse(trans_value <= -50, 1,
+                                                       ifelse(trans_value >-50 & trans_value <= -20, 2,
+                                                       ifelse(trans_value >-20 & trans_value <= -10, 3,
+                                                       ifelse(trans_value >-10 & trans_value <= -5, 4,
+                                                       ifelse(trans_value >-5 & trans_value <= 5, 5,
+                                                       ifelse(trans_value >5 & trans_value <= 10, 6,
+                                                       ifelse(trans_value >10 & trans_value <= 20, 7,
+                                                       ifelse(trans_value >20 & trans_value <= 50, 8,
+                                                       ifelse(trans_value >50 & trans_value <= 100, 9,
+                                                       ifelse(trans_value >100 & trans_value <= 200, 10, 11)))))))))))
   }else {print("fail; input N/A")}
   
   # Saving RDS
-  saveRDS(xx_listf, paste0(outdir, input, scenario, ".rds"))
+  saveRDS(pu_filef, paste0(outdir, input, scenario, ".rds"))
   
-  return(xx_listf)
+  return(pu_filef)
   
 }

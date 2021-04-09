@@ -34,6 +34,11 @@ run01 <- layer_intersect(input = "RCE",
 
 run01
 
+# filtering out the lower quartile 
+run01a <- run01 %>% 
+  filter(value <= quantile(value, .25))
+run01a
+
 # Plotting RCE SSP126
 p1 <- ggplot()+
   geom_sf(data = run01, aes(color = rce_categ)) +
