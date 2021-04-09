@@ -48,6 +48,8 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
       # calling the raster layer of the cost layer
       epi_cost <- readAll(raster(input))
       crs(epi_cost) <- CRS(longlat)
+      
+      # Creating layer of weights
       weight_rs <- raster::area(epi_cost)
       
       # Projecting the costs and weights into Robinson's (the same projection as the PUs)
