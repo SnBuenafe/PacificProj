@@ -39,11 +39,11 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
       shp_PU_sf <- shp_PU_sf %>% 
         st_transform(crs = rob_pacific)
       
-      shp_PU_sf <- shp_PU_sf %>%
+      shp_PU_sf1 <- shp_PU_sf %>%
         dplyr::mutate (cellsID = 1:nrow(shp_PU_sf), 
                        area_km2 = as.numeric(st_area(shp_PU_sf)/1e+06)) %>% 
         dplyr::select(cellsID, geometry)
-      pu_min_area <- min(shp_PU_sf$area_km2)
+      pu_min_area <- min(shp_PU_sf1$area_km2)
       
       # calling the raster layer of the cost layer
       epi_cost <- readAll(raster(input))
