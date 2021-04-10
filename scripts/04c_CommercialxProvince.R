@@ -79,7 +79,7 @@ commercial_intersect <- function(path, pu_shp, fit, outdir, ...) {
     
     # Filter the intersection with the planning unit sf object to get the exact distribution per planning units
     if(nrow(pu_int) > 0) { # to avoid empty sf objects 
-      files_list[[i]] <- st_join(x = shp_PU_sf1, y = pu_int,  by = "cellsID") %>% 
+      files_list[[i]] <- st_join(x = pu_int, y = shp_PU_sf1,  by = "cellsID") %>% 
         na.omit() %>% 
         dplyr::group_by(cellsID.x) %>% 
         dplyr::summarise(cellsID = unique(cellsID.x)) %>% 
