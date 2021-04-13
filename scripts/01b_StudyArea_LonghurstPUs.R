@@ -140,12 +140,12 @@ pu_by_provinces <- function(pu_file, province_file, prov_name, olayer, outdir) {
 # RUNNING THE FUNCTION #
 #############################
 
-run01 <- pu_by_provinces(pu_file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds",
+run001 <- pu_by_provinces(pu_file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds",
                 province_file = "inputs/shapefiles/Longhurst/Longhurst_world_v4_2010.shp", 
                 prov_name = "Longhurst",
                 olayer = "surface",
                 outdir = "outputs/Provinces/")
-run01
+run001
 
 prov_code <- c("ANTA" = "#b2182b","ARCH" = "#ef8a62","CCAL" = "#fddbc7","CHIL" = "#d1e5f0","KURO" = "#67a9cf","non-categ_Longhurst" = "#2166ac",
                "NPPF" = "#8c510a","NPSW" = "#d8b365","NPTG" = "#f6e8c3", "PEQD" = "#c7eae5","PNEC" = "#5ab4ac","PSAE" = "#01665e",
@@ -156,7 +156,7 @@ prov_code <- c("ANTA" = "#b2182b","ARCH" = "#ef8a62","CCAL" = "#fddbc7","CHIL" =
 # 2. world_sf
 
 longhurst <- ggplot()+
-  geom_sf(data = run01, aes(color = province), fill = NA) +
+  geom_sf(data = run001, aes(color = province), fill = NA) +
   scale_color_manual(values = prov_code,
                      aesthetics = c("color")
                      ) +

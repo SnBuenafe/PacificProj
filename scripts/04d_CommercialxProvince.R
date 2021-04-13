@@ -116,11 +116,12 @@ commercial_intersect <- function(path, pu_shp, fit, outdir, ...) {
 # Running the function
 ####################################
 
-run15 <- commercial_intersect(path = "outputs/commercial",
-            pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-            fit = "global",
-            outdir = "outputs/commercial/04c_CommercialxProvince/",
-            longhurst_rds = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst.rds")
+# global-fitted data
+run15 <- commercial_intersect(path = "outputs/commercial/04b_CommercialPredictions",
+                              pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
+                              fit = "global",
+                              outdir = "outputs/commercial/04d_CommercialxProvince/global/",
+                              longhurst_rds = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst.rds")
 
 run15
 
@@ -128,10 +129,11 @@ run15
 ggplot() +
   geom_sf(data = run15, aes(color = feature, fill = feature))
 
-run16 <- commercial_intersect(path = "outputs/commercial",
+# pacific-fitted data
+run16 <- commercial_intersect(path = "outputs/commercial/04b_CommercialPredictions",
                              pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
                              fit = "pacific",
-                             outdir = "outputs/commercial/04c_CommercialxProvince/",
+                             outdir = "outputs/commercial/04d_CommercialxProvince/pacific/",
                              longhurst_rds = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst.rds")
 
 run16
