@@ -16,7 +16,7 @@
 # pu: PU .shp file; "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp"
 # prob_threshold: median of the predictions; everything else < the prob_threshold is not included in the data.
 
-commercial_feat <- function(input, inpdir, prob_threshold, PU, outdir, ...) {
+commercial_feat <- function(input, inpdir, prob_threshold, PU, data, outdir, ...) {
 
   ###########################
   # Libraries to be used
@@ -89,28 +89,29 @@ run07 <- commercial_feat(input = "YFT",
                          inpdir = "inputs/mercer/yft.csv",
                          prob_threshold = 0.1716593, #median of predictions of YFT
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-                         outdir = "outputs/commercial/")
+                         outdir = "outputs/commercial/04b_CommercialPredictions/")
 
 # Albacore
 run08 <- commercial_feat(input = "ALB",
                          inpdir = "inputs/mercer/alba.csv",
                          prob_threshold = 0.05841855, #median of predictions of ALB
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-                         outdir = "outputs/commercial/")
+                         outdir = "outputs/commercial/04b_CommercialPredictions/")
 
 # Skipjack Tuna
 run09 <- commercial_feat(input = "SKP",
                          inpdir = "inputs/mercer/skip.csv",
                          prob_threshold = 0.08408474, #median of predictions of SKP
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-                         outdir = "outputs/commercial/")
+                         outdir = "outputs/commercial/04b_CommercialPredictions/")
 
 # Swordfish
 run10 <- commercial_feat(input = "SWO",
                          inpdir = "inputs/mercer/sword.csv",
                          prob_threshold = 0.01448773, #median of predictions of SWO
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-                         outdir = "outputs/commercial/")
+                         outdir = "outputs/commercial/04b_CommercialPredictions/")
+
 ###########################
 # PLOTTING #
 ##########################
@@ -217,7 +218,7 @@ run11 <- commercial_feat(input = "YFT_pac",
                          inpdir = "inputs/mercer/yft_pacific.csv",
                          prob_threshold = 0.06778708, #median of predictions of YFT
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-                         outdir = "outputs/commercial/")
+                         outdir = "outputs/commercial/04b_CommercialPredictions/")
 
 sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 
                              colours = myPalette(100), 
@@ -239,7 +240,7 @@ run12 <- commercial_feat(input = "ALB_pac",
                          inpdir = "inputs/mercer/alba_pacific.csv",
                          prob_threshold = 0.006294141, #median of predictions of ALB
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-                         outdir = "outputs/commercial/")
+                         outdir = "outputs/commercial/04b_CommercialPredictions/")
 
 sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 
                              colours = myPalette(100), 
@@ -261,7 +262,7 @@ run13 <- commercial_feat(input = "SKP_pac",
                          inpdir = "inputs/mercer/skip_pacific.csv",
                          prob_threshold = 0.0824297, #median of predictions of SKP
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-                         outdir = "outputs/commercial/")
+                         outdir = "outputs/commercial/04b_CommercialPredictions/")
 
 sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 
                              colours = myPalette(100), 
@@ -284,7 +285,7 @@ run14 <- commercial_feat(input = "SWO_pac",
                          inpdir = "inputs/mercer/sword_pacific.csv",
                          prob_threshold = 0.01336354, #median of predictions of SWO
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-                         outdir = "outputs/commercial/")
+                         outdir = "outputs/commercial/04b_CommercialPredictions/")
 
 sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 
                              colours = myPalette(100), 
