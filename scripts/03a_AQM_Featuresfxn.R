@@ -10,7 +10,7 @@
 # outdir: where to put the final sf-.rds object
 # pu_shp: 
 
-features_pus <- function(path, outdir, pu_shp, olayer) { 
+features_pus <- function(path, outdir, pu_shp, data, olayer) { 
   
   ####################################################################################
   ####### Defining the main packages (tryining to auto this)
@@ -40,10 +40,22 @@ features_pus <- function(path, outdir, pu_shp, olayer) {
     dplyr::select(cellsID, geometry)
   pu_min_area <- min(shp_PU_sf$area_km2)
   
-  # Reading conservation features .rds files (AquaMaps)
-  dir <- path
-  pattern1 <-  c(paste0("*", ".*.rds$"), paste0("*", ".*shp$"))
-  files <- list.files(path = dir, pattern = paste0(pattern1, collapse = "|"), full.names = TRUE)
+  if(data == "global") {
+    # Reading conservation features .rds files (Global-Fitted)
+    dir <- path
+    pattern1 <-  c("ALB.rds","SKP.rds","SWO.rds","YFT.rds")
+    files <- list.files(path = dir, pattern = paste0(pattern1, collapse = "|"), full.names = TRUE)
+  }else if(data == "pacific") {
+    # Reading conservation features .rds files (Pacific-Fitted)
+    dir <- path
+    pattern1 <-  c("ALB_pac.rds","SKP_pac.rds","SWO_pac.rds","YFT_pac.rds")
+    files <- list.files(path = dir, pattern = paste0(pattern1, collapse = "|"), full.names = TRUE)
+  }else {
+      # Reading conservation features .rds files (AquaMaps)
+      dir <- path
+      pattern1 <-  c(paste0("*", ".*.rds$"), paste0("*", ".*shp$"))
+      files <- list.files(path = dir, pattern = paste0(pattern1, collapse = "|"), full.names = TRUE)
+  }
   
   ####################################################################################
   ####### 
@@ -72,9 +84,17 @@ features_pus <- function(path, outdir, pu_shp, olayer) {
         dplyr::group_by(cellsID.x) %>% 
         dplyr::summarise(cellsID = unique(cellsID.x)) %>% 
         dplyr::select(cellsID, geometry) %>% 
-        dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06),
-                      feature_names = paste(unlist(strsplit(basename(files[i]), "_"))[1], olayer, sep = "_")) %>% 
-        ungroup()
+        dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06))
+      
+      if(data %in% c("global","pacific")) {
+        files_list[[i]] <- files_list[[i]] %>% 
+          mutate(feature_names = paste(unlist(strsplit(basename(files[i]), "[.]"))[1], olayer, sep = "_")) %>% 
+          ungroup()
+      }else if(data == "AQM") {
+        files_list[[i]] <- files_list[[i]] %>% 
+          mutate(feature_names = paste(unlist(strsplit(basename(files[i]), "_"))[1], olayer, sep = "_")) %>% 
+          ungroup()
+      }
       # dplyr::filter(area_km2 >= pu_min_area) %>% 
     }
   }
@@ -86,7 +106,11 @@ features_pus <- function(path, outdir, pu_shp, olayer) {
   # Final sf with all species information and write that object (main object to develop marxan input files)
   PU_list_b <- do.call(rbind, PU_list)
   # Write the object
-  pu_rds <- paste("bycatch_features_",olayer, ".rds", sep = "")
+  if(data %in% c("global","pacific")) {
+    pu_rds <- paste("commercial_features_",olayer,".rds", sep = "")
+  } else {
+    pu_rds <- paste("bycatch_features_",olayer, ".rds", sep = "")
+  }
   saveRDS(PU_list_b, paste(outdir, pu_rds, sep = ""))
   return(PU_list_b)
 }
