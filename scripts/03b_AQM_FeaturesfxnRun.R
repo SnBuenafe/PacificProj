@@ -12,6 +12,7 @@ source("scripts/03a_AQM_Featuresfxn.R")
 run_a <- features_pus(path = "outputs/AQM_wflow/02b_bycatch",
                       outdir = "outputs/AQM_wflow/03b_features/",
                       pu_shp = "inputs/rdsfiles/PacificABNJGrid_05deg.rds",
+                      data = "AQM",
                       olayer = "surface")
 run_a
 
@@ -19,6 +20,7 @@ run_a
 run_b <- features_pus(path = "outputs/AQM_wflow/02b_bycatch",
                       outdir = "outputs/AQM_wflow/03b_features/",
                       pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
+                      data = "AQM"
                       olayer = "surface")
 
 #creating data matrix for the total areas of the features (and their percentages)
