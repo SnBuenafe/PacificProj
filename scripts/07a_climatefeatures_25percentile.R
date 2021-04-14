@@ -40,10 +40,10 @@ filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
   
   feat_int <- st_intersection(feature, climate_int) %>% 
     filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>%  # we want just the polygons/multi not extra geometries
-    select(-feature_names)
+    rename(new_features = feature, species = feature_names)
   
   # Begin the parallel structure  
-  list <- unique(feat_int$feature)
+  list <- unique(feat_int$new_features)
   temp <- list()
   temp_x <- list()
   
@@ -53,7 +53,7 @@ filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
   
   filter_PU <- foreach(i = 1:length(list), .packages = c("raster", "sf", "dplyr")) %dopar% {
       temp[[i]] <- feat_int %>% 
-        filter(feature == list[i])
+        filter(new_features == list[i])
       
       qrt_RCE <- quantile(temp[[i]]$RCE_tvalue)
       qrt_velocity <- quantile(temp[[i]]$velo_tvalue)
