@@ -58,7 +58,7 @@ run20 <- filter_quartile(velocity_file = "outputs/climate_features/velocity/velo
                          feature_prov = "outputs/commercial/04d_CommercialxProvince/pacific/commercial_features.rds",
                          outdir = "outputs/final_features/07a_25perc/",
                          scenario = "SSP126",
-                         feature_n = "commercial_pac"
+                         feature_n = "commercialpac"
 )
 
 # Scenario SSP245
@@ -68,7 +68,7 @@ run21 <- filter_quartile(velocity_file = "outputs/climate_features/velocity/velo
                          feature_prov = "outputs/commercial/04d_CommercialxProvince/pacific/commercial_features.rds",
                          outdir = "outputs/final_features/07a_25perc/",
                          scenario = "SSP245",
-                         feature_n = "commercial_pac"
+                         feature_n = "commercialpac"
 )
 
 # Scenario SSP585
@@ -78,7 +78,7 @@ run22 <- filter_quartile(velocity_file = "outputs/climate_features/velocity/velo
                          feature_prov = "outputs/commercial/04d_CommercialxProvince/pacific/commercial_features.rds",
                          outdir = "outputs/final_features/07a_25perc/",
                          scenario = "SSP585",
-                         feature_n = "commercial_pac"
+                         feature_n = "commercialpac"
 )
 
 ########################################
