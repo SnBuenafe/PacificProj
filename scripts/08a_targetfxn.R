@@ -13,16 +13,17 @@
 
 # The function represent_target() requires the following inputs:
 # 1. number_PU = total number of PUs in study area.
-# 2. target_max = in percentage e.g. 100
-# 3. target_min = in percentage e.g. 0
+# 2. target_max = in proportion e.g. 1
+# 3. target_min = in proportion e.g. 0
 # 4. file_spec_info = .xlsx file of the species information (with the codes and the scientific names)
 # 5. inpdir = directory where the .rds files of the conservation features for each scenario are
 # 6. scenario = climate scenario (e.g. SSP126)
 # 7. outdir = directory where the .rds files will be saved.
+# 8. target_max_perc = in percentage e.g. 100
 
 # The function is run in 08b for different scenarios.
 
-represent_target <- function(number_PU, target_max, target_min, file_spec_info, inpdir, scenario, outdir, ...) {
+represent_target <- function(number_PU, target_max, target_min, file_spec_info, inpdir, scenario, outdir, target_max_perc, ...) {
 
       library(rredlist)
       library(tidyverse)
@@ -61,6 +62,7 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
           total_PU_area = number_PU*2667.6
           target_max = target_max
           target_min = target_min
+          target_max_perc = target_max_perc
           
           trans_target <- list()
           
@@ -68,7 +70,7 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
              if(feature2$category[i] %in% c("EX","EW","CR","EN","VU")) {
                     trans_target[[i]] <- 100
             }else {
-                    trans_target[[i]] <- target_max*(feature2$total_area[i]/total_PU_area)*(target_max-target_min)
+                    trans_target[[i]] <- target_max_perc*(feature2$total_area[i]/total_PU_area)*(target_max-target_min)
             }
           }
           
