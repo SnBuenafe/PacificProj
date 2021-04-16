@@ -61,4 +61,4 @@ run28 <- represent_target(number_PU <- 31917,
 # works for bycatch
 df_temp <- readRDS("outputs/final_features/08b_targets/SSP585/target_bycatchSSP585.rds")
 df_temp1 <- readRDS("outputs/final_features/08b_targets/SSP126/target_commercialSSP126.rds")
-df_temp2 <- readRDS("outputs/final_features/08b_targets/SSP245/target_bycatchSSP245.rds")
+df_temp2 <- readRDS("outputs/final_features/08b_targets/SSP245/target_commercialpacSSP245.rds")
