@@ -70,6 +70,16 @@ skip$Chl[skip$Chl>2] <- 2 # Few data >2, so make them 2
 bigeye$SST[bigeye$SST<10] <- 10 # Few data <10oC, so make them 10oC
 bigeye$Chl[bigeye$Chl>2] <- 2 # Few data >2, so make them 2
 
+# create subsets of the Pacific data
+yft_pacific <- subset(yft, ocean == "pacific") %>% 
+  select(-ocean, -species)
+alba_pacific <- subset(alba, ocean == "pacific") %>% 
+  select(-ocean, -species)
+sword_pacific <- subset(sword, ocean == "pacific") %>% 
+  select(-ocean, -species)
+skip_pacific <- subset(skip, ocean == "pacific") %>% 
+  select(-ocean, -species)
+
 ###################################
 # Doing GAMs for each subset
 ###################################
@@ -171,287 +181,82 @@ ggsave("outputs/commercial/GAM_plots/YFT/YFT_map.png", p, dpi = 1200)
 
 ###### delete after this
 
+###################################
+# Yellowfin Tuna (Pacific-fitted)
+###################################
+
+m01 <- gam(pa ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + s(Chl), data = yft_pacific, family = "binomial")
+summary(m01)
+
+# Plotting response of all variables
+fullplot_yftpac1 <- visreg(m01, "SST", partial = FALSE, ylab = " ", xlab = "SST", gg = TRUE) + theme_bw()
+fullplot_yftpac2 <- visreg(m01, "Season2", partial = FALSE, ylab = " ", xlab = "Seasons", gg = TRUE) + theme_bw()
+fullplot_yftpac3 <- visreg(m01, "MLD", partial = FALSE, ylab = " ", xlab = "MLD", gg = TRUE) + theme_bw()
+fullplot_yftpac4 <- visreg(m01, "Latitude", partial = FALSE, ylab = " ", xlab = "Latitude", gg = TRUE) + theme_bw()
+fullplot_yftpac5 <- visreg(m01, "Longitude", partial = FALSE, ylab = " ", xlab = "Longitude", gg = TRUE) + theme_bw()
+fullplot_yftpac6 <- visreg(m01, "Bathymetry", partial = FALSE, ylab = " ", xlab = "Bathymetry", gg = TRUE) + theme_bw()
+fullplot_yftpac7 <- visreg(m01, "Dist2Coast", partial = FALSE, ylab = " ", xlab = "Dist2Coast", gg = TRUE) + theme_bw() 
+# Dist2Coast seems to make more sense that Bathymetry
+fullplot_yftpac8 <- visreg(m01, "Nitrate", partial = FALSE, ylab = " ", xlab = "Nitrate", gg = TRUE) + theme_bw()
+fullplot_yftpac9 <- visreg(m01, "Chl", partial = FALSE, ylab = " ", xlab = "Chl", gg = TRUE) + theme_bw()
+# Some of the relationships look too wiggly, and might not make sense
+
+YFTPAC_FullModel <- (fullplot_yftpac1 | fullplot_yftpac2 | fullplot_yftpac3) / (fullplot_yftpac4 | fullplot_yftpac5 | fullplot_yftpac6) / (fullplot_yftpac7 | fullplot_yftpac8 | fullplot_yftpac9) +
+  plot_annotation(title = "Response of Variables for Full Model", subtitle = "Yellowfin Tuna (Pacific-fitted)", tag_levels = "i")
+YFTPAC_FullModel
+ggsave("outputs/commercial/GAM_plots/YFT/YFTPAC_FullModel.pdf", width = 20, height = 20, dpi = 320)
+
 # First, let's see what we can drop using BIC
-m10 <- gam(pa ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + s(Chl), data = alba, family = "binomial")
-summary(m10) # Everything significant except Bathymetry and Dist2Coast
-# Deviance explained = 30.9%, R-sq. (adjusted) = 0.185
+summary(m01) # Nitrate is not significant.
+# Dist2Coast and MLD looks kind of linear.
+# Deviance explained = 17.1%, R-squared (adjusted) = 0.129
 
-# Removing Bathymetry
-m11 <- update(m10, ~ . -s(Bathymetry))
-BIC(m11, m10) # m11 has lower BIC (i.e. Bathymetry n.s.)
-summary(m11)
+# Remove Nitrate as it is not significant.
+m02 <- update(m01, ~. -s(Nitrate))
+BIC(m01, m02)
+summary(m02) # BIC of m02 is lower (Nitrate is n.s.)
 
-# Dist2Coast n.s. but looks important in plot - let's see
-m12 <- update(m11, ~ . -s(Dist2Coast))
-BIC(m12, m11) # m12 has lower BIC (Dist2Coast n.s.)
-summary(m12)
+# Try to make Dist2Coast linear.
+m03 <- update(m02, ~. -s(Dist2Coast) +Dist2Coast)
+BIC(m02, m03) # BIC of m03 is lower (retain linearity)
 
-# Removing Nitrate
-m13 <- update(m12, ~ . -s(Nitrate))
-BIC(m13, m12) # m13 has lower BIC (Nitrate n.s.)
-summary(m13)
+# Try to make MLD linear?
+m04 <- update(m03, ~. -s(MLD) +MLD)
+BIC(m04, m03) # BIC of m04 is lower (retain linearity)
+summary(m04)
 
-# Removing MLD
-m14 <- update(m13, ~ . -s(MLD))
-BIC(m14, m13) # m14 has lower BIC (MLD n.s.)
-summary(m14)
+# Try dropping Bathymetry.
+m05 <- update(m04, ~. -s(Bathymetry))
+BIC(m05, m04) #BIC of m05 is lower (remove Bathymetry)
+summary(m05)
 
-# Try removing SST
-m15 <- update(m14, ~ . -s(SST))
-BIC(m15, m14) # m14 has lower BIC (i.e. SST should be retained)
+# Best model
+YFTPAC_BestModel <- m05
 
-# Plotting retained variables
-par(mfrow = c(2,3))
-visreg(m14, "SST", partial = FALSE, ylim = c(-50, 0))
-visreg(m14, "SST", partial = FALSE, ylim = c(0, 0.02), scale = "response")
-visreg(m14, "Season2", partial = FALSE)
-visreg(m14, "Chl", partial = FALSE, ylim = c(-20, 0))
-visreg(m14, "Chl", partial = FALSE, ylim = c(0, 0.1), scale = "response")
-vis.gam(m14, c("Latitude", "Longitude"), ticktype = "detailed", xlab = "\nLatitude (oC)", 
-        ylab = "Longitude", zlab = "\nPresence/Absence", color = "cm", theta = 45, phi = 10, r = 100) # also "grey"
-summary(m14) # Deviance explained = 29.3%; R-sq (adjusted) = 0.174
-
-#######################################
-# Plotting best model as a map
-#######################################
-
-# Plot m14 as a map
-alba$Preds <- predict.gam(m14, type = "response")
-write_csv(alba, file = "inputs/mercer/alba.csv")
-
-Surface <- mba.surf(alba[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
-
-# This is just to organise dataframe for plotting
-dimnames(Surface$xyz.est$z) <- list(Surface$xyz.est$x, Surface$xyz.est$y)
-df3 <- melt(Surface$xyz.est$z, varnames = c('Longitude', 'Latitude'), value.name = 'Preds')
-
-# Plot the map
-x11(width = 14, height = 7)
-p <- ggplot(data = df3, aes(Longitude, Latitude)) +
-  geom_raster(aes(fill = Preds)) +
-  scale_fill_gradientn(colours = matlab.like(7), na.value = "white") +
-  theme_minimal() +
-  theme(legend.position="right")
-
-p <- p + geom_map(data = WorldData, map = WorldData,
-                  aes(x = long, y = lat, group = group, map_id = region),
-                  fill = "grey", colour = "grey", size = 0.5)
-p 
-ggsave("outputs/commercial/plots/Alba_map.png", p, dpi = 1200)
-
-###################################
-# Skipjack Tuna
-###################################
-
-# Look at the data by plotting a global map of Alba
-ggplot() +
-  geom_map(data = WorldData, map = WorldData,
-           aes(x = long, y = lat, group = group, map_id = region),
-           fill = "grey", colour = "grey", size = 0.5) +
-  geom_point(data = skip, aes(x = Longitude, y = Latitude), size = 0.2) + 
-  facet_wrap(~pa)
-
-# Creating GAM for all variables
-m16 <- gam(pa ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + s(Chl), data = skip, family = "binomial")
-summary(m16) # Everything significant except Bathymetry and Distance to Coast
-# Deviance explained = 15.6%, R-sq.(adj) = 0.123
-
-# Plotting response of all variables
-par(mfrow = c(3,3))
-visreg(m16, "SST", partial = FALSE)
-visreg(m16, "Season2", partial = FALSE)
-visreg(m16, "MLD", partial = FALSE)
-visreg(m16, "Latitude", partial = FALSE)
-visreg(m16, "Longitude", partial = FALSE)
-visreg(m16, "Bathymetry", partial = FALSE)
-visreg(m16, "Dist2Coast", partial = FALSE) # Dist2Coast seems to make more sense that Bathymetry
-visreg(m16, "Nitrate", partial = FALSE)
-visreg(m16, "Chl", partial = FALSE) # Chl has a lot of peaks
-
-# Select best model based on BIC
-m17 <- update(m16, ~ . -s(Bathymetry)) # Remove Bathymetry as it is not significant
-BIC(m16, m17) # BIC is lower for m17; remove bathymetry
-summary(m17) # Deviance explained = 15.5%; R-sq(adj.) = 0.122
-
-# All the variables are significant, so let's just try to remove some of the variables one by one
-
-# Try removing SST
-m18 <- update(m17, ~ . -s(SST))
-BIC(m17, m18) # BIC is lower for m17; SST is important
-
-# Try removing MLD
-m19 <- update(m17, ~. -s(MLD))
-BIC(m17, m19)
-summary(m19) # BIC is a little bit smaller, but not by much. It also decreases the deviance explained by a bit.
-# Try to retain MLD. (Looks like it's important according the the plots)
-
-# Try removing Dist2Coast (but this looks important according to the plots)
-m20 <- update(m17, ~ . -s(Dist2Coast))
-BIC(m17, m20) #BIC is larger; retain Dist2Coast
-summary(m20)
-
-# Try removing Nitrate (also looks important).
-m21 <- update(m17, ~ . -s(Nitrate))
-BIC(m17, m21) # Not much change in BIC; a little bit smaller.
-summary(m21) # Also decreases the deviance explained by a bit.
-# Try to retain Nitrate
-
-# Try changing the df of Chlorophyll because there are too many peaks
-m22 <- update(m17, ~. -s(Chl) +s(Chl, k = 4))
-BIC(m17, m22) # Made the BIC smaller.
-summary(m22) # Deviance explained = 15.2%, R-sq. (adj.) = 0.119
-# Retain Chl with 4 degrees of freedom.
-# Probably the best model.
-
-#######################################
-# Plotting best model as a map
-#######################################
-
-# Plot m22 as a map
-skip$Preds <- predict.gam(m22, type = "response")
-write_csv(skip, file = "inputs/mercer/skip.csv")
-
-Surface <- mba.surf(skip[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
-
-# This is just to organise dataframe for plotting
-dimnames(Surface$xyz.est$z) <- list(Surface$xyz.est$x, Surface$xyz.est$y)
-df3 <- melt(Surface$xyz.est$z, varnames = c('Longitude', 'Latitude'), value.name = 'Preds')
-
-# Plot the map
-x11(width = 14, height = 7)
-p <- ggplot(data = df3, aes(Longitude, Latitude)) +
-  geom_raster(aes(fill = Preds)) +
-  scale_fill_gradientn(colours = matlab.like(7), na.value = "white") +
-  theme_minimal() +
-  theme(legend.position="right")
-
-p <- p + geom_map(data = WorldData, map = WorldData,
-                  aes(x = long, y = lat, group = group, map_id = region),
-                  fill = "grey", colour = "grey", size = 0.5)
-p 
-ggsave("outputs/commercial/plots/Skip_map.png", p, dpi = 1200)
-
-###################################
-# Swordfish
-###################################
-
-# Look at the data by plotting a global map of Swordfish
-ggplot() +
-  geom_map(data = WorldData, map = WorldData,
-           aes(x = long, y = lat, group = group, map_id = region),
-           fill = "grey", colour = "grey", size = 0.5) +
-  geom_point(data = sword, aes(x = Longitude, y = Latitude), size = 0.2) + 
-  facet_wrap(~pa)
-
-# Creating GAM for all variables
-m23 <- gam(pa ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + s(Chl), data = sword, family = "binomial")
-summary(m23) # Everything significant except Bathymetry.
-# Deviance explained = 22.2%, R-sq.(adj) = 0.118
-
-# Plotting response of all variables
-par(mfrow = c(3,3))
-visreg(m23, "SST", partial = FALSE)
-visreg(m23, "Season2", partial = FALSE)
-visreg(m23, "MLD", partial = FALSE)
-visreg(m23, "Latitude", partial = FALSE)
-visreg(m23, "Longitude", partial = FALSE)
-visreg(m23, "Bathymetry", partial = FALSE)
-visreg(m23, "Dist2Coast", partial = FALSE)
-visreg(m23, "Nitrate", partial = FALSE)
-visreg(m23, "Chl", partial = FALSE) # Chl has a lot of peaks
-
-# Select best model based on BIC
-m24 <- update(m23, ~ . -s(Bathymetry)) # Remove Bathymetry as it is not significant
-BIC(m23, m24) # BIC is lower for m24; remove bathymetry
-summary(m24) # Deviance explained = 21.9%; R-sq(adj.) = 0.116
-
-# Try removing Dist2Coast
-m25 <- update(m24, ~. -s(Dist2Coast))
-BIC(m24,m25) # BIC is lower for m25
-summary(m25) # Deviance explained = 21.7%; R-sq (adj.) = 0.115
-# Remove Dist2Coast?
-# Everything else is significant.
-
-#######################################
-# Plotting best model as a map
-#######################################
-
-# Plot m25 as a map
-sword$Preds <- predict.gam(m25, type = "response")
-write_csv(sword, file = "inputs/mercer/sword.csv")
-
-Surface <- mba.surf(sword[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
-
-# This is just to organise dataframe for plotting
-dimnames(Surface$xyz.est$z) <- list(Surface$xyz.est$x, Surface$xyz.est$y)
-df3 <- melt(Surface$xyz.est$z, varnames = c('Longitude', 'Latitude'), value.name = 'Preds')
-
-# Plot the map
-x11(width = 14, height = 7)
-p <- ggplot(data = df3, aes(Longitude, Latitude)) +
-  geom_raster(aes(fill = Preds)) +
-  scale_fill_gradientn(colours = matlab.like(7), na.value = "white") +
-  theme_minimal() +
-  theme(legend.position="right")
-
-p <- p + geom_map(data = WorldData, map = WorldData,
-                  aes(x = long, y = lat, group = group, map_id = region),
-                  fill = "grey", colour = "grey", size = 0.5)
-p 
-ggsave("outputs/commercial/plots/Sword_map.png", p, dpi = 1200)
-
-############################################################
-# Doing GAMs for each subset (Fitting using Pacific Data)
-############################################################
-# Yellowfin Tuna
-yft_pacific <- subset(yft, ocean =="pacific")
-
-# Creating GAM for all variables
-m26 <- gam(pa ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + s(Chl), data = yft_pacific, family = "binomial")
-summary(m26) # Everything significant except Nitrate & low significance on Bathymetry
-# Deviance explained = 17.2%; R-sq.(adj) = 0.13
-
-# Plotting response of all variables
-par(mfrow = c(3,3))
-visreg(m26, "SST", partial = FALSE)
-visreg(m26, "Season2", partial = FALSE)
-visreg(m26, "MLD", partial = FALSE)
-visreg(m26, "Latitude", partial = FALSE)
-visreg(m26, "Longitude", partial = FALSE)
-visreg(m26, "Bathymetry", partial = FALSE)
-visreg(m26, "Dist2Coast", partial = FALSE)
-visreg(m26, "Nitrate", partial = FALSE)
-visreg(m26, "Chl", partial = FALSE)
-visreg(m26, "Chl", partial = FALSE, scale = "response")
-
-# Remove nitrate because it's not significant
-m27 <- update(m26, ~. -s(Nitrate))
-BIC(m26, m27) # BIC of m27 is smaller; remove nitrate
-summary(m27)
-
-m28 <- update(m27, ~. -s(Chl) +s(Chl, k = 4)) # changing df of Chl because it's too wiggly and doesn't really make sense
-BIC(m27, m28) # BIC of m28 is smaller; keep these df.
-summary(m28)
-# Would retain other variables because everything is significant.
-
-# Plotting response to the variables included in the final model.
-par(mfrow = c(3,3))
-visreg(m28, "SST", partial = FALSE)
-visreg(m28, "MLD", partial = FALSE)
-visreg(m28, "Bathymetry", partial = FALSE)
-visreg(m28, "Dist2Coast", partial = FALSE)
-visreg(m28, "Chl", partial = FALSE)
-visreg(m28, "Season2", partial = FALSE)
-vis.gam(m28, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (oC)", 
-        ylab = "Longitude", zlab = "\nPresence/Absence", color = "cm", theta = 45, phi = 10, r = 100) # also "grey"
-
-#######################################
-# Plotting best model as a map
-#######################################
-
-# Plot m28 as a map
-yft_pacific$Preds <- predict.gam(m28, type = "response")
+# Saving predictions
+yft_pacific$Preds <- predict.gam(YFTPAC_BestModel, type = "response")
+median(yft_pacific$Preds)
+# Writing the data and predictions into a .csv
 write_csv(yft_pacific, file = "inputs/mercer/yft_pacific.csv")
+
+bestplot_yftpac1 <- visreg(YFTPAC_BestModel, "SST", partial = FALSE, ylab = "s(SST, 4.71)", xlab = "SST (°C)", gg = TRUE) + theme_bw() + ylim(-100, 50)
+bestplot_yftpac2 <- visreg(YFTPAC_BestModel, "Season2", partial = FALSE, ylab = "f(Season)", xlab = "Season", gg = TRUE) + theme_bw() 
+bestplot_yftpac3 <- visreg(YFTPAC_BestModel, "Chl", partial = FALSE, ylab = "s(Chl, 8.70)", xlab = "Chlorophyll A (mg/m^3)", gg = TRUE) + theme_bw()  
+bestplot_yftpac4 <- visreg(YFTPAC_BestModel, "MLD", partial = FALSE, ylab = "f(MLD, -0.02)", xlab = "MLD (m)", gg = TRUE) + theme_bw()  
+bestplot_yftpac5 <- visreg(YFTPAC_BestModel, "Dist2Coast", partial = FALSE, ylab = "f(Chl, -1.03x10^-3)", xlab = "Dist2Coast (km)", gg = TRUE) + theme_bw()  
+
+bestplot_yftpac <- (bestplot_yftpac1 | bestplot_yftpac2 | bestplot_yftpac3) / (bestplot_yftpac4 | bestplot_yftpac5) +
+  plot_annotation(title = "Response of Variables for Best Model", subtitle = "Yellowfin Tuna (Pacific-fitted)", tag_levels = "i")
+bestplot_yftpac
+ggsave("outputs/commercial/GAM_plots/YFT/YFTPAC_BestModel.pdf", width = 20, height = 20, dpi = 320)
+
+vis.gam(YFTPAC_BestModel, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (°)", 
+        ylab = "Longitude (°)", zlab = "Presence", color = "cm", theta = 30, phi = 30, r = 100)
+dev.copy2pdf(file = "outputs/commercial/GAM_plots/YFT/YFTPAC_BestModelLatLong.pdf", paper = "A4r")
+
+#######################################
+# Plotting best model as a map
+#######################################
 
 Surface <- mba.surf(yft_pacific[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
 
@@ -471,230 +276,4 @@ p <- p + geom_map(data = WorldData, map = WorldData,
                   aes(x = long, y = lat, group = group, map_id = region),
                   fill = "grey", colour = "grey", size = 0.5)
 p 
-ggsave("outputs/commercial/plots/Yft_Pacific_map.png", p, dpi = 1200)
-
-# Albacore
-alba_pacific <- subset(alba, ocean =="pacific")
-
-# Creating GAM for all variables
-m29 <- gam(pa ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + s(Chl), data = alba_pacific, family = "binomial")
-summary(m29) # The only significant variables are SST, Lat, Long and Chl
-# Deviance explained = 33.3%; R-sq.(adj) = 0.206
-
-# Plotting response of all variables
-par(mfrow = c(3,3))
-visreg(m29, "SST", partial = FALSE)
-visreg(m29, "Season2", partial = FALSE)
-visreg(m29, "MLD", partial = FALSE)
-visreg(m29, "Latitude", partial = FALSE)
-visreg(m29, "Longitude", partial = FALSE)
-visreg(m29, "Bathymetry", partial = FALSE)
-visreg(m29, "Dist2Coast", partial = FALSE)
-visreg(m29, "Nitrate", partial = FALSE)
-visreg(m29, "Chl", partial = FALSE)
-
-# Remove MLD as it is not significant
-m30 <- update(m29, ~. -s(MLD))
-BIC(m29, m30) # BIC is smaller. Remove MLD.
-summary(m30) 
-
-# Remove Bathymetry as it is not significant
-m31 <- update(m30, ~. -s(Bathymetry))
-BIC(m30, m31) # BIC is a little bit higher.
-summary(m31)
-# Try to retain bathymetry
-
-# Remove Nitrate as it is not significant.
-m32 <- update(m30, ~. -s(Nitrate))
-BIC(m30, m32) # BIC is smaller. Remove Nitrate.
-summary(m32)
-
-# Try removing Dist2Coast as it is not significant.
-m33 <- update(m32, ~. -s(Dist2Coast))
-BIC(m32, m33) # BIC is smaller. Remove Dist2Coast
-summary(m33) # Best model?
-# Deviance explained = 32.3%; R-sq.(adj) = 0.198
-
-# Plotting response to the variables included in the final model.
-par(mfrow = c(3,2))
-visreg(m33, "SST", partial = FALSE)
-visreg(m33, "Bathymetry", partial = FALSE)
-visreg(m33, "Chl", partial = FALSE)
-visreg(m33, "Season2", partial = FALSE)
-vis.gam(m33, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (oC)", 
-        ylab = "Longitude", zlab = "\nPresence/Absence", color = "cm", theta = 45, phi = 10, r = 100) # also "grey"
-
-#######################################
-# Plotting best model as a map
-#######################################
-
-# Plot m33 as a map
-alba_pacific$Preds <- predict.gam(m33, type = "response")
-write_csv(alba_pacific, file = "inputs/mercer/alba_pacific.csv")
-
-Surface <- mba.surf(alba_pacific[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
-
-# This is just to organise dataframe for plotting
-dimnames(Surface$xyz.est$z) <- list(Surface$xyz.est$x, Surface$xyz.est$y)
-df3 <- melt(Surface$xyz.est$z, varnames = c('Longitude', 'Latitude'), value.name = 'Preds')
-
-# Plot the map
-x11(width = 14, height = 7)
-p <- ggplot(data = df3, aes(Longitude, Latitude)) +
-  geom_raster(aes(fill = Preds)) +
-  scale_fill_gradientn(colours = matlab.like(7), na.value = "white") +
-  theme_minimal() +
-  theme(legend.position="right")
-
-p <- p + geom_map(data = WorldData, map = WorldData,
-                  aes(x = long, y = lat, group = group, map_id = region),
-                  fill = "grey", colour = "grey", size = 0.5)
-p 
-ggsave("outputs/commercial/plots/Alb_Pacific_map.png", p, dpi = 1200)
-
-# Skipjack Tuna
-skip_pacific <- subset(skip, ocean =="pacific")
-
-# Creating GAM for all variables
-m34 <- gam(pa ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + s(Chl), data = skip_pacific, family = "binomial")
-summary(m34) # Dist2Coast is not significant
-# Deviance explained = 18.2%; R-sq. adj.
-
-# Plot the variables of the full model.
-par(mfrow = c(3,3))
-visreg(m34, "SST", partial = FALSE)
-visreg(m34, "Season2", partial = FALSE)
-visreg(m34, "MLD", partial = FALSE)
-visreg(m34, "Latitude", partial = FALSE)
-visreg(m34, "Longitude", partial = FALSE)
-visreg(m34, "Bathymetry", partial = FALSE)
-visreg(m34, "Dist2Coast", partial = FALSE)
-visreg(m34, "Nitrate", partial = FALSE)
-visreg(m34, "Chl", partial = FALSE)
-
-# Try to remove Dist2Coast as it is not significant.
-m35 <- update(m34, ~. -s(Dist2Coast))
-BIC(m34, m35) # BIC is smaller. Remove Dist2Coast.
-summary(m35)
-
-# Try to remove Nitrate.
-m36 <- update(m35, ~. -s(Nitrate))
-BIC(m35, m36)
-summary(m36) # BIC is smaller. Remove Nitrate.
-# R-sq.(adj) = 0.147; Deviance explained = 18%
-# Best model?
-
-# Plotting response to the variables included in the final model.
-par(mfrow = c(3,2))
-visreg(m36, "SST", partial = FALSE)
-visreg(m36, "MLD", partial = FALSE)
-visreg(m36, "Bathymetry", partial = FALSE)
-visreg(m36, "Chl", partial = FALSE)
-visreg(m36, "Season2", partial = FALSE)
-vis.gam(m36, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (oC)", 
-        ylab = "Longitude", zlab = "\nPresence/Absence", color = "cm", theta = 45, phi = 10, r = 100) # also "grey"
-
-#######################################
-# Plotting best model as a map
-#######################################
-
-# Plot m33 as a map
-skip_pacific$Preds <- predict.gam(m36, type = "response")
-write_csv(skip_pacific, file = "inputs/mercer/skip_pacific.csv")
-
-Surface <- mba.surf(skip_pacific[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
-
-# This is just to organise dataframe for plotting
-dimnames(Surface$xyz.est$z) <- list(Surface$xyz.est$x, Surface$xyz.est$y)
-df3 <- melt(Surface$xyz.est$z, varnames = c('Longitude', 'Latitude'), value.name = 'Preds')
-
-# Plot the map
-x11(width = 14, height = 7)
-p <- ggplot(data = df3, aes(Longitude, Latitude)) +
-  geom_raster(aes(fill = Preds)) +
-  scale_fill_gradientn(colours = matlab.like(7), na.value = "white") +
-  theme_minimal() +
-  theme(legend.position="right")
-
-p <- p + geom_map(data = WorldData, map = WorldData,
-                  aes(x = long, y = lat, group = group, map_id = region),
-                  fill = "grey", colour = "grey", size = 0.5)
-p 
-ggsave("outputs/commercial/plots/Skip_Pacific_map.png", p, dpi = 1200)
-
-# Swordfish
-sword_pacific <- subset(sword, ocean =="pacific")
-
-# Creating GAM for all variables
-m37 <- gam(pa ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + s(Chl), data = sword_pacific, family = "binomial")
-summary(m37) # Everything significant except Bathymetry and Dist2Coast
-# Deviance explained = 20.1%; R-sq.(adj) = 0.0897
-
-# Plot the variables from the full model.
-par(mfrow = c(3,3))
-visreg(m37, "SST", partial = FALSE)
-visreg(m37, "Season2", partial = FALSE)
-visreg(m37, "MLD", partial = FALSE)
-visreg(m37, "Latitude", partial = FALSE)
-visreg(m37, "Longitude", partial = FALSE)
-visreg(m37, "Bathymetry", partial = FALSE)
-visreg(m37, "Dist2Coast", partial = FALSE)
-visreg(m37, "Nitrate", partial = FALSE)
-visreg(m37, "Chl", partial = FALSE)
-
-# Remove Dist2Coast.
-m38 <- update(m37, ~. -s(Dist2Coast))
-BIC(m37, m38) # BIC is smaller; Remove Dist2Coast
-summary(m38)
-
-# Remove Bathymetry.
-m39 <- update(m38, ~. -s(Bathymetry))
-BIC(m38, m39) # BIC is smaller; 
-summary(m39) # Deviance explained = 19.7%
-
-# Try removing MLD
-m40 <- update(m39, ~. -s(MLD))
-BIC(m39, m40) # BIC is smaller; Remove MLD.
-summary(m40) # Deviance explained = 19.1%; R-sq.(adj) = 0.0841
-# Best model?
-
-# Try removing Chl
-m41 <- update(m40, ~. -s(Chl))
-BIC(m40, m41) # BIC change is not big. Retain Chl.
-
-# Plotting response to the variables included in the final model.
-par(mfrow = c(3,2))
-visreg(m40, "SST", partial = FALSE)
-visreg(m40, "Nitrate", partial = FALSE)
-visreg(m40, "Chl", partial = FALSE)
-visreg(m40, "Season2", partial = FALSE)
-vis.gam(m40, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (oC)", 
-        ylab = "Longitude", zlab = "\nPresence/Absence", color = "cm", theta = 45, phi = 10, r = 100) # also "grey"
-
-#######################################
-# Plotting best model as a map
-#######################################
-
-# Plot m40 as a map
-sword_pacific$Preds <- predict.gam(m40, type = "response")
-write_csv(sword_pacific, file = "inputs/mercer/sword_pacific.csv")
-
-Surface <- mba.surf(sword_pacific[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
-
-# This is just to organise dataframe for plotting
-dimnames(Surface$xyz.est$z) <- list(Surface$xyz.est$x, Surface$xyz.est$y)
-df3 <- melt(Surface$xyz.est$z, varnames = c('Longitude', 'Latitude'), value.name = 'Preds')
-
-# Plot the map
-x11(width = 14, height = 7)
-p <- ggplot(data = df3, aes(Longitude, Latitude)) +
-  geom_raster(aes(fill = Preds)) +
-  scale_fill_gradientn(colours = matlab.like(7), na.value = "white") +
-  theme_minimal() +
-  theme(legend.position="right")
-
-p <- p + geom_map(data = WorldData, map = WorldData,
-                  aes(x = long, y = lat, group = group, map_id = region),
-                  fill = "grey", colour = "grey", size = 0.5)
-p 
-ggsave("outputs/commercial/plots/Sword_Pacific_map.png", p, dpi = 1200)
+ggsave("outputs/commercial/GAM_plots/YFT/YFTPAC_map.png", p, dpi = 1200)
