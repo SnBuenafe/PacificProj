@@ -138,6 +138,19 @@ run16 <- commercial_intersect(path = "outputs/commercial/04b_CommercialPredictio
 
 run16
 
+library(wesanderson)
+library(RColorBrewer)
+nb.cols <- 34
+mycolors <- colorRampPalette(brewer.pal(8, "Set2"))(nb.cols)
+
 # checking if it works
 ggplot() +
-  geom_sf(data = run16, aes(color = feature, fill = feature))
+  geom_sf(data = run16, aes(color = feature, fill = feature)) +
+  scale_color_manual(values = mycolors) +
+  scale_fill_manual(values = mycolors) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Commercial Species") +
+  theme_bw()
