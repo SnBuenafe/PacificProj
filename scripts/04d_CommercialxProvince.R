@@ -103,8 +103,7 @@ commercial_intersect <- function(path, pu_shp, fit, outdir, ...) {
       dplyr::mutate(feature = paste0(province,"_",feature_names)) 
     
     PU_list_c <- temp1 %>% 
-      dplyr::group_by(province) %>% 
-      dplyr::select(-cellsID, -area_km2)
+      dplyr::group_by(province)
   
     # Write the object
     pu_rds <- paste("commercial_features", ".rds", sep = "")

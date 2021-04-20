@@ -22,25 +22,25 @@ filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
   
   library(dplyr)
   library(sf)
-  library(tidyverse)
   library(doParallel)
+  library(dplyr)
   
   velocity <- readRDS(velocity_file) %>% 
-    rename(velocity = value, velo_tvalue = trans_value)
+    dplyr::rename(velocity = value, velo_tvalue = trans_value)
   RCE <- readRDS(RCE_file) %>% 
-    rename(RCE = value, RCE_tvalue = trans_value)
+    dplyr::rename(RCE = value, RCE_tvalue = trans_value)
   
   # Intersects climate features for all PUs
   climate_int <- st_intersection(velocity, RCE) %>% 
-    filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>% # we want just the polygons/multi not extra geometries
-    select(-area_km2, -area_km2.1, -velo_categ, -rce_categ)
+    dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>% # we want just the polygons/multi not extra geometries
+    dplyr::select(-area_km2, -area_km2.1, -velo_categ, -rce_categ)
   
   # Calling features that are intersected with provinces
   feature <- readRDS(feature_prov)
   
   feat_int <- st_intersection(feature, climate_int) %>% 
-    filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>%  # we want just the polygons/multi not extra geometries
-    rename(new_features = feature, species = feature_names)
+    dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>%  # we want just the polygons/multi not extra geometries
+    dplyr::rename(new_features = feature, species = feature_names)
   
   # Begin the parallel structure  
   list <- unique(feat_int$new_features)
@@ -53,17 +53,25 @@ filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
   
   filter_PU <- foreach(i = 1:length(list), .packages = c("raster", "sf", "dplyr")) %dopar% {
       temp[[i]] <- feat_int %>% 
-        filter(new_features == list[i])
+        dplyr::filter(new_features == list[i])
       
       qrt_RCE <- quantile(temp[[i]]$RCE_tvalue)
       qrt_velocity <- quantile(temp[[i]]$velo_tvalue)
       
       temp_x[[i]] <- temp[[i]] %>% 
-        filter((RCE_tvalue <= qrt_RCE[2]) | (velo_tvalue <= qrt_velocity[2]))
+        dplyr::filter((RCE_tvalue <= qrt_RCE[2]) | (velo_tvalue <= qrt_velocity[2]))
   }
   stopCluster(cl)
   
   filter_PU_final <- do.call(rbind, filter_PU)
+  
+  if(feature_n == "bycatch") {
+    filter_PU_final <- filter_PU_final %>% 
+      dplyr::select(-cellsID.1)
+  }else {
+  filter_PU_final <- filter_PU_final %>% 
+    dplyr::select(-cellsID.2, -cellsID.1)
+  }
   
   saveRDS(filter_PU_final, paste0(outdir,feature_n,scenario,"_25percentile.rds"))
   

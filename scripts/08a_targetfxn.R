@@ -29,6 +29,7 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
       library(tidyverse)
       library(readxl)
       library(stringr)
+      library(dplyr)
   
       # Calling .xlsx file of species information
       spec_info <- read_xlsx(file_spec_info, na = "NA")
@@ -49,7 +50,7 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
           
           # Match the categories from the data from IUCN to the shapefiles with all the new features (prov x feature; filtered < 25 percentile of climate features)
           spec_info2 <- spec_info1 %>% 
-            select(code, category) %>% 
+            dplyr::select(code, category) %>% 
             rename(species = code)
           feature1 <- left_join(feature, spec_info2, by = "species")
           
@@ -80,6 +81,8 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
             mutate(target = target_list[,1])
           
           saveRDS(feat_targ, paste0(outdir,scenario,"/","target_",unlist(strsplit(basename(call_temp[j]),"_"))[1],".rds"))
+          
+          return(feat_targ)
       }
 }
 
