@@ -11,7 +11,7 @@
 # 2. pu_shp: .shp or .rds file of the PUs
 # 3. outdir: path of the output
   
-cost_pu <- function(input, pu_shp, outdir, ...) {
+cost_pu <- function(input, pu_shp, outdir, layer, stack_num, ...) {
 
       library(raster)
       library(sf)
@@ -46,14 +46,22 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
       pu_min_area <- min(shp_PU_sf1$area_km2)
       
       # calling the raster layer of the cost layer
-      epi_cost <- readAll(raster(input))
+      if(layer == "pelagics") {
+        x <- stack_num
+        stack_cost <- stack(input) %>% 
+          unstack()
+        epi_cost <- stack_cost[[x]]
+      }else {
+        epi_cost <- readAll(raster(input))
+      }
+  
       crs(epi_cost) <- CRS(longlat)
       
       # Creating layer of weights
       weight_rs <- raster::area(epi_cost)
       
       # Projecting the costs and weights into Robinson's (the same projection as the PUs)
-      cost_filef <- projectRaster(cost_file, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
+      cost_filef <- projectRaster(epi_cost, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
       weight_rsf <- projectRaster(weight_rs, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
       
       names(cost_filef) <- "layer"
@@ -61,7 +69,11 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
       # Getting cost value by planning unit
       cost_bypu <- exact_extract(cost_filef, shp_PU_sf1, "weighted_mean", weights = weight_rsf)
       pu_file <- shp_PU_sf1 %>% 
-        mutate(cost = cost_bypu, cost_log = log10(cost_bypu+1)) %>% 
+        mutate(cost = cost_bypu)
+      
+      pu_filef <- pu_file %>% 
+        mutate(cost = ifelse(is.na(cost), median(filter(pu_file, pu_file$cost!=0)$cost),cost)) %>% 
+        mutate(cost_log = log10(cost+1)) %>% 
         mutate(cost_categ = ifelse(cost_log == 0, 1,
                                    ifelse(cost_log > 0 & cost_log <= 1, 2,
                                           ifelse(cost_log > 1 & cost_log <= 2, 3,
@@ -69,9 +81,9 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
                                                         ifelse(cost_log > 3 & cost_log <= 4, 5, 6))))))
       
       # Saving RDS
-      saveRDS(pu_file, paste0(outdir, "costlayer.rds"))
+      saveRDS(pu_filef, paste0(outdir, "costlayer.rds"))
       
-      return(pu_file)
+      return(pu_filef)
   }
   
 ########################################
@@ -79,8 +91,17 @@ cost_pu <- function(input, pu_shp, outdir, ...) {
 ########################################
 run00 <-  cost_pu(input = "inputs/rasterfiles/Costlayer/02-epipelagic_Cost_Raster_Sum.tif",
           pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-          outdir = "outputs/cost_layer/"
+          outdir = "outputs/cost_layer/",
+          layer = "all",
+          stack_num = NA
           )
+
+run001 <- cost_pu(input = "inputs/rasterfiles/Costlayer/Cost_RasterStack_byFunctionalGroup.grd",
+                  pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
+                  outdir = "outputs/cost_layer/",
+                  layer = "pelagics",
+                  stack_num = 19
+)
 
 ###################################################
 # PLOTTING THE INTERSECTION OF PUs AND COST LAYER #
@@ -113,7 +134,7 @@ myPalette <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))
 sc <- scale_colour_gradientn(name = "log10(cost)", colours = myPalette(100), limits=c(0, 4), aesthetics = c("color","fill"))
 
 ggplot()+
-  geom_sf(data = run00, aes(color = cost_log, fill = cost_log)) +
+  geom_sf(data = run001, aes(color = cost_log, fill = cost_log)) +
   sc +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
