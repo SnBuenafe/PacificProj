@@ -24,6 +24,7 @@ iucn_int <- function(input, pu_file, outdir, ...) {
   library(foreach)
   library(dplyr)
   library(magrittr)
+  library(raster)
   
   outdir = outdir
   
