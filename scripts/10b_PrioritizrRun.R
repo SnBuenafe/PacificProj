@@ -26,7 +26,6 @@ runfinal03 <- prioritizr_run(cost_file = "outputs/cost_layer/costlayer.rds",
       climate_scenario = "SSP585",
       outdir = "outputs/prioritizr_run/")
 
-
 ## PLOTTING
 library(RColorBrewer)
 library(patchwork)
