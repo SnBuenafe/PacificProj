@@ -1,3 +1,22 @@
+# This code was written by Tin Buenafe (2021)
+# email: tinbuenafe@gmail.com
+# Please do not distribute this code without permission.
+# There are no guarantees that this code will work perfectly.
+# Modified from Jase's code.
+
+# This function runs prioritizr and solves the spatial plan problem using the
+# Minimum set objective function.
+# It requires the following inputs:
+# 1. cost_file: PUs with the cellsID and the costs per PU (.rds)
+# 2. commercial_targetfile: lists the targets per commercial feature x province (.rds)
+# 3. bycatch_targetfile: lists the targets per bycatch feature x province (.rds)
+# 4. commercial_file: file containing the commercial features (.rds)
+# 5. bycatch_file: file containing the bycatch features (.rds)
+# 6. climate_scenario: climate scenario (e.g. SSP126)
+# 7. outdir: path where the solution will be saved.
+
+# Runs are found in 10b_PrioritizrRun.R
+
 prioritizr_run <- function(cost_file, commercial_targetfile, bycatch_targetfile, 
                            commercial_file, bycatch_file, climate_scenario, outdir, ...) {
   ####################################################################################
