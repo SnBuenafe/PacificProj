@@ -36,7 +36,10 @@ filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
     dplyr::select(-area_km2, -area_km2.1, -velo_categ, -rce_categ)
   
   # Calling features that are intersected with provinces
-  feature <- readRDS(feature_prov)
+  feature <- readRDS(feature_prov) %>% 
+    group_by(feature) %>% 
+    mutate(total_area = sum(area_km2)) %>% 
+    ungroup()
   
   feat_int <- st_intersection(feature, climate_int) %>% 
     dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>%  # we want just the polygons/multi not extra geometries
