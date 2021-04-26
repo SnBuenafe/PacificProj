@@ -64,14 +64,16 @@ filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
   stopCluster(cl)
   
   filter_PU_final <- do.call(rbind, filter_PU)
-  
-  if(feature_n == "bycatch") {
-    filter_PU_final <- filter_PU_final %>% 
-      dplyr::select(-cellsID.1)
-  }else {
   filter_PU_final <- filter_PU_final %>% 
-    dplyr::select(-cellsID.2, -cellsID.1)
-  }
+    dplyr::select(-cellsID.1)
+  
+# if(feature_n == "bycatch") {
+#    filter_PU_final <- filter_PU_final %>% 
+#      dplyr::select(-cellsID.1)
+#  }else {
+#  filter_PU_final <- filter_PU_final %>% 
+#    dplyr::select(-cellsID.2, -cellsID.1)
+#  }
   
   saveRDS(filter_PU_final, paste0(outdir,feature_n,scenario,"_25percentile.rds"))
   
