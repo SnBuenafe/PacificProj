@@ -58,7 +58,7 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
           feature2 <- feature1 %>% 
                       mutate(area_km2 = as.numeric(st_area(feature1)/1e+06)) %>% 
                       group_by(new_features) %>% 
-                      summarize(total_area = sum(area_km2), category = first(category))
+                      summarize(total_area = unique(total_area), category = first(category))
           
           total_PU_area = number_PU*2667.6
           target_max = target_max
@@ -85,5 +85,3 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
           return(feat_targ)
       }
 }
-
-
