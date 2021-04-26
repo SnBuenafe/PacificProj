@@ -156,9 +156,9 @@ prov_code <- c("ANTA" = "#b2182b","ARCH" = "#ef8a62","CCAL" = "#fddbc7","CHIL" =
 # 2. world_sf
 
 longhurst <- ggplot()+
-  geom_sf(data = run001, aes(color = province), fill = NA) +
-  scale_color_manual(values = prov_code,
-                     aesthetics = c("color")
+  geom_sf(data = run001, aes(fill = province), colour = "grey64", size = 0.1) +
+  scale_fill_manual(values = prov_code,
+                     aesthetics = c("fill")
                      ) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
@@ -182,5 +182,5 @@ PUs <- ggplot() +
 library(patchwork)
 plot <- PUs + longhurst
 plot + plot_annotation(tag_levels = 'a', tag_suffix = ')',
-                       title = "Study Area") +
-  ggsave("pdfs/StudyArea.pdf", width = 20, height = 10, dpi = 300)  
+                       title = "Study Area")
+ggsave("pdfs/StudyArea.pdf", width = 20, height = 10, dpi = 300)  
