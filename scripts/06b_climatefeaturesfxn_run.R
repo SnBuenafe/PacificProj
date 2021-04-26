@@ -115,7 +115,7 @@ run04
 # Plotting Climate Velocity SSP126
 q1 <- ggplot()+
   geom_sf(data = run04, aes(color = velo_categ)) +
-  scale_color_gradientn(name = expression('Climate velocity (km decade'^"-1"*')'),
+  scale_color_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
                         colours = pal1,
                         limits = c(1, 11),
                         breaks = seq(1, 11, 1),
@@ -140,7 +140,7 @@ run05
 # Plotting Climate Velocity SSP245
 q2 <- ggplot()+
   geom_sf(data = run05, aes(color = velo_categ)) +
-  scale_color_gradientn(name = expression('Climate velocity (km decade'^"-1"*')'),
+  scale_color_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
                         colours = pal1,
                         limits = c(1, 11),
                         breaks = seq(1, 11, 1),
@@ -167,7 +167,7 @@ run06
 # Defining generalities
 q3 <- ggplot()+
   geom_sf(data = run06, aes(color = velo_categ)) +
-  scale_color_gradientn(name = expression('Climate velocity (km decade'^"-1"*')'),
+  scale_color_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
                         colours = pal1,
                         limits = c(1, 11),
                         breaks = seq(1, 11, 1),
