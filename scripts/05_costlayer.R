@@ -11,7 +11,7 @@
 # 2. pu_shp: .shp or .rds file of the PUs
 # 3. outdir: path of the output
   
-cost_pu <- function(input, pu_shp, outdir, layer, stack_num, ...) {
+cost_pu <- function(input, pu_shp, outdir, layer, ...) {
 
       library(raster)
       library(sf)
@@ -47,41 +47,46 @@ cost_pu <- function(input, pu_shp, outdir, layer, stack_num, ...) {
       
       # calling the raster layer of the cost layer
       if(layer == "pelagics") {
-        x <- stack_num
-        stack_cost <- stack(input) %>% 
-          unstack()
-        epi_cost <- stack_cost[[x]]
+        temp_cost <- stack(input)
+        epi_cost <- unstack(temp_cost)[[19]]
       }else {
         epi_cost <- readAll(raster(input))
       }
-  
       crs(epi_cost) <- CRS(longlat)
       
       # Creating layer of weights
       weight_rs <- raster::area(epi_cost)
+      
+      # creating an empty raster
+      rs <- raster(ncol = 720, nrow = 360)
+      rs[] <- 1:ncell(rs)
+      
+      # projecting this to rob_pacific
+      rs_rob <- projectRaster(rs, crs = CRS(rob_pacific))
+      resolution <- res(rs_rob)
       
       # Projecting the costs and weights into Robinson's (the same projection as the PUs)
       cost_filef <- projectRaster(epi_cost, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
       weight_rsf <- projectRaster(weight_rs, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
       
       names(cost_filef) <- "layer"
-      
+
       # Getting cost value by planning unit
       cost_bypu <- exact_extract(cost_filef, shp_PU_sf1, "weighted_mean", weights = weight_rsf)
       pu_file <- shp_PU_sf1 %>% 
-        mutate(cost = cost_bypu)
-      
+        dplyr::mutate(cost = cost_bypu)
+
       pu_filef <- pu_file %>% 
-        mutate(cost = ifelse(is.na(cost), median(filter(pu_file, pu_file$cost!=0)$cost),cost)) %>% 
-        mutate(cost_log = log10(cost+1)) %>% 
-        mutate(cost_categ = ifelse(cost_log == 0, 1,
+        dplyr::mutate(cost = ifelse(is.na(cost), median(filter(pu_file, pu_file$cost!=0)$cost),cost)) %>% 
+        dplyr::mutate(cost_log = log10(cost+1)) %>% 
+        dplyr::mutate(cost_categ = ifelse(cost_log == 0, 1,
                                    ifelse(cost_log > 0 & cost_log <= 1, 2,
                                           ifelse(cost_log > 1 & cost_log <= 2, 3,
                                                  ifelse(cost_log > 2 & cost_log <= 3, 4,
                                                         ifelse(cost_log > 3 & cost_log <= 4, 5, 6))))))
       
       # Saving RDS
-      saveRDS(pu_filef, paste0(outdir, "costlayer.rds"))
+      #saveRDS(pu_filef, paste0(outdir, "costlayer.rds"))
       
       return(pu_filef)
   }
@@ -92,15 +97,14 @@ cost_pu <- function(input, pu_shp, outdir, layer, stack_num, ...) {
 run00 <-  cost_pu(input = "inputs/rasterfiles/Costlayer/02-epipelagic_Cost_Raster_Sum.tif",
           pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
           outdir = "outputs/cost_layer/",
-          layer = "all",
-          stack_num = NA
+          layer = "all"
           )
 
-run001 <- cost_pu(input = "inputs/rasterfiles/Costlayer/Cost_RasterStack_byFunctionalGroup.grd",
+# running using just large pelagics
+run001 <- cost_pu(input = "inputs/rasterfiles/CostLayer/Cost_RasterStack_byFunctionalGroup.grd",
                   pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
                   outdir = "outputs/cost_layer/",
-                  layer = "pelagics",
-                  stack_num = 19
+                  layer = "pelagics"
 )
 
 ###################################################
@@ -143,3 +147,13 @@ ggplot()+
   labs(title = "Cost Layer") +
   theme_bw() +
   ggsave("pdfs/CostLayer.pdf", width = 20, height = 10, dpi = 300)
+
+###################################################
+# CHECKING NEW COST LAYER #
+###################################################
+
+r <- stack("inputs/rasterfiles/CostLayer/Cost_RasterStack_byFunctionalGroup.grd")
+names(r)
+
+r_unstack <- unstack(r)
+large_pelagics <- r_unstack[[19]]
