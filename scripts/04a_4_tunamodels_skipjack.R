@@ -9,21 +9,19 @@
 # 4. 04a_4: swordfish
 # The code must be run one after the other.
 
-library(tidyverse)
-library(effects)
-library(splines)
-library(ggplot2)
-library(devtools)
-library(ggiraphExtra)
-library(ggiraph)
-library(mgcv)
-library(visreg)
-library(patchwork)
-library(MBA) # Does bilinear interpolation
-library(reshape2) # For melt
-library(colorRamps) # for Matlab like colour scheme
-library(ggthemes) # for theme_minimal()
-library(patchwork)
+####################################################################################
+####### Defining packages needed
+####################################################################################
+# List of pacakges that we will use
+list.of.packages <- c("tidyverse", "effects", "splines", "devtools", "ggiraphExtra",
+                      "ggiraph", "mgcv", "visreg", "patchwork", "MBA", "reshape2",
+                      "colorRamps", "ggthemes")
+# MBA: for bilinear interpolation; reshape2: for melt
+# If is not installed, install the pacakge
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+# Load packages
+lapply(list.of.packages, require, character.only = TRUE)
 
 ###################################
 # Skipjack Tuna

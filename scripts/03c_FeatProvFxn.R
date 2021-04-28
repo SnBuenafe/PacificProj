@@ -24,9 +24,9 @@ prov_intersect <- function(path, pu_shp, fit, outdir, data, feature_file, prov_f
   ### Defining the main packages ###
   ##################################
   
-  # List of pacakges that we will use
-  list.of.packages <- c("raster", "sf", "dplyr", "magrittr", "rnaturalearth", "rnaturalearthdata", 
-                        "fasterize", "ggplot2", "readr", "proj4", "exactextractr", "parallel", 
+  # List of packages that we will use
+  list.of.packages <- c("raster", "sf", "tidyverse", "magrittr", "rnaturalearth", "rnaturalearthdata", 
+                        "fasterize", "proj4", "exactextractr", "parallel", 
                         "doParallel")
   # If is not installed, install the pacakge
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]

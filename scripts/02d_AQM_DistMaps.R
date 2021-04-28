@@ -19,14 +19,14 @@ bycatch_distmap <- function(path, bycatch, ...) {
 ####################################################################################
 ####### Defining packages needed
 ####################################################################################
-
-library(RColorBrewer)
-library(ggplot2)
-library(readxl)
-library(stringr)
-library(patchwork)
-library(sf)
-
+  # List of pacakges that we will use
+  list.of.packages <- c("RColorBrewer", "tidyverse", "readxl", "patchwork", "sf")
+  # If is not installed, install the pacakge
+  new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+  if(length(new.packages)) install.packages(new.packages)
+  # Load packages
+  lapply(list.of.packages, require, character.only = TRUE)
+  
 ####################################################################################
 ####### Creating bycatch data to be plotted
 ####################################################################################

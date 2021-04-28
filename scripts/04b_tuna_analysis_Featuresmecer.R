@@ -18,27 +18,32 @@
 
 commercial_feat <- function(input, inpdir, prob_threshold, PU, data, outdir, ...) {
 
-  ###########################
-  # Libraries to be used
-  ###########################
+  ##################################
+  ### Defining the main packages ###
+  ##################################
   
-  library(raster)
-  library(sf)
-  library(dplyr)
-  library(magrittr)
-  library(rnaturalearth)
-  library(rnaturalearthdata)
-  library(fasterize)
-  library(ggplot2)
-  library(readr)
-  library(proj4)
-  library(exactextractr)
+  # List of packages that we will use
+  list.of.packages <- c("raster", "sf", "tidyverse", "magrittr", "rnaturalearth", "rnaturalearthdata", 
+                        "fasterize", "proj4", "exactextractr")
+  # If is not installed, install the pacakge
+  new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+  if(length(new.packages)) install.packages(new.packages)
+  # Load packages
+  lapply(list.of.packages, require, character.only = TRUE)
+  
+  ############################
+  ### Defining projections ###
+  ############################
 
   rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
   longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
   prob_threshold <- prob_threshold #median
-  
+
+  #####################
+  ### Calling Files ###
+  #####################
+    
   # Calling .shp file of PUs
   shp_PU_sf <- st_read(PU) %>% 
     st_transform(crs = rob_pacific)
@@ -49,6 +54,7 @@ commercial_feat <- function(input, inpdir, prob_threshold, PU, data, outdir, ...
     dplyr::select(cellsID, geometry)
   pu_min_area <- min(shp_PU_sf1$area_km2)
 
+  # Selecting Lat, Long and Predictions
   temp_sp <- read_csv(inpdir) %>% 
     dplyr::select(Latitude, Longitude, Preds) %>% 
     dplyr::filter(Preds > prob_threshold) %>% 
@@ -58,6 +64,10 @@ commercial_feat <- function(input, inpdir, prob_threshold, PU, data, outdir, ...
 
   sp_raster <- rasterFromXYZ(temp_sp)
   crs(sp_raster) <- CRS(longlat)
+  
+  ######################################
+  ### Assigning area-weighted values ###
+  ######################################
   
   # Creating layer of weights
   weight_rs <- raster::area(sp_raster)
@@ -81,40 +91,41 @@ commercial_feat <- function(input, inpdir, prob_threshold, PU, data, outdir, ...
 return(pu_file)
 }
 
-###########################
-# RUNNING  #
-##########################
+#####################################
+# Running for global-fitted models  #
+#####################################
+
 # Yellowfin Tuna
-run07 <- commercial_feat(input = "YFT",
+PRED_global_YFT <- commercial_feat(input = "YFT",
                          inpdir = "inputs/mercer/yft.csv",
                          prob_threshold = 0.07712687, #median of predictions of YFT
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
                          outdir = "outputs/commercial/04b_CommercialPredictions/")
 
 # Albacore
-run08 <- commercial_feat(input = "ALB",
+PRED_global_ALB <- commercial_feat(input = "ALB",
                          inpdir = "inputs/mercer/alba.csv",
                          prob_threshold = 0.01519237, #median of predictions of ALB
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
                          outdir = "outputs/commercial/04b_CommercialPredictions/")
 
 # Skipjack Tuna
-run09 <- commercial_feat(input = "SKP",
+PRED_global_SKP <- commercial_feat(input = "SKP",
                          inpdir = "inputs/mercer/skip.csv",
                          prob_threshold = 0.08615083, #median of predictions of SKP
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
                          outdir = "outputs/commercial/04b_CommercialPredictions/")
 
 # Swordfish
-run10 <- commercial_feat(input = "SWO",
+PRED_global_SWO <- commercial_feat(input = "SWO",
                          inpdir = "inputs/mercer/sword.csv",
                          prob_threshold = 0.01542815, #median of predictions of SWO
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
                          outdir = "outputs/commercial/04b_CommercialPredictions/")
 
-###########################
-# PLOTTING #
-##########################
+############
+# Plotting #
+############
 
 #Defining generalities for plotting
 
@@ -134,13 +145,13 @@ Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (
   st_polygon() %>%
   st_sfc(crs = rob_pacific)
 
-#########################
-# Plotting
-#########################
+#####################################
+# Plotting globally fitted models  #
+#####################################
 library(patchwork)
+library(RColorBrewer)
 
 # YFT
-library(RColorBrewer)
 myPalette <- colorRampPalette(brewer.pal(9, "BuGn"))
 sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 
                              colours = myPalette(100), 
@@ -189,7 +200,7 @@ p3 <- ggplot()+
         labs(title = "Skipjack Tuna") +
         theme_bw()
 
-#SWO
+# SWO
 sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 
                              colours = myPalette(100), 
                              limits=c(0, 0.4), 
@@ -210,11 +221,12 @@ p4 <- ggplot()+
                           title = "Spawning areas")
 ggsave("pdfs/tuna_spawning.pdf", width = 20, height = 10, dpi = 300)
 
-#####################################
-# RUNNING PACIFIC FITTED MODELS  #
-#####################################
+#################################################
+# Running & Plotting for Pacific-fitted models  #
+#################################################
+
 # Yellowfin Tuna
-run11 <- commercial_feat(input = "YFT_pac",
+PRED_pacific_YFT <- commercial_feat(input = "YFT_pac",
                          inpdir = "inputs/mercer/yft_pacific.csv",
                          prob_threshold = 0.06676035, #median of predictions of YFT
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
@@ -236,7 +248,7 @@ p5 <- ggplot()+
   theme_bw()
 
 # Albacore
-run12 <- commercial_feat(input = "ALB_pac",
+PRED_pacific_ALB <- commercial_feat(input = "ALB_pac",
                          inpdir = "inputs/mercer/alba_pacific.csv",
                          prob_threshold = 0.006207029, #median of predictions of ALB
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
@@ -258,7 +270,7 @@ p6 <- ggplot()+
   theme_bw()
 
 # Skipjack Tuna
-run13 <- commercial_feat(input = "SKP_pac",
+PRED_pacific_SKP <- commercial_feat(input = "SKP_pac",
                          inpdir = "inputs/mercer/skip_pacific.csv",
                          prob_threshold = 0.08267397, #median of predictions of SKP
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
@@ -281,7 +293,7 @@ p7 <- ggplot()+
 
 # Swordfish
 
-run14 <- commercial_feat(input = "SWO_pac",
+PRED_pacific_SWO <- commercial_feat(input = "SWO_pac",
                          inpdir = "inputs/mercer/sword_pacific.csv",
                          prob_threshold = 0.01340143, #median of predictions of SWO
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",

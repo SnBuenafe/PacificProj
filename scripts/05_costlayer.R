@@ -13,18 +13,19 @@
   
 cost_pu <- function(input, pu_shp, outdir, layer, ...) {
 
-      library(raster)
-      library(sf)
-      library(dplyr)
-      library(magrittr)
-      library(rnaturalearth)
-      library(rnaturalearthdata)
-      library(fasterize)
-      library(ggplot2)
-      library(readr)
-      library(proj4)
-      library(exactextractr)
-      
+  ####################################################################################
+  ####### Defining packages needed
+  ####################################################################################
+  # List of pacakges that we will use
+  list.of.packages <- c("tidyverse", "raster", "sf", "magrittr", "rnaturalearth",
+                        "rnaturalearthdata", "fasterize", "proj4", "exactextractr")
+  # If is not installed, install the pacakge
+  new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+  if(length(new.packages)) install.packages(new.packages)
+  # Load packages
+  lapply(list.of.packages, require, character.only = TRUE)
+  
+  # Defining generalities
       rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
       longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
       

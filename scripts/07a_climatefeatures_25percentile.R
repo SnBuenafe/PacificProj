@@ -20,10 +20,16 @@
 
 filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scenario, feature_n, ...) {
   
-  library(dplyr)
-  library(sf)
-  library(doParallel)
-  library(dplyr)
+  ####################################################################################
+  ####### Defining packages needed
+  ####################################################################################
+  # List of pacakges that we will use
+  list.of.packages <- c("sf", "tidyverse", "doParallel")
+  # If is not installed, install the pacakge
+  new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+  if(length(new.packages)) install.packages(new.packages)
+  # Load packages
+  lapply(list.of.packages, require, character.only = TRUE)
   
   velocity <- readRDS(velocity_file) %>% 
     dplyr::rename(velocity = value, velo_tvalue = trans_value)

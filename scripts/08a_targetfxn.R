@@ -25,17 +25,31 @@
 
 represent_target <- function(number_PU, target_max, target_min, file_spec_info, inpdir, scenario, outdir, target_max_perc, ...) {
 
-      library(rredlist)
-      library(tidyverse)
-      library(readxl)
-      library(stringr)
-      library(dplyr)
+      ##################################
+      ### Defining the main packages ###
+      ##################################
+      
+      # List of packages that we will use
+      list.of.packages <- c("rredlist", "tidyverse", "readxl")
+      # If is not installed, install the pacakge
+      new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+      if(length(new.packages)) install.packages(new.packages)
+      # Load packages
+      lapply(list.of.packages, require, character.only = TRUE)
   
+      ####################
+      ### Calling data ###
+      ####################
+      
       # Calling .xlsx file of species information
       spec_info <- read_xlsx(file_spec_info, na = "NA")
       
       pattern_list <- c(paste0("\\Q",scenario,"\\E"))
       call_temp <- list.files(path = inpdir, pattern = pattern_list)
+      
+      #########################
+      ### Assigning targets ###
+      #########################
       
       for(j in 1:length(call_temp)) {
           for(i in 1:nrow(spec_info)) {

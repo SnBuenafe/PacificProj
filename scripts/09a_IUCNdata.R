@@ -16,15 +16,18 @@
 # Code is run in 10b_IUCNxPU.
 
 iucn_int <- function(input, pu_file, outdir, ...) {
-  library(sf)
-  library(rnaturalearth)
-  library(tidyverse)
-  library(fasterize)
-  library(doParallel)
-  library(foreach)
-  library(dplyr)
-  library(magrittr)
-  library(raster)
+  
+  ####################################################################################
+  ####### Defining packages needed
+  ####################################################################################
+  # List of pacakges that we will use
+  list.of.packages <- c("raster", "sf", "tidyverse", "magrittr", "rnaturalearth",
+                        "rnaturalearthdata", "fasterize", "doParallel", "foreach")
+  # If is not installed, install the pacakge
+  new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+  if(length(new.packages)) install.packages(new.packages)
+  # Load packages
+  lapply(list.of.packages, require, character.only = TRUE)
   
   outdir = outdir
   
