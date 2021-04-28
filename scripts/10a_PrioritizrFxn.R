@@ -15,7 +15,7 @@
 # 6. climate_scenario: climate scenario (e.g. SSP126)
 # 7. outdir: path where the solution will be saved.
 
-# Runs are found in 10b_PrioritizrRun.R
+# Runs are found in 10b_PrioritizrRun.R and 10c_PrioritizrRunIUCN.R
 
 prioritizr_run <- function(cost_file, commercial_targetfile, bycatch_targetfile, 
                            commercial_file, bycatch_file, climate_scenario, outdir, ...) {
