@@ -10,8 +10,12 @@
 # 1. input: raster file of the cost layer
 # 2. pu_shp: .shp or .rds file of the PUs
 # 3. outdir: path of the output
+# 4. layer: "all" or "pelagics"
+# 5. stack_num: if layer == "all": NA, if layer == "pelagics", input the stack number (if multiple use c())
+
+# Function is run in 05b
   
-cost_pu <- function(input, pu_shp, outdir, layer, ...) {
+cost_pu <- function(input, pu_shp, outdir, layer, stack_num, ...) {
 
   ####################################################################################
   ####### Defining packages needed
@@ -49,7 +53,9 @@ cost_pu <- function(input, pu_shp, outdir, layer, ...) {
       # calling the raster layer of the cost layer
       if(layer == "pelagics") {
         temp_cost <- stack(input)
-        epi_cost <- unstack(temp_cost)[[19]]
+        temp_cost1 <- raster::subset(temp_cost, stack_num)
+        epi_cost <- calc(temp_cost1, fun = sum)
+        #epi_cost <- unstack(temp_cost)[[stack_num]]
       }else {
         epi_cost <- readAll(raster(input))
       }
@@ -76,9 +82,11 @@ cost_pu <- function(input, pu_shp, outdir, layer, ...) {
       cost_bypu <- exact_extract(cost_filef, shp_PU_sf1, "weighted_mean", weights = weight_rsf)
       pu_file <- shp_PU_sf1 %>% 
         dplyr::mutate(cost = cost_bypu)
+      
+      small_value <- (min(pu_file$cost, na.rm = T))/2
 
       pu_filef <- pu_file %>% 
-        dplyr::mutate(cost = ifelse(is.na(cost), median(filter(pu_file, pu_file$cost!=0)$cost),cost)) %>% 
+        dplyr::mutate(cost = ifelse(is.na(cost), small_value, cost)) %>% 
         dplyr::mutate(cost_log = log10(cost+1)) %>% 
         dplyr::mutate(cost_categ = ifelse(cost_log == 0, 1,
                                    ifelse(cost_log > 0 & cost_log <= 1, 2,
@@ -87,74 +95,8 @@ cost_pu <- function(input, pu_shp, outdir, layer, ...) {
                                                         ifelse(cost_log > 3 & cost_log <= 4, 5, 6))))))
       
       # Saving RDS
-      #saveRDS(pu_filef, paste0(outdir, "costlayer.rds"))
+      saveRDS(pu_filef, paste0(outdir, "costlayer.rds"))
       
       return(pu_filef)
   }
-  
-########################################
-# RUNNING THE FUNCTION #
-########################################
-run00 <-  cost_pu(input = "inputs/rasterfiles/Costlayer/02-epipelagic_Cost_Raster_Sum.tif",
-          pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-          outdir = "outputs/cost_layer/",
-          layer = "all"
-          )
 
-# running using just large pelagics
-run001 <- cost_pu(input = "inputs/rasterfiles/CostLayer/Cost_RasterStack_byFunctionalGroup.grd",
-                  pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-                  outdir = "outputs/cost_layer/",
-                  layer = "pelagics"
-)
-
-###################################################
-# PLOTTING THE INTERSECTION OF PUs AND COST LAYER #
-###################################################
-
-#Defining generalities for plotting
-
-world_sf <- st_read("inputs/shapefiles/PacificCenterLand/PacificCenterLand.shp") %>% 
-  st_transform(crs = rob_pacific)
-
-test<-cbind(c(140, -78, -78, 140), #TopLeft, TopRight, BottomRight, BottomLeft
-            c( 51, 51, -60, -60))
-Cnr <- proj4::project(test, proj = rob_pacific)
-print(Cnr)
-
-Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (51N)
-  bind_rows(as_tibble(project(as.matrix(tibble(x = -78, y = seq(51, -60, by = -1))), proj = rob_pacific))) %>% # Then bind to E boundary (-78E)
-  bind_rows(as_tibble(project(as.matrix(tibble(x = 140, y = seq(-60, 51, by = 1))), proj = rob_pacific))) %>% # Then W boundary (140E) - reverse x order
-  as.matrix() %>%
-  list() %>%
-  st_polygon() %>%
-  st_sfc(crs = rob_pacific)
-
-# Plotting
-
-library(RColorBrewer)
-library(patchwork)
-# Defining palette
-myPalette <- colorRampPalette(rev(brewer.pal(11, "RdYlBu")))
-sc <- scale_colour_gradientn(name = "log10(cost)", colours = myPalette(100), limits=c(0, 4), aesthetics = c("color","fill"))
-
-ggplot()+
-  geom_sf(data = run001, aes(color = cost_log, fill = cost_log)) +
-  sc +
-  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
-  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
-           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
-           expand = TRUE) +
-  labs(title = "Cost Layer") +
-  theme_bw() +
-  ggsave("pdfs/CostLayer.pdf", width = 20, height = 10, dpi = 300)
-
-###################################################
-# CHECKING NEW COST LAYER #
-###################################################
-
-r <- stack("inputs/rasterfiles/CostLayer/Cost_RasterStack_byFunctionalGroup.grd")
-names(r)
-
-r_unstack <- unstack(r)
-large_pelagics <- r_unstack[[19]]
