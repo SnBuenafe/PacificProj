@@ -23,7 +23,7 @@
 
 # The function is run in 08b for different scenarios.
 
-represent_target <- function(number_PU, target_max, target_min, file_spec_info, inpdir, scenario, outdir, target_max_perc, ...) {
+represent_target <- function(number_PU, target_max, target_min, file_spec_info, inpdir, scenario, outdir, ...) {
 
       ##################################
       ### Defining the main packages ###
@@ -53,7 +53,7 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
       
       for(j in 1:length(call_temp)) {
           for(i in 1:nrow(spec_info)) {
-                        temp_categ[i] <- rl_search(paste(spec_info$genus[i], spec_info$species[i], sep = " "))$result[13]
+            temp_categ[i] <- rl_search(paste(spec_info$genus[i], spec_info$species[i], sep = " "))$result[13]
           }
           
           categories <- do.call(rbind, temp_categ)
@@ -77,15 +77,14 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
           total_PU_area = number_PU*2667.6
           target_max = target_max
           target_min = target_min
-          target_max_perc = target_max_perc
           
           trans_target <- list()
           
-          for(i in 1:nrow(feature2)) {
-             if(feature2$category[i] %in% c("EX","EW","CR","EN","VU")) {
-                    trans_target[[i]] <- 100
+          for(x in 1:nrow(feature2)) {
+             if(feature2$category[x] %in% c("EX","EW","CR","EN","VU")) {
+                    trans_target[[x]] <- target_max*100
             }else {
-                    trans_target[[i]] <- target_max_perc*(feature2$total_area[i]/total_PU_area)*(target_max-target_min)
+                    trans_target[[x]] <- target_max*(feature2$total_area[x]/total_PU_area)*(target_max-target_min)*100
             }
           }
           
@@ -95,7 +94,5 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
             mutate(target = target_list[,1])
           
           saveRDS(feat_targ, paste0(outdir,scenario,"/","target_",unlist(strsplit(basename(call_temp[j]),"_"))[1],".rds"))
-          
-          return(feat_targ)
       }
 }

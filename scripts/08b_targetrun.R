@@ -25,40 +25,319 @@
 
 source("scripts/08a_targetfxn.R")
 
-# Run for SSP126
+####################################
+#### 100%, 0 - 1 RUN ####
+####################################
 
-TARGET_run01 <- represent_target(number_PU <- 31917,
+# Run for SSP126
+TARGET100_run01 <- represent_target(number_PU <- 31917,
                     target_max <- 1,
                     target_min <- 0,
                     file_spec_info <- "outputs/final_features/spec_info.xlsx",
                     inpdir <- "outputs/final_features/07a_25perc/",
                     scenario <- "SSP126",
-                    outdir <- "outputs/final_features/08b_targets/",
-                    target_max_perc <- 100)
+                    outdir <- "outputs/final_features/08b_targets/01_Target100/")
 
 # Run for SSP245
-
-TARGET_run02 <- represent_target(number_PU <- 31917,
+TARGET100_run02 <- represent_target(number_PU <- 31917,
                     target_max <- 1,
                     target_min <- 0,
                     file_spec_info <- "outputs/final_features/spec_info.xlsx",
                     inpdir <- "outputs/final_features/07a_25perc/",
                     scenario <- "SSP245",
-                    outdir <- "outputs/final_features/08b_targets/",
-                    target_max_perc <- 100)
+                    outdir <- "outputs/final_features/08b_targets/01_Target100/")
 
 # Run for SSP585
-
-TARGET_run03 <- represent_target(number_PU <- 31917,
+TARGET100_run03 <- represent_target(number_PU <- 31917,
                     target_max <- 1,
                     target_min <- 0,
                     file_spec_info <- "outputs/final_features/spec_info.xlsx",
                     inpdir <- "outputs/final_features/07a_25perc/",
                     scenario <- "SSP585",
-                    outdir <- "outputs/final_features/08b_targets/",
-                    target_max_perc <- 100)
+                    outdir <- "outputs/final_features/08b_targets/01_Target100/")
 
-# works for bycatch
-df_temp <- readRDS("outputs/final_features/08b_targets/SSP585/target_commercialSSP585.rds")
-df_temp1 <- readRDS("outputs/final_features/08b_targets/SSP126/target_commercialSSP126.rds")
-df_temp2 <- readRDS("outputs/final_features/08b_targets/SSP245/target_commercialpacSSP245.rds")
+####################################
+#### 90%, 0.1 - 0.9 RUNS ####
+####################################
+
+# Run for SSP126
+TARGET90_run01 <- represent_target(number_PU <- 31917,
+                                    target_max <- 0.9,
+                                    target_min <- 0.1,
+                                    file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                    inpdir <- "outputs/final_features/07a_25perc/",
+                                    scenario <- "SSP126",
+                                    outdir <- "outputs/final_features/08b_targets/02_Target90/")
+
+# Run for SSP245
+TARGET90_run02 <- represent_target(number_PU <- 31917,
+                                    target_max <- 0.9,
+                                    target_min <- 0.1,
+                                    file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                    inpdir <- "outputs/final_features/07a_25perc/",
+                                    scenario <- "SSP245",
+                                    outdir <- "outputs/final_features/08b_targets/02_Target90/")
+
+# Run for SSP585
+TARGET90_run03 <- represent_target(number_PU <- 31917,
+                                    target_max <- 0.9,
+                                    target_min <- 0.1,
+                                    file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                    inpdir <- "outputs/final_features/07a_25perc/",
+                                    scenario <- "SSP585",
+                                    outdir <- "outputs/final_features/08b_targets/02_Target90/")
+
+####################################
+#### 80%, 0.1 - 0.8 RUNS ####
+####################################
+
+# Run for SSP126
+TARGET80_run01 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.8,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP126",
+                                   outdir <- "outputs/final_features/08b_targets/03_Target80/")
+
+# Run for SSP245
+TARGET80_run02 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.8,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP245",
+                                   outdir <- "outputs/final_features/08b_targets/03_Target80/")
+
+# Run for SSP585
+TARGET80_run03 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.8,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP585",
+                                   outdir <- "outputs/final_features/08b_targets/03_Target80/")
+
+####################################
+#### 70%, 0.1 - 0.7 RUNS ####
+####################################
+
+# Run for SSP126
+TARGET70_run01 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.7,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP126",
+                                   outdir <- "outputs/final_features/08b_targets/04_Target70/")
+
+# Run for SSP245
+TARGET70_run02 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.7,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP245",
+                                   outdir <- "outputs/final_features/08b_targets/04_Target70/")
+
+# Run for SSP585
+TARGET70_run03 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.7,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP585",
+                                   outdir <- "outputs/final_features/08b_targets/04_Target70/")
+
+####################################
+#### 60%, 0.1 - 0.6 RUNS ####
+####################################
+
+# Run for SSP126
+TARGET60_run01 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.6,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP126",
+                                   outdir <- "outputs/final_features/08b_targets/05_Target60/")
+
+# Run for SSP245
+TARGET60_run02 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.6,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP245",
+                                   outdir <- "outputs/final_features/08b_targets/05_Target60/")
+
+# Run for SSP585
+TARGET60_run03 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.6,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP585",
+                                   outdir <- "outputs/final_features/08b_targets/05_Target60/")
+
+####################################
+#### 50%, 0.1 - 0.5 RUNS ####
+####################################
+
+# Run for SSP126
+TARGET50_run01 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.5,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP126",
+                                   outdir <- "outputs/final_features/08b_targets/06_Target50/")
+
+# Run for SSP245
+TARGET50_run02 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.5,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP245",
+                                   outdir <- "outputs/final_features/08b_targets/06_Target50/")
+
+# Run for SSP585
+TARGET50_run03 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.5,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP585",
+                                   outdir <- "outputs/final_features/08b_targets/06_Target50/")
+
+####################################
+#### 40%, 0.1 - 0.4 RUNS ####
+####################################
+
+# Run for SSP126
+TARGET40_run01 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.4,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP126",
+                                   outdir <- "outputs/final_features/08b_targets/07_Target40/")
+
+# Run for SSP245
+TARGET40_run02 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.4,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP245",
+                                   outdir <- "outputs/final_features/08b_targets/07_Target40/")
+
+# Run for SSP585
+TARGET40_run03 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.4,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP585",
+                                   outdir <- "outputs/final_features/08b_targets/07_Target40/")
+
+####################################
+#### 30%, 0.1 - 0.3 RUNS ####
+####################################
+
+# Run for SSP126
+TARGET30_run01 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.3,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP126",
+                                   outdir <- "outputs/final_features/08b_targets/08_Target30/")
+
+# Run for SSP245
+TARGET30_run02 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.3,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP245",
+                                   outdir <- "outputs/final_features/08b_targets/08_Target30/")
+
+# Run for SSP585
+TARGET30_run03 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.3,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP585",
+                                   outdir <- "outputs/final_features/08b_targets/08_Target30/")
+
+####################################
+#### 20%, 0.1 - 0.2 RUNS ####
+####################################
+
+# Run for SSP126
+TARGET20_run01 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.2,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP126",
+                                   outdir <- "outputs/final_features/08b_targets/09_Target20/")
+
+# Run for SSP245
+TARGET20_run02 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.2,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP245",
+                                   outdir <- "outputs/final_features/08b_targets/09_Target20/")
+
+# Run for SSP585
+TARGET20_run03 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.2,
+                                   target_min <- 0.1,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP585",
+                                   outdir <- "outputs/final_features/08b_targets/09_Target20/")
+
+####################################
+#### 10%, 0 - 0.1 RUNS ####
+####################################
+
+# Run for SSP126
+TARGET10_run01 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.1,
+                                   target_min <- 0,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP126",
+                                   outdir <- "outputs/final_features/08b_targets/10_Target10/")
+
+# Run for SSP245
+TARGET10_run02 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.1,
+                                   target_min <- 0,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP245",
+                                   outdir <- "outputs/final_features/08b_targets/10_Target10/")
+
+# Run for SSP585
+TARGET10_run03 <- represent_target(number_PU <- 31917,
+                                   target_max <- 0.1,
+                                   target_min <- 0,
+                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
+                                   inpdir <- "outputs/final_features/07a_25perc/",
+                                   scenario <- "SSP585",
+                                   outdir <- "outputs/final_features/08b_targets/10_Target10/")
+#############
+## testing ##
+#############
+
+df_temp <- readRDS("outputs/final_features/08b_targets/04_Target70/SSP245/target_commercialSSP245.rds")
+
+
