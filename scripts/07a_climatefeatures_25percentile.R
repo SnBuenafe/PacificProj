@@ -18,7 +18,7 @@
 
 # The function is run in 07b for different scenarios.
 
-filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scenario, feature_n, ...) {
+filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scenario, feature_n, data, ...) {
   
   ####################################################################################
   ####### Defining packages needed
@@ -30,6 +30,8 @@ filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
   if(length(new.packages)) install.packages(new.packages)
   # Load packages
   lapply(list.of.packages, require, character.only = TRUE)
+  
+  if(data == "smart") {
   
   velocity <- readRDS(velocity_file) %>% 
     dplyr::rename(velocity = value, velo_tvalue = trans_value)
@@ -85,6 +87,19 @@ filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
 #  }
   
   saveRDS(filter_PU_final, paste0(outdir,feature_n,scenario,"_25percentile.rds"))
+  
+  }else{
+    # Calling features that are intersected with provinces
+    feature <- readRDS(feature_prov) %>% 
+      group_by(feature) %>% 
+      mutate(total_area = sum(area_km2)) %>% 
+      ungroup() %>% 
+      dplyr::rename(new_features = feature, species = feature_names)
+    
+    filter_PU_final <- feature
+    
+    saveRDS(filter_PU_final, paste0(outdir,feature_n,scenario,"_100percentile.rds"))
+  }
   
   return(filter_PU_final)
   

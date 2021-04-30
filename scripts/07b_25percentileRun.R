@@ -22,7 +22,8 @@ FILTER_GLOBAL_run01 <- filter_quartile(velocity_file = "outputs/climate_features
           feature_prov = "outputs/commercial/04d_CommercialxProvince/global/commercial_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP126",
-          feature_n = "commercial"
+          feature_n = "commercial",
+          data = "smart"
 )
 
 FILTER_GLOBAL_run01
@@ -34,7 +35,8 @@ FILTER_GLOBAL_run02 <- filter_quartile(velocity_file = "outputs/climate_features
           feature_prov = "outputs/commercial/04d_CommercialxProvince/global/commercial_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP245",
-          feature_n = "commercial"
+          feature_n = "commercial",
+          data = "smart"
 )
 
 FILTER_GLOBAL_run02
@@ -46,7 +48,8 @@ FILTER_GLOBAL_run03 <- filter_quartile(velocity_file = "outputs/climate_features
           feature_prov = "outputs/commercial/04d_CommercialxProvince/global/commercial_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP585",
-          feature_n = "commercial"
+          feature_n = "commercial",
+          data = "smart"
 )
 
 FILTER_GLOBAL_run03
@@ -62,7 +65,8 @@ FILTER_PACIFIC_run01 <- filter_quartile(velocity_file = "outputs/climate_feature
           feature_prov = "outputs/commercial/04d_CommercialxProvince/pacific/commercial_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP126",
-          feature_n = "commercialpac"
+          feature_n = "commercialpac",
+          data = "smart"
 )
 
 FILTER_PACIFIC_run01
@@ -74,7 +78,8 @@ FILTER_PACIFIC_run02 <- filter_quartile(velocity_file = "outputs/climate_feature
           feature_prov = "outputs/commercial/04d_CommercialxProvince/pacific/commercial_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP245",
-          feature_n = "commercialpac"
+          feature_n = "commercialpac",
+          data = "smart"
 )
 
 FILTER_PACIFIC_run02
@@ -86,7 +91,8 @@ FILTER_PACIFIC_run03 <- filter_quartile(velocity_file = "outputs/climate_feature
           feature_prov = "outputs/commercial/04d_CommercialxProvince/pacific/commercial_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP585",
-          feature_n = "commercialpac"
+          feature_n = "commercialpac",
+          data = "smart"
 )
 
 FILTER_PACIFIC_run03
@@ -102,7 +108,8 @@ FILTER_AQM_run01 <- filter_quartile(velocity_file = "outputs/climate_features/ve
           feature_prov = "outputs/AQM_wflow/03d_AQMxProv/bycatch_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP126",
-          feature_n = "bycatch"
+          feature_n = "bycatch",
+          data = "smart"
 )
 
 FILTER_AQM_run01
@@ -114,7 +121,8 @@ FILTER_AQM_run02 <- filter_quartile(velocity_file = "outputs/climate_features/ve
           feature_prov = "outputs/AQM_wflow/03d_AQMxProv/bycatch_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP245",
-          feature_n = "bycatch"
+          feature_n = "bycatch",
+          data = "smart"
 )
 
 FILTER_AQM_run02
@@ -126,7 +134,8 @@ FILTER_AQM_run03 <- filter_quartile(velocity_file = "outputs/climate_features/ve
           feature_prov = "outputs/AQM_wflow/03d_AQMxProv/bycatch_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP585",
-          feature_n = "bycatch"
+          feature_n = "bycatch",
+          data = "smart"
 )
 
 ########################################
@@ -140,7 +149,8 @@ FILTER_IUCN_run01 <- filter_quartile(velocity_file = "outputs/climate_features/v
           feature_prov = "outputs/IUCN_wflow/09c_IUCNxProv/bycatch_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP126",
-          feature_n = "bycatchIUCN"
+          feature_n = "bycatchIUCN",
+          data = "smart"
 )
 
 # Scenario SSP245
@@ -150,7 +160,8 @@ FILTER_IUCN_run02 <- filter_quartile(velocity_file = "outputs/climate_features/v
           feature_prov = "outputs/IUCN_wflow/09c_IUCNxProv/bycatch_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP245",
-          feature_n = "bycatchIUCN"
+          feature_n = "bycatchIUCN",
+          data = "smart"
 )
 
 # Scenario SSP585
@@ -160,5 +171,6 @@ FILTER_IUCN_run03 <- filter_quartile(velocity_file = "outputs/climate_features/v
           feature_prov = "outputs/IUCN_wflow/09c_IUCNxProv/bycatch_features.rds",
           outdir = "outputs/final_features/07a_25perc/",
           scenario = "SSP585",
-          feature_n = "bycatchIUCN"
+          feature_n = "bycatchIUCN",
+          data = "smart"
 )

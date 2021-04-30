@@ -1,0 +1,282 @@
+# This code was written by Tin Buenafe (2021)
+# email: tinbuenafe@gmail.com
+# Please do not distribute this code without permission.
+# There are no guarantees that this code will work perfectly.
+# Modified from Jase's code.
+
+# This function runs prioritizr and solves the spatial plan problem using the
+# Minimum set objective function.
+# It requires the following inputs:
+# 1. cost_file: PUs with the cellsID and the costs per PU (.rds)
+# 2. commercial_targetfile: lists the targets per commercial feature x province (.rds)
+# 3. bycatch_targetfile: lists the targets per bycatch feature x province (.rds)
+# 4. commercial_file: file containing the commercial features (.rds)
+# 5. bycatch_file: file containing the bycatch features (.rds)
+# 6. climate_scenario: climate scenario (e.g. SSP126)
+# 7. outdir: path where the solution will be saved.
+
+# Function is found at 10a_PrioritizrFxn.R
+
+source("scripts/10a_PrioritizrFxn.R")
+
+# Plotting generalities
+library(RColorBrewer)
+library(patchwork)
+pal_rich <- c("FALSE" = NA, "TRUE" = "sienna3")
+solution <- c("FALSE", "TRUE")
+
+##########################################################
+## Climate-uninformed runs using AQM as bycatch + Plots ##
+##########################################################
+
+###############################
+## Target 100% (0 - 1) ##
+###############################
+PRIORITIZR_AQM_target100_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                 commercial_targetfile = "outputs/final_features/08c_targets/01_Target100/uninformed/target_commercialuninformed.rds",
+                                                 bycatch_targetfile = "outputs/final_features/08c_targets/01_Target100/uninformed/target_bycatchuninformed.rds",
+                                                 commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
+                                                 bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+                                                 climate_scenario = "uninformed",
+                                                 outdir = "outputs/prioritizr_run/Uninformed/AQM/01_Target100/")
+# Plotting
+uninformed_target100_plot1 <- ggplot() + 
+  geom_sf(data = PRIORITIZR_AQM_target100_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
+       subtitle = "Maximum Target 100% (0 - 1)") +
+  theme_bw()
+uninformed_target100_plot1
+ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target100.pdf")
+
+###############################
+## Target 90% (0.1 - 0.9) ##
+###############################
+PRIORITIZR_AQM_target90_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                            commercial_targetfile = "outputs/final_features/08c_targets/02_Target90/uninformed/target_commercialuninformed.rds",
+                                                            bycatch_targetfile = "outputs/final_features/08c_targets/02_Target90/uninformed/target_bycatchuninformed.rds",
+                                                            commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
+                                                            bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+                                                            climate_scenario = "uninformed",
+                                                            outdir = "outputs/prioritizr_run/Uninformed/AQM/02_Target90/")
+# Plotting
+uninformed_target90_plot1 <- ggplot() + 
+  geom_sf(data = PRIORITIZR_AQM_target90_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
+       subtitle = "Maximum Target 90% (0.1 - 0.9)") +
+  theme_bw()
+uninformed_target90_plot1
+ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target90.pdf")
+###############################
+## Target 80% (0.1 - 0.8) ##
+###############################
+PRIORITIZR_AQM_target80_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/final_features/08c_targets/03_Target80/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/final_features/08c_targets/03_Target80/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+                                                           climate_scenario = "uninformed",
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/03_Target80/")
+# Plotting
+uninformed_target80_plot1 <- ggplot() + 
+  geom_sf(data = PRIORITIZR_AQM_target80_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
+       subtitle = "Maximum Target 80% (0.1 - 0.8)") +
+  theme_bw()
+uninformed_target80_plot1
+ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target80.pdf")
+###############################
+## Target 70% (0.1 - 0.7) ##
+###############################
+PRIORITIZR_AQM_target70_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/final_features/08c_targets/04_Target70/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/final_features/08c_targets/04_Target70/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+                                                           climate_scenario = "uninformed",
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/04_Target70/")
+# Plotting
+uninformed_target70_plot1 <- ggplot() + 
+  geom_sf(data = PRIORITIZR_AQM_target70_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
+       subtitle = "Maximum Target 70% (0.1 - 0.7)") +
+  theme_bw()
+uninformed_target70_plot1
+ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target70.pdf")
+###############################
+## Target 60% (0.1 - 0.6) ##
+###############################
+PRIORITIZR_AQM_target60_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/final_features/08c_targets/05_Target60/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/final_features/08c_targets/05_Target60/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+                                                           climate_scenario = "uninformed",
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/05_Target60/")
+# Plotting
+uninformed_target60_plot1 <- ggplot() + 
+  geom_sf(data = PRIORITIZR_AQM_target60_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
+       subtitle = "Maximum Target 60% (0.1 - 0.6)") +
+  theme_bw()
+uninformed_target60_plot1
+ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target60.pdf")
+###############################
+## Target 50% (0.1 - 0.5) ##
+###############################
+PRIORITIZR_AQM_target50_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/final_features/08c_targets/06_Target50/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/final_features/08c_targets/06_Target50/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+                                                           climate_scenario = "uninformed",
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/06_Target50/")
+# Plotting
+uninformed_target50_plot1 <- ggplot() + 
+  geom_sf(data = PRIORITIZR_AQM_target50_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
+       subtitle = "Maximum Target 50% (0.1 - 0.5)") +
+  theme_bw()
+uninformed_target50_plot1
+ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target50.pdf")
+###############################
+## Target 40% (0.1 - 0.4) ##
+###############################
+PRIORITIZR_AQM_target40_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/final_features/08c_targets/07_Target40/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/final_features/08c_targets/07_Target40/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+                                                           climate_scenario = "uninformed",
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/07_Target40/")
+# Plotting
+uninformed_target40_plot1 <- ggplot() + 
+  geom_sf(data = PRIORITIZR_AQM_target40_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
+       subtitle = "Maximum Target 40% (0.1 - 0.4)") +
+  theme_bw()
+uninformed_target40_plot1
+ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target40.pdf")
+###############################
+## Target 30% (0.1 - 0.3) ##
+###############################
+PRIORITIZR_AQM_target30_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/final_features/08c_targets/08_Target30/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/final_features/08c_targets/08_Target30/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+                                                           climate_scenario = "uninformed",
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/08_Target30/")
+# Plotting
+uninformed_target30_plot1 <- ggplot() + 
+  geom_sf(data = PRIORITIZR_AQM_target30_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
+       subtitle = "Maximum Target 30% (0.1 - 0.3)") +
+  theme_bw()
+uninformed_target30_plot1
+ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target30.pdf")
+###############################
+## Target 20% (0.1 - 0.2) ##
+###############################
+PRIORITIZR_AQM_target20_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/final_features/08c_targets/09_Target20/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/final_features/08c_targets/09_Target20/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+                                                           climate_scenario = "uninformed",
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/09_Target20/")
+# Plotting
+uninformed_target20_plot1 <- ggplot() + 
+  geom_sf(data = PRIORITIZR_AQM_target20_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
+       subtitle = "Maximum Target 20% (0.1 - 0.2)") +
+  theme_bw()
+uninformed_target20_plot1
+ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target20.pdf")
+###############################
+## Target 10% (0 - 0.1) ##
+###############################
+PRIORITIZR_AQM_target10_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/final_features/08c_targets/10_Target10/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/final_features/08c_targets/10_Target10/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+                                                           climate_scenario = "uninformed",
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/10_Target10/")
+# Plotting
+uninformed_target10_plot1 <- ggplot() + 
+  geom_sf(data = PRIORITIZR_AQM_target10_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
+       subtitle = "Maximum Target 10% (0 - 0.1)") +
+  theme_bw()
+uninformed_target10_plot1
+ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target10.pdf")
