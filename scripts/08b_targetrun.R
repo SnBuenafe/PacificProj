@@ -13,8 +13,8 @@
 
 # The function represent_target() requires the following inputs:
 # 1. number_PU = total number of PUs in study area.
-# 2. target_max = in percentage e.g. 100
-# 3. target_min = in percentage e.g. 0
+# 2. target_max = in proportion e.g. 0 - 1
+# 3. target_min = in proportion e.g. 0 - 1
 # 4. file_spec_info = .xlsx file of the species information (with the codes and the scientific names)
 # 5. inpdir = directory where the .rds files of the conservation features for each scenario are
 # 6. scenario = climate scenario (e.g. SSP126)
@@ -32,7 +32,7 @@ source("scripts/08a_targetfxn.R")
 # Run for SSP126
 TARGET100_run01 <- represent_target(number_PU <- 31917,
                     target_max <- 1,
-                    target_min <- 0,
+                    target_min <- 0.1,
                     file_spec_info <- "outputs/final_features/spec_info.xlsx",
                     inpdir <- "outputs/final_features/07a_25perc/",
                     scenario <- "SSP126",
@@ -41,7 +41,7 @@ TARGET100_run01 <- represent_target(number_PU <- 31917,
 # Run for SSP245
 TARGET100_run02 <- represent_target(number_PU <- 31917,
                     target_max <- 1,
-                    target_min <- 0,
+                    target_min <- 0.1,
                     file_spec_info <- "outputs/final_features/spec_info.xlsx",
                     inpdir <- "outputs/final_features/07a_25perc/",
                     scenario <- "SSP245",
@@ -50,7 +50,7 @@ TARGET100_run02 <- represent_target(number_PU <- 31917,
 # Run for SSP585
 TARGET100_run03 <- represent_target(number_PU <- 31917,
                     target_max <- 1,
-                    target_min <- 0,
+                    target_min <- 0.1,
                     file_spec_info <- "outputs/final_features/spec_info.xlsx",
                     inpdir <- "outputs/final_features/07a_25perc/",
                     scenario <- "SSP585",
