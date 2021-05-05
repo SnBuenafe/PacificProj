@@ -27,11 +27,10 @@ solution <- c("FALSE", "TRUE")
 ###############################
 NOREGRET_AQM_target100_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/AQM/01_Target100/",
                                                 outdir = "outputs/noregret_closures/AQM/",
-                                                target = "Target100")
-# To determine total cost
-NOREGRET_AQM_target100_run01 %>% 
-  filter(!is.na(cost)) %>% 
-  summarize(total_cost = sum(cost))
+                                                target_name = "Target100",
+                                                pu_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                                outexcel = "excel/no_regret/",
+                                                climate_scenario = "noregret")
 
 # Plotting
 noregret_target100 <- ggplot() + 
@@ -43,7 +42,7 @@ noregret_target100 <- ggplot() +
                           coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                    ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                    expand = TRUE) +
-                          labs(title = "Target 100% (0 - 1)") +
+                          labs(title = "Target 100% (0.1 - 1)") +
                           theme_bw()
 noregret_target100
 ###############################
@@ -51,11 +50,10 @@ noregret_target100
 ###############################
 NOREGRET_AQM_target90_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/AQM/02_Target90/",
                                                 outdir = "outputs/noregret_closures/AQM/",
-                                                target = "Target90")
-# To determine total cost
-NOREGRET_AQM_target90_run01 %>% 
-  filter(!is.na(cost)) %>% 
-  summarize(total_cost = sum(cost))
+                                                target_name = "Target90",
+                                               pu_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                               outexcel = "excel/no_regret/",
+                                               climate_scenario = "noregret")
 
 # Plotting
 noregret_target90 <- ggplot() + 
@@ -75,7 +73,10 @@ noregret_target90
 ###############################
 NOREGRET_AQM_target80_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/AQM/03_Target80/",
                                                outdir = "outputs/noregret_closures/AQM/",
-                                               target = "Target80")
+                                               target_name = "Target80",
+                                               pu_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                               outexcel = "excel/no_regret/",
+                                               climate_scenario = "noregret")
 # To determine total cost
 NOREGRET_AQM_target80_run01 %>% 
   filter(!is.na(cost)) %>% 
@@ -99,7 +100,10 @@ noregret_target80
 ###############################
 NOREGRET_AQM_target70_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/AQM/04_Target70/",
                                                outdir = "outputs/noregret_closures/AQM/",
-                                               target = "Target70")
+                                               target_name = "Target70",
+                                               pu_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                               outexcel = "excel/no_regret/",
+                                               climate_scenario = "noregret")
 # To determine total cost
 NOREGRET_AQM_target70_run01 %>% 
   filter(!is.na(cost)) %>% 
@@ -123,7 +127,10 @@ noregret_target70
 ###############################
 NOREGRET_AQM_target60_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/AQM/05_Target60/",
                                                outdir = "outputs/noregret_closures/AQM/",
-                                               target = "Target60")
+                                               target_name = "Target60",
+                                               pu_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                               outexcel = "excel/no_regret/",
+                                               climate_scenario = "noregret")
 # To determine total cost
 NOREGRET_AQM_target60_run01 %>% 
   filter(!is.na(cost)) %>% 
@@ -147,7 +154,10 @@ noregret_target60
 ###############################
 NOREGRET_AQM_target50_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/AQM/06_Target50/",
                                                outdir = "outputs/noregret_closures/AQM/",
-                                               target = "Target50")
+                                               target_name = "Target50",
+                                               pu_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                               outexcel = "excel/no_regret/",
+                                               climate_scenario = "noregret")
 # To determine total cost
 NOREGRET_AQM_target50_run01 %>% 
   filter(!is.na(cost)) %>% 
@@ -171,7 +181,10 @@ noregret_target50
 ###############################
 NOREGRET_AQM_target40_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/AQM/07_Target40/",
                                                outdir = "outputs/noregret_closures/AQM/",
-                                               target = "Target40")
+                                               target_name = "Target40",
+                                               pu_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                               outexcel = "excel/no_regret/",
+                                               climate_scenario = "noregret")
 # To determine total cost
 NOREGRET_AQM_target40_run01 %>% 
   filter(!is.na(cost)) %>% 
@@ -195,7 +208,10 @@ noregret_target40
 ###############################
 NOREGRET_AQM_target30_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/AQM/08_Target30/",
                                                outdir = "outputs/noregret_closures/AQM/",
-                                               target = "Target30")
+                                               target_name = "Target30",
+                                               pu_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                               outexcel = "excel/no_regret/",
+                                               climate_scenario = "noregret")
 # To determine total cost
 NOREGRET_AQM_target30_run01 %>% 
   filter(!is.na(cost)) %>% 
@@ -219,7 +235,10 @@ noregret_target30
 ###############################
 NOREGRET_AQM_target20_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/AQM/09_Target20/",
                                                outdir = "outputs/noregret_closures/AQM/",
-                                               target = "Target20")
+                                               target_name = "Target20",
+                                               pu_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                               outexcel = "excel/no_regret/",
+                                               climate_scenario = "noregret")
 # To determine total cost
 NOREGRET_AQM_target20_run01 %>% 
   filter(!is.na(cost)) %>% 
@@ -243,7 +262,10 @@ noregret_target20
 ###############################
 NOREGRET_AQM_target10_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/AQM/10_Target10/",
                                                outdir = "outputs/noregret_closures/AQM/",
-                                               target = "Target10")
+                                               target_name = "Target10",
+                                               pu_file = "outputs/cost_layer/large_medium/costlayer.rds",
+                                               outexcel = "excel/no_regret/",
+                                               climate_scenario = "noregret")
 # To determine total cost
 NOREGRET_AQM_target10_run01 %>% 
   filter(!is.na(cost)) %>% 

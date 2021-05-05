@@ -6,11 +6,13 @@
 # This function creates no-regret closures, requiring the ff. inputs:
 # 1. inpdir: where the prioritizr_run results are found.
 # 2. outdir: where to save the results of this function.
-# 3. target: e.g. Target100
+# 3. target_name: e.g. Target100
+# 4. pu_file: 
+# 5. climate_scenario: noregret
 
 # Runs are found in 11b_NoRegretRunAQM, and 11c_NoRegretRunIUCN.
 
-create_noregret <- function(inpdir, outdir, target, ...) {
+create_noregret <- function(inpdir, outdir, target_name, pu_file, climate_scenario, ...) {
   
   ##################################
   ### Defining the main packages ###
@@ -29,7 +31,7 @@ create_noregret <- function(inpdir, outdir, target, ...) {
   #######################
   files <- list.files(path = inpdir, pattern = "*.rds")
   # Calling the Planning Unit files.
-  temp_pu <- readRDS("inputs/rdsfiles/PacificABNJGrid_05deg.rds")
+  temp_pu <- readRDS(pu_file)
   planning_units <- temp_pu %>%
     dplyr::mutate(cellsID = 1:nrow(temp_pu)) %>% 
     as_tibble()
@@ -43,37 +45,51 @@ create_noregret <- function(inpdir, outdir, target, ...) {
     temp_file <- readRDS(paste0(inpdir, x_file))
     
     temp_plan <- temp_file %>% 
-      select(-cellsID.2.x, -province.y, -prov_descr.y, -area_km2.y, -species.y, -total_area.y, -cellsID.2.y, -velocity.y, -velo_tvalue.y,
-             -RCE.y, -RCE_tvalue.y) %>% 
-      rename(province = province.x, prov_descr = prov_descr.x, area_km2 = area_km2.x, species = species.x, total_area = total_area.x,
-             velocity = velocity.x, velo_tvalue = velo_tvalue.x, RCE = RCE.x, RCE_tvalue = RCE_tvalue.x, solution = solution_1)
+      select(cellsID, solution_1, geometry)
     
     assign(x = paste0("plan_",x), value = temp_plan)
   }
   
   temp <- st_intersection(plan_SSP126, plan_SSP245) %>% 
-    dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON"))
+    filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON"))
   
   temp_final <- st_intersection(temp, plan_SSP585) %>% 
-    dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON"))
-
+    filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON"))
+  
   final_list <- temp_final %>% 
-    dplyr::filter(solution == TRUE & solution.1 == TRUE & solution.2 == TRUE) %>% 
-    select(cellsID, area_km2, cost, solution, geometry) %>% 
+    dplyr::filter(solution_1 == TRUE & solution_1.1 == TRUE & solution_1.2 == TRUE) %>% 
+    select(solution_1, cellsID, geometry) %>% 
+    rename(solution = solution_1) %>% 
     as_tibble()
 
   #######################
   #### Join with PUs ####
   #######################
   no_regret <- left_join(planning_units, final_list, by = "cellsID") %>% 
-    dplyr::mutate(solution = replace_na(solution, "FALSE")) %>% 
+    dplyr::mutate(solution = replace_na(solution, "FALSE"),
+                  area_km2 = as.numeric(st_area(shp_PU_sf)/1e+06)) %>% 
     select(-geometry.y) %>% 
     rename(geometry = geometry.x) %>% 
     st_as_sf(sf_column_name = "geometry")
   
-  no_regret <- no_regret %>% 
-    mutate(area_km2 = as.numeric(st_area(no_regret)/1e+06)) # NA costs are not part of the plans
+  ##########################
+  ## Saving files as .csv ##
+  ##########################
+  total = 31917*2667.6
+  
+  summary <- no_regret %>% 
+    dplyr::filter(solution == "TRUE")
+  
+  summary1 <- summary %>% 
+    summarize(sum_area = sum(area_km2),percent_area = (sum(area_km2)/total)*100, 
+              num_pu = length(st_geometry(summary)),
+              total_cost = sum(cost)) %>% 
+    as_tibble() %>% 
+    select(-geometry)
+  
+  write_csv(summary1, paste0(outexcel,target_name,"_summary",climate_scenario,".csv"))
 
-  saveRDS(no_regret, paste0(outdir,"noregretclosures_",target,".rds"))
+  saveRDS(no_regret, paste0(outdir,"noregretclosures_",target_name,".rds"))
   return(no_regret)
 }
+

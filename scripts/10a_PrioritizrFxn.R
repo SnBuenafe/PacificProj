@@ -14,11 +14,13 @@
 # 5. bycatch_file: file containing the bycatch features (.rds)
 # 6. climate_scenario: climate scenario (e.g. SSP126)
 # 7. outdir: path where the solution will be saved.
+# 8. outexcel: where to save the .csv files of the summaries 
+# 9. target_name: e.g. Target100
 
 # Runs are found in 10b_PrioritizrRun.R and 10c_PrioritizrRunIUCN.R
 
 prioritizr_run <- function(cost_file, commercial_targetfile, bycatch_targetfile, 
-                           commercial_file, bycatch_file, climate_scenario, outdir, ...) {
+                           commercial_file, bycatch_file, climate_scenario, outdir, outexcel, target_name, ...) {
   ####################################################################################
   ####### Loading packages needed
   ####################################################################################
@@ -83,7 +85,14 @@ prioritizr_run <- function(cost_file, commercial_targetfile, bycatch_targetfile,
   ####################################
   
   # joining all the features
-  features <- full_join(commercial_features, bycatch_features, by = c("cellsID", "new_features"))
+  if(climate_scenario == "uninformed"){
+    features <- full_join(commercial_features, bycatch_features, by = c("cellsID", "new_features", "province",
+                                                                        "prov_descr","area_km2"))
+  }else{
+  features <- full_join(commercial_features, bycatch_features, by = c("cellsID", "new_features", "province",
+                                                                      "prov_descr", "area_km2", "velocity",
+                                                                      "velo_tvalue", "RCE", "RCE_tvalue", "cellsID.2"))
+  }
   
   # A character list of features to analyse
   features_list = unique(features$new_features) %>% 
@@ -117,13 +126,40 @@ prioritizr_run <- function(cost_file, commercial_targetfile, bycatch_targetfile,
     add_min_set_objective() %>%
     add_relative_targets(target_listf) %>%
     add_binary_decisions() %>%
-    add_gurobi_solver(verbose = FALSE) # using Gurobi Solver
+    add_gurobi_solver(gap = 0.1, verbose = FALSE) # using Gurobi Solver
   
   s1 <- solve(p1) %>% 
-    st_as_sf(sf_column_name = "geometry") %>% # Output changes from sf to df so we change it back
+    st_as_sf(sf_column_name = "geometry") # Output changes from sf to df so we change it back
+  solution <- s1 %>% 
     mutate(solution_1 = as.logical(solution_1)) # Change solution to logical for plotting
   
-  saveRDS(s1, paste0(outdir,"solution_",climate_scenario,".rds"))
-  return(s1)
-
+  # Printing important figures.
+  total = 31917*2667.6
+  rep <- eval_feature_representation_summary(p1, s1[, "solution_1"])
+  rep
+  write_csv(rep, paste0(outexcel,target_name,"_features_rep_",climate_scenario,".csv"))
+  
+  summary <- s1 %>% 
+    filter(solution_1 == 1)
+  
+  if(climate_scenario == "uninformed"){
+    summary1 <- summary %>% 
+      summarize(sum_area = sum(area_km2), percent_area = (sum(area_km2)/total)*100, num_pu = length(st_geometry(summary)),
+                total_cost = sum(cost)) %>% 
+      as_tibble() %>% 
+      select(-geometry)
+  }
+  else{
+  summary1 <- summary %>% 
+    summarize(sum_area = sum(area_km2), percent_area = (sum(area_km2)/total)*100, num_pu = length(st_geometry(summary)),
+              total_cost = sum(cost), median_velocity = median(velocity), median_tvelocity = median(velo_tvalue),
+              median_RCE = median(RCE), median_RCEtvalue = median(RCE_tvalue)) %>% 
+    as_tibble() %>% 
+    select(-geometry)
+  }
+  summary1
+  write_csv(summary1, paste0(outexcel,target_name,"_summary",climate_scenario,".csv"))
+  
+  saveRDS(solution, paste0(outdir,"solution_",climate_scenario,".rds"))
+  return(solution)
 }

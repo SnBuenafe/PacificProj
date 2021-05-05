@@ -38,7 +38,9 @@ PRIORITIZR_AQM_target100_uninformed_run01 <- prioritizr_run(cost_file = "outputs
                                                  commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
                                                  bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
                                                  climate_scenario = "uninformed",
-                                                 outdir = "outputs/prioritizr_run/Uninformed/AQM/01_Target100/")
+                                                 outdir = "outputs/prioritizr_run/Uninformed/AQM/01_Target100/",
+                                                 outexcel = "excel/AQM/",
+                                                 target_name = "Target100")
 # Plotting
 uninformed_target100_plot1 <- ggplot() + 
   geom_sf(data = PRIORITIZR_AQM_target100_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
@@ -64,7 +66,9 @@ PRIORITIZR_AQM_target90_uninformed_run01 <- prioritizr_run(cost_file = "outputs/
                                                             commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
                                                             bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
                                                             climate_scenario = "uninformed",
-                                                            outdir = "outputs/prioritizr_run/Uninformed/AQM/02_Target90/")
+                                                            outdir = "outputs/prioritizr_run/Uninformed/AQM/02_Target90/",
+                                                           outexcel = "excel/AQM/",
+                                                           target_name = "Target90")
 # Plotting
 uninformed_target90_plot1 <- ggplot() + 
   geom_sf(data = PRIORITIZR_AQM_target90_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
@@ -89,7 +93,9 @@ PRIORITIZR_AQM_target80_uninformed_run01 <- prioritizr_run(cost_file = "outputs/
                                                            commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
                                                            bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/03_Target80/")
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/03_Target80/",
+                                                           outexcel = "excel/AQM/",
+                                                           target_name = "Target80")
 # Plotting
 uninformed_target80_plot1 <- ggplot() + 
   geom_sf(data = PRIORITIZR_AQM_target80_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
@@ -114,7 +120,9 @@ PRIORITIZR_AQM_target70_uninformed_run01 <- prioritizr_run(cost_file = "outputs/
                                                            commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
                                                            bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/04_Target70/")
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/04_Target70/",
+                                                           outexcel = "excel/AQM/",
+                                                           target_name = "Target70")
 # Plotting
 uninformed_target70_plot1 <- ggplot() + 
   geom_sf(data = PRIORITIZR_AQM_target70_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
@@ -139,7 +147,9 @@ PRIORITIZR_AQM_target60_uninformed_run01 <- prioritizr_run(cost_file = "outputs/
                                                            commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
                                                            bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/05_Target60/")
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/05_Target60/",
+                                                           outexcel = "excel/AQM/",
+                                                           target_name = "Target60")
 # Plotting
 uninformed_target60_plot1 <- ggplot() + 
   geom_sf(data = PRIORITIZR_AQM_target60_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
@@ -164,7 +174,9 @@ PRIORITIZR_AQM_target50_uninformed_run01 <- prioritizr_run(cost_file = "outputs/
                                                            commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
                                                            bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/06_Target50/")
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/06_Target50/",
+                                                           outexcel = "excel/AQM/",
+                                                           target_name = "Target50")
 # Plotting
 uninformed_target50_plot1 <- ggplot() + 
   geom_sf(data = PRIORITIZR_AQM_target50_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
@@ -189,7 +201,9 @@ PRIORITIZR_AQM_target40_uninformed_run01 <- prioritizr_run(cost_file = "outputs/
                                                            commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
                                                            bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/07_Target40/")
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/07_Target40/",
+                                                           outexcel = "excel/AQM/",
+                                                           target_name = "Target40")
 # Plotting
 uninformed_target40_plot1 <- ggplot() + 
   geom_sf(data = PRIORITIZR_AQM_target40_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
@@ -214,7 +228,9 @@ PRIORITIZR_AQM_target30_uninformed_run01 <- prioritizr_run(cost_file = "outputs/
                                                            commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
                                                            bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/08_Target30/")
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/08_Target30/",
+                                                           outexcel = "excel/AQM/",
+                                                           target_name = "Target30")
 # Plotting
 uninformed_target30_plot1 <- ggplot() + 
   geom_sf(data = PRIORITIZR_AQM_target30_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
@@ -239,7 +255,9 @@ PRIORITIZR_AQM_target20_uninformed_run01 <- prioritizr_run(cost_file = "outputs/
                                                            commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
                                                            bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/09_Target20/")
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/09_Target20/",
+                                                           outexcel = "excel/AQM/",
+                                                           target_name = "Target20")
 # Plotting
 uninformed_target20_plot1 <- ggplot() + 
   geom_sf(data = PRIORITIZR_AQM_target20_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
@@ -264,7 +282,9 @@ PRIORITIZR_AQM_target10_uninformed_run01 <- prioritizr_run(cost_file = "outputs/
                                                            commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
                                                            bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/10_Target10/")
+                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/10_Target10/",
+                                                           outexcel = "excel/AQM/",
+                                                           target_name = "Target10")
 # Plotting
 uninformed_target10_plot1 <- ggplot() + 
   geom_sf(data = PRIORITIZR_AQM_target10_uninformed_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
