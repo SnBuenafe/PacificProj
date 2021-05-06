@@ -88,6 +88,9 @@ create_noregret <- function(inpdir, outdir, target_name, pu_file, climate_scenar
     select(-geometry)
   
   write_csv(summary1, paste0(outexcel,target_name,"_summary",climate_scenario,".csv"))
+  
+  no_regret <- no_regret %>% 
+    rename(solution_1 = solution)
 
   saveRDS(no_regret, paste0(outdir,"noregretclosures_",target_name,".rds"))
   return(no_regret)

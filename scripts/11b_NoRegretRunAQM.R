@@ -34,7 +34,7 @@ NOREGRET_AQM_target100_run01 <- create_noregret(inpdir = "outputs/prioritizr_run
 
 # Plotting
 noregret_target100 <- ggplot() + 
-                          geom_sf(data = NOREGRET_AQM_target100_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+                          geom_sf(data = NOREGRET_AQM_target100_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
                           scale_fill_manual(name = "Solution",
                                             values = pal_rich,
                                             labels = solution) +
@@ -57,7 +57,7 @@ NOREGRET_AQM_target90_run01 <- create_noregret(inpdir = "outputs/prioritizr_run/
 
 # Plotting
 noregret_target90 <- ggplot() + 
-  geom_sf(data = NOREGRET_AQM_target90_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_AQM_target90_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -84,7 +84,7 @@ NOREGRET_AQM_target80_run01 %>%
 
 # Plotting
 noregret_target80 <- ggplot() + 
-  geom_sf(data = NOREGRET_AQM_target80_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_AQM_target80_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -111,7 +111,7 @@ NOREGRET_AQM_target70_run01 %>%
 
 # Plotting
 noregret_target70 <- ggplot() + 
-  geom_sf(data = NOREGRET_AQM_target70_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_AQM_target70_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -138,7 +138,7 @@ NOREGRET_AQM_target60_run01 %>%
 
 # Plotting
 noregret_target60 <- ggplot() + 
-  geom_sf(data = NOREGRET_AQM_target60_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_AQM_target60_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -165,7 +165,7 @@ NOREGRET_AQM_target50_run01 %>%
 
 # Plotting
 noregret_target50 <- ggplot() + 
-  geom_sf(data = NOREGRET_AQM_target50_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_AQM_target50_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -192,7 +192,7 @@ NOREGRET_AQM_target40_run01 %>%
 
 # Plotting
 noregret_target40 <- ggplot() + 
-  geom_sf(data = NOREGRET_AQM_target40_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_AQM_target40_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -219,7 +219,7 @@ NOREGRET_AQM_target30_run01 %>%
 
 # Plotting
 noregret_target30 <- ggplot() + 
-  geom_sf(data = NOREGRET_AQM_target30_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_AQM_target30_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -246,7 +246,7 @@ NOREGRET_AQM_target20_run01 %>%
 
 # Plotting
 noregret_target20 <- ggplot() + 
-  geom_sf(data = NOREGRET_AQM_target20_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_AQM_target20_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -273,7 +273,7 @@ NOREGRET_AQM_target10_run01 %>%
 
 # Plotting
 noregret_target10 <- ggplot() + 
-  geom_sf(data = NOREGRET_AQM_target10_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_AQM_target10_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -294,4 +294,4 @@ AQM_noregret <- (noregret_target100 + noregret_target90 + noregret_target80 + no
                   title = 'No-Regret Closures',
                   subtitle = 'Using AQM Bycatch & Global-fitted Commercial Data')
 AQM_noregret
-ggsave("pdfs/solutions/AQM/NoRegret_AQM.pdf")
+ggsave("pdfs/solutions/AQM/NoRegret_AQM.pdf", width = 21, height = 29.7, units = "cm")
