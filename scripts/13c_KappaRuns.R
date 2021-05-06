@@ -14,5 +14,10 @@
 
 source("scripts/13b_Kappa.R")
 
+# Run with everything @ 0.1 - 1
 kappa_run01 <- kappa_corrplot(inpdir = "outputs/kappa_coefficient/run1/",
                               name_cols = c("No-regret", "SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed")) # make sure it follows the files' alphabetical order
+
+# Run with 0.1 - 1 w/o No-regret.
+kappa_run02 <- kappa_corrplot(inpdir = "outputs/kappa_coefficient/run2/",
+                              name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))

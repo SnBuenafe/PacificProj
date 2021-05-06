@@ -177,8 +177,6 @@ p <- p + geom_map(data = WorldData, map = WorldData,
 p 
 ggsave("outputs/commercial/GAM_plots/YFT/YFT_map.png", p, dpi = 1200)
 
-###### delete after this
-
 ###################################
 # Yellowfin Tuna (Pacific-fitted)
 ###################################
