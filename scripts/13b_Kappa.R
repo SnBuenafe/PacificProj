@@ -74,7 +74,8 @@ matrix_final2 <- matrix_final %>%
 write_csv(matrix_final2, paste0(inpdir,"kappa_matrix.csv"))
 
 rownames(matrix_final1) <- matrix_final1[,1]
-matrix_final2 <- matrix_final1[,2:6]
+n <- length(files) + 1
+matrix_final2 <- matrix_final1[,2:n]
 class(matrix_final2) <- "numeric"
 
 col <- colorRampPalette(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
