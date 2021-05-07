@@ -2,7 +2,7 @@
 # 04a creates the GAMs for each of the species.
 # It saves the predictions (with the environmental variables and the coordinates) as a .csv file. (dir: input/mercer/)
 # Saves the visreg plots and maps. (dir: outputs/commercial/GAM_plots/)
-# There are 4 parts to 04a:
+# There are 8 parts to 04a; the first 4 of which are global-fitted data:
 # 1. 04a_1: yellowfin
 # 2. 04a_2: albacore
 # 3. 04a_3: swordfish
@@ -157,6 +157,17 @@ dev.copy2pdf(file = "outputs/commercial/GAM_plots/YFT/YFT_BestModelLatLong.pdf",
 # Plotting best model as a map
 #######################################
 
+# Defining generalities (used for all subsequent 04a)
+WorldData <- map_data('world')
+WorldData %>% filter(region != "Antarctica") -> WorldData
+WorldData <- fortify(WorldData)
+ggplot() +
+  geom_map(data = WorldData, map = WorldData,
+           aes(x = long, y = lat, group = group, map_id = region),
+           fill = "grey", colour = "grey", size = 0.5) +
+  geom_point(data = yft, aes(x = Longitude, y = Latitude), size = 0.2) + 
+  facet_wrap(~pa)
+
 Surface <- mba.surf(yft[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
 
 # This is just to organise dataframe for plotting
@@ -177,99 +188,4 @@ p <- p + geom_map(data = WorldData, map = WorldData,
 p 
 ggsave("outputs/commercial/GAM_plots/YFT/YFT_map.png", p, dpi = 1200)
 
-###################################
-# Yellowfin Tuna (Pacific-fitted)
-###################################
 
-m01 <- gam(pa ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + s(Chl), data = yft_pacific, family = "binomial")
-summary(m01)
-
-# Plotting response of all variables
-fullplot_yftpac1 <- visreg(m01, "SST", partial = FALSE, ylab = " ", xlab = "SST", gg = TRUE) + theme_bw()
-fullplot_yftpac2 <- visreg(m01, "Season2", partial = FALSE, ylab = " ", xlab = "Seasons", gg = TRUE) + theme_bw()
-fullplot_yftpac3 <- visreg(m01, "MLD", partial = FALSE, ylab = " ", xlab = "MLD", gg = TRUE) + theme_bw()
-fullplot_yftpac4 <- visreg(m01, "Latitude", partial = FALSE, ylab = " ", xlab = "Latitude", gg = TRUE) + theme_bw()
-fullplot_yftpac5 <- visreg(m01, "Longitude", partial = FALSE, ylab = " ", xlab = "Longitude", gg = TRUE) + theme_bw()
-fullplot_yftpac6 <- visreg(m01, "Bathymetry", partial = FALSE, ylab = " ", xlab = "Bathymetry", gg = TRUE) + theme_bw()
-fullplot_yftpac7 <- visreg(m01, "Dist2Coast", partial = FALSE, ylab = " ", xlab = "Dist2Coast", gg = TRUE) + theme_bw() 
-# Dist2Coast seems to make more sense that Bathymetry
-fullplot_yftpac8 <- visreg(m01, "Nitrate", partial = FALSE, ylab = " ", xlab = "Nitrate", gg = TRUE) + theme_bw()
-fullplot_yftpac9 <- visreg(m01, "Chl", partial = FALSE, ylab = " ", xlab = "Chl", gg = TRUE) + theme_bw()
-# Some of the relationships look too wiggly, and might not make sense
-
-YFTPAC_FullModel <- (fullplot_yftpac1 | fullplot_yftpac2 | fullplot_yftpac3) / (fullplot_yftpac4 | fullplot_yftpac5 | fullplot_yftpac6) / (fullplot_yftpac7 | fullplot_yftpac8 | fullplot_yftpac9) +
-  plot_annotation(title = "Response of Variables for Full Model", subtitle = "Yellowfin Tuna (Pacific-fitted)", tag_levels = "i")
-YFTPAC_FullModel
-ggsave("outputs/commercial/GAM_plots/YFT/YFTPAC_FullModel.pdf", width = 20, height = 20, dpi = 320)
-
-# First, let's see what we can drop using BIC
-summary(m01) # Nitrate is not significant.
-# Dist2Coast and MLD looks kind of linear.
-# Deviance explained = 17.1%, R-squared (adjusted) = 0.129
-
-# Remove Nitrate as it is not significant.
-m02 <- update(m01, ~. -s(Nitrate))
-BIC(m01, m02)
-summary(m02) # BIC of m02 is lower (Nitrate is n.s.)
-
-# Try to make Dist2Coast linear.
-m03 <- update(m02, ~. -s(Dist2Coast) +Dist2Coast)
-BIC(m02, m03) # BIC of m03 is lower (retain linearity)
-
-# Try to make MLD linear?
-m04 <- update(m03, ~. -s(MLD) +MLD)
-BIC(m04, m03) # BIC of m04 is lower (retain linearity)
-summary(m04)
-
-# Try dropping Bathymetry.
-m05 <- update(m04, ~. -s(Bathymetry))
-BIC(m05, m04) #BIC of m05 is lower (remove Bathymetry)
-summary(m05)
-
-# Best model
-YFTPAC_BestModel <- m05
-
-# Saving predictions
-yft_pacific$Preds <- predict.gam(YFTPAC_BestModel, type = "response")
-median(yft_pacific$Preds)
-# Writing the data and predictions into a .csv
-write_csv(yft_pacific, file = "inputs/mercer/yft_pacific.csv")
-
-bestplot_yftpac1 <- visreg(YFTPAC_BestModel, "SST", partial = FALSE, ylab = "s(SST, 4.71)", xlab = "SST (°C)", gg = TRUE) + theme_bw() + ylim(-100, 50)
-bestplot_yftpac2 <- visreg(YFTPAC_BestModel, "Season2", partial = FALSE, ylab = "f(Season)", xlab = "Season", gg = TRUE) + theme_bw() 
-bestplot_yftpac3 <- visreg(YFTPAC_BestModel, "Chl", partial = FALSE, ylab = "s(Chl, 8.70)", xlab = "Chlorophyll A (mg/m^3)", gg = TRUE) + theme_bw()  
-bestplot_yftpac4 <- visreg(YFTPAC_BestModel, "MLD", partial = FALSE, ylab = "f(MLD, -0.02)", xlab = "MLD (m)", gg = TRUE) + theme_bw()  
-bestplot_yftpac5 <- visreg(YFTPAC_BestModel, "Dist2Coast", partial = FALSE, ylab = "f(Chl, -1.03x10^-3)", xlab = "Dist2Coast (km)", gg = TRUE) + theme_bw()  
-
-bestplot_yftpac <- (bestplot_yftpac1 | bestplot_yftpac2 | bestplot_yftpac3) / (bestplot_yftpac4 | bestplot_yftpac5) +
-  plot_annotation(title = "Response of Variables for Best Model", subtitle = "Yellowfin Tuna (Pacific-fitted)", tag_levels = "i")
-bestplot_yftpac
-ggsave("outputs/commercial/GAM_plots/YFT/YFTPAC_BestModel.pdf", width = 20, height = 20, dpi = 320)
-
-vis.gam(YFTPAC_BestModel, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (°)", 
-        ylab = "Longitude (°)", zlab = "Presence", color = "cm", theta = 30, phi = 30, r = 100)
-dev.copy2pdf(file = "outputs/commercial/GAM_plots/YFT/YFTPAC_BestModelLatLong.pdf", paper = "A4r")
-
-#######################################
-# Plotting best model as a map
-#######################################
-
-Surface <- mba.surf(yft_pacific[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
-
-# This is just to organise dataframe for plotting
-dimnames(Surface$xyz.est$z) <- list(Surface$xyz.est$x, Surface$xyz.est$y)
-df3 <- melt(Surface$xyz.est$z, varnames = c('Longitude', 'Latitude'), value.name = 'Preds')
-
-# Plot the map
-x11(width = 14, height = 7)
-p <- ggplot(data = df3, aes(Longitude, Latitude)) +
-  geom_raster(aes(fill = Preds)) +
-  scale_fill_gradientn(colours = matlab.like(7), na.value = "white") +
-  theme_minimal() +
-  theme(legend.position="right")
-
-p <- p + geom_map(data = WorldData, map = WorldData,
-                  aes(x = long, y = lat, group = group, map_id = region),
-                  fill = "grey", colour = "grey", size = 0.5)
-p 
-ggsave("outputs/commercial/GAM_plots/YFT/YFTPAC_map.png", p, dpi = 1200)

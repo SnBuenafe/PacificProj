@@ -228,7 +228,7 @@ ggsave("pdfs/tuna_spawning.pdf", width = 20, height = 10, dpi = 300)
 # Yellowfin Tuna
 PRED_pacific_YFT <- commercial_feat(input = "YFT_pac",
                          inpdir = "inputs/mercer/yft_pacific.csv",
-                         prob_threshold = 0.06676035, #median of predictions of YFT
+                         prob_threshold = 0.06638632, #median of predictions of YFT
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
                          outdir = "outputs/commercial/04b_CommercialPredictions/")
 
@@ -238,7 +238,7 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p5 <- ggplot()+
-  geom_sf(data = run11, aes(color = Prob, fill = Prob)) +
+  geom_sf(data = PRED_pacific_YFT, aes(color = Prob, fill = Prob)) +
   sc +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
@@ -250,7 +250,7 @@ p5 <- ggplot()+
 # Albacore
 PRED_pacific_ALB <- commercial_feat(input = "ALB_pac",
                          inpdir = "inputs/mercer/alba_pacific.csv",
-                         prob_threshold = 0.006207029, #median of predictions of ALB
+                         prob_threshold = 0.006207977, #median of predictions of ALB
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
                          outdir = "outputs/commercial/04b_CommercialPredictions/")
 
@@ -260,7 +260,7 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p6 <- ggplot()+
-  geom_sf(data = run12, aes(color = Prob, fill = Prob)) +
+  geom_sf(data = PRED_pacific_ALB, aes(color = Prob, fill = Prob)) +
   sc +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
@@ -272,7 +272,7 @@ p6 <- ggplot()+
 # Skipjack Tuna
 PRED_pacific_SKP <- commercial_feat(input = "SKP_pac",
                          inpdir = "inputs/mercer/skip_pacific.csv",
-                         prob_threshold = 0.08267397, #median of predictions of SKP
+                         prob_threshold = 0.0830641, #median of predictions of SKP
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
                          outdir = "outputs/commercial/04b_CommercialPredictions/")
 
@@ -282,7 +282,7 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p7 <- ggplot()+
-  geom_sf(data = run13, aes(color = Prob, fill = Prob)) +
+  geom_sf(data = PRED_pacific_SKP, aes(color = Prob, fill = Prob)) +
   sc +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
@@ -295,7 +295,7 @@ p7 <- ggplot()+
 
 PRED_pacific_SWO <- commercial_feat(input = "SWO_pac",
                          inpdir = "inputs/mercer/sword_pacific.csv",
-                         prob_threshold = 0.01340143, #median of predictions of SWO
+                         prob_threshold = 0.01336439, #median of predictions of SWO
                          PU = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
                          outdir = "outputs/commercial/04b_CommercialPredictions/")
 
@@ -305,7 +305,7 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p8 <- ggplot()+
-  geom_sf(data = run14, aes(color = Prob, fill = Prob)) +
+  geom_sf(data = PRED_pacific_SWO, aes(color = Prob, fill = Prob)) +
   sc +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
