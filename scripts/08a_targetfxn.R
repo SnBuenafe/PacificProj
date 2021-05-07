@@ -47,6 +47,8 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
       pattern_list <- c(paste0("\\Q",scenario,"\\E"))
       call_temp <- list.files(path = inpdir, pattern = pattern_list)
       
+      temp_categ <- list()
+      
       #########################
       ### Assigning targets ###
       #########################
