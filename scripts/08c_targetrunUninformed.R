@@ -31,7 +31,7 @@ source("scripts/08a_targetfxn.R")
 ####################################
 TARGET100uninformed_run01 <- represent_target(number_PU <- 31917,
                                     target_max <- 1,
-                                    target_min <- 0,
+                                    target_min <- 0.1,
                                     file_spec_info <- "outputs/final_features/spec_info.xlsx",
                                     inpdir <- "outputs/final_features/07c_100perc/",
                                     scenario <- "uninformed",

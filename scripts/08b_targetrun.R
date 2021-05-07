@@ -140,7 +140,7 @@ TARGET70_run02 <- represent_target(number_PU <- 31917,
                                    scenario <- "SSP245",
                                    outdir <- "outputs/final_features/08b_targets/04_Target70/")
 
-# Run for SSP585
+ # Run for SSP585
 TARGET70_run03 <- represent_target(number_PU <- 31917,
                                    target_max <- 0.7,
                                    target_min <- 0.1,
