@@ -15,6 +15,7 @@
 # 4. RCE_file = .rds file for RCE of the scenario
 # 5. feature_prov = .rds file for the features x province
 # 6. outdir = path of the output
+# 7. data = "smart" for climate-smart and NA for uninformed
 
 # The function is run in 07b for different scenarios.
 

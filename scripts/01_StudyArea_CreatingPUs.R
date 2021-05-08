@@ -1,36 +1,34 @@
-#code modified by Tin Buenafe, 2021 (tinbuenafe@gmail.com)
-
-# This code was written by Isaac Brito-Morales (i.britomorales@uq.edu.au)
+# This code was written by Tin Buenafe (2021)
+# email: tinbuenafe@gmail.com
 # Please do not distribute this code without permission.
-# NO GUARANTEES THAT CODE IS CORRECT
-# Caveat Emptor!
+# There are no guarantees that this code will work perfectly.
 
-# proj_type = moll_global <- "+proj=moll +lon_0=0 +datum=WGS84 +units=m +no_defs"
-# proj_type = robin_global <- "+proj=robin +lon_0=0 +datum=WGS84 +units=m +no_defs"
-
-# size of hexagons: 
-# resolution 0.25 deg == grid_spacing(26860)
-# resolution 0.5 deg == grid_spacing(53730)
-# resolution 1 deg == grid_spacing(119300)
-
-# size of squares: 
-# resolution 0.25 deg == grid_spacing(25000)
-# resolution 0.5 deg == grid_spacing(50000)
-# resolution 1 deg == grid_spacing(111000)
+##################################
+### Defining the main packages ###
+##################################
 
 library(raster)
 library(sf)
-library(dplyr)
+library(tidyverse)
 library(magrittr)
 library(rnaturalearth)
-library(rnaturalearthdata)
-library(fasterize)
-library(ggplot2)
-library(proj4) #needed for creating Bndry
+library(proj4)
 
-#projections used
+#######################################################
+### Defining the generalities and calling functions ###
+#######################################################
+
 rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
 longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+
+source("scripts/study_area/fConvert2PacificRobinson.R")
+source("scripts/study_area/fCreateSinglePolygon.R")
+source("scripts/study_area/fCreateMaskedPolygon.R")
+source("scripts/study_area/fCreate_PlanningUnits.R")
+
+#######################################
+### Polygons of seas in the Pacific ###
+#######################################
 
 ocean_sf <- ne_download(scale = "large", category = "physical", type = "geography_marine_polys", returnclass = "sf") %>% 
   filter(name %in% c("North Pacific Ocean", "South Pacific Ocean", "Philippine Sea", "Coral Sea", "Tasman Sea", "South China Sea", 
@@ -48,257 +46,72 @@ ocean_sf <- ne_download(scale = "large", category = "physical", type = "geograph
                      "Prince William Sound", "Smith Sound", "Queen Charlotte Strait", "Baird Inlet", "Hecate Strait", "Cordova Bay", "Columbia River",
                      "Salish Sea", "Golfo de Panamá", "Golfo Corcovado", "Golfo de Penas", "Golfo de Guayaquil", "Golfo de Tehuantepec",
                      "Dixon Entrance", "Smith Sound", "Queen Charlotte Strait", "Cordova Bay" ))
-
 # "Chukchi Sea""Gulf of Olen‘k""Chaun Bay", "Ozero Mogotoyevo","Guba Gusinaya", "Strait of Malacca"
 
 
-#########################################################
-# Create a land shapefile Pacific centered and projected  
-#########################################################
+############################################################
+# Creating Pacific-centered and Robinson projected land .shp
+############################################################
 # Using land mask for nature earth package to create a projected sf/shapefile object
 world <- ne_countries(scale = 'small', returnclass = 'sf')
-# Define a long & slim polygon that overlaps the meridian line & set its CRS to match # that of world
-polygon <- st_polygon(x = list(rbind(c(-0.0001, 90),
-                                     c(0, 90),
-                                     c(0, -90),
-                                     c(-0.0001, -90),
-                                     c(-0.0001, 90)))) %>%
-  st_sfc() %>%
-  st_set_crs(4326)
 
-# Modify world dataset to remove overlapping portions with world's polygons
-world2 <- world %>% 
-  st_difference(polygon)
-# Perform transformation on modified version of world dataset
-world_robinson <- world2 %>% 
-  st_transform(crs = rob_pacific)
-# Check the plot if just in case
-ggplot() +
-  geom_sf(data = world_robinson) 
-# notice that there is a line in the middle of Antarctica. This is because we have
-# split the map after reprojection. We need to fix this:
-
-# Fix those extra boundaries
-bbox <-  st_bbox(world_robinson)
-bbox[c(1,3)]  <-  c(-1e-5,1e-5)
-polygon2 <- st_as_sfc(bbox)
-crosses <- world_robinson %>%
-  st_intersects(polygon2) %>%
-  sapply(length) %>%
-  as.logical %>%
-  which
-# Adding buffer 0
-world_robinson[crosses,] %<>%
-  st_buffer(0) 
-# Check the plot again
-ggplot() +
-  geom_sf(data = world_robinson) # OK now looks better!
-# Save the object
+world_robinson <- fConvert2PacificRobinson(world)
+saveRDS(world_robinson, "inputs/rdsfiles/PacificCenterLand.rds")
 # st_write(world_robinson, dsn = "files/shapefiles/PacificCenterLand", driver = "ESRI Shapefile")
+#############################################################
+# Creating Pacific-centered and Robinson projected ABNJ .shp
+#############################################################
+res = 0.5
+# Data from Marine Regions
+mask = st_read("inputs/shapefiles/World_EEZ_v11_20191118/eez_v11.shp") %>% 
+  filter(SOVEREIGN1 != "Antarctica")
+inverse = TRUE
+pacific_robinson <- fCreateMaskedPolygon(ocean_sf, res, mask, inverse) %>% 
+  fConvert2PacificRobinson()
 
+saveRDS(pacific_robinson, "inputs/rdsfiles/PacificCenterABNJ.rds")
+# st_write(pacific_robinson, dsn = "inputs/shapefiles/PacificCenterABNJ", driver = "ESRI Shapefile", append = TRUE)
 
-##########################################################################################
-# Create HighSeas shapefile Pacific centered that could be used to create planning units
-##########################################################################################
-# Land mask to inverted later
-ocean <- ocean_sf
-# Creating a empty raster at 0.5° resolution (you can increase the resolution to get a better border precision)
-rs <- raster(ncol = 360*2, nrow = 180*2) 
-rs[] <- 1:ncell(rs)
-crs(rs) <- CRS(longlat)
-# Fasterize the ocean_sf object
-ocean_rs <- fasterize(ocean, rs)
-writeRaster(ocean_rs, "inputs/rasterfiles/PacificCentered_05deg", format = "GTiff", overwrite = TRUE)
-
-# Reading EEZ
-eez <- st_read("inputs/shapefiles/World_EEZ_v11_20191118/eez_v11.shp") %>% 
-  filter(SOVEREIGN1 != "Antarctica") # Antarctica HAS EEZs so we must exclude the EEZ region from the shp data
-eez_sp <- as(eez, "Spatial")
-# Creating the final raster
-abnj_rs <- mask(ocean_rs, eez_sp, inverse = TRUE)
-# We can plot the object to see if it is correct
-plot(abnj_rs) 
-# looks OK but there are some land pixels that should not be there 
-# If you convert this to a polygon you would end up with "unwanted" land polyong
-
-# A process to delete certain agrupation of pixels
-abnj_clump <- clump(abnj_rs, directions = 8) 
-# Get frequency table    
-df_clump <- freq(abnj_clump) %>% 
-  as.data.frame()
-# which rows of the data.frame are only represented by clumps under 9 pixels?
-str(which(df_clump$count <= 9))
-# which values do these correspond to?
-str(df_clump$value[which(df_clump$count <= 9)])
-# put these into a vector of clump ID's to be removed
-excludeID <- df_clump$value[which(df_clump$count <= 9)]
-# make a new raster to be sieved
-abnj_rs2 <- abnj_clump
-# assign NA to all clumps whose IDs are found in excludeID
-abnj_rs2[abnj_rs2 %in% excludeID] <- NA
-# We can plot the object to see if it is correct
-plot(abnj_rs2)
-writeRaster(abnj_rs2, "inputs/rasterfiles/PacificCentredABNJ_05deg", format = "GTiff", overwrite = TRUE)
-
-# From Raster to Polygon
-abnj_pol <- as(abnj_rs2,  "SpatialPolygonsDataFrame")
-abnj_pol$layer <- seq(1, length(abnj_pol))
-abnj_pol <- spTransform(abnj_pol, CRS(longlat))
-# Now to a sf object and create ONE BIG polygon that we can use to populate with PUs
-abnj_pol_sf <- st_as_sf(abnj_pol) %>% 
-  dplyr::select(layer) %>% 
-  summarise(total_layer = sum(layer, do_union = TRUE))
-# We can plot the object to see if it is correct
-ggplot() +
-  geom_sf(data = abnj_pol_sf) # Looks GOOD!
-
-# Transform the High Seas object to a Pacific-centered projected shapefile  
-abnj <- abnj_pol_sf %>% 
-  st_difference(polygon)
-# Perform transformation
-abnj_robinson <- abnj %>% 
-  st_transform(crs = rob_pacific)
-# We can plot the object to see if it is correct
-ggplot() +
-  geom_sf(data = abnj_robinson) # Looks weird and also there is some lines due the Split process
-
-# To fix it the same code as above
-bbox2 <-  st_bbox(abnj_robinson)
-bbox2[c(1,3)]  <-  c(-1e-5,1e-5)
-polygon3 <- st_as_sfc(bbox2)
-crosses2 <- abnj_robinson %>%
-  st_intersects(polygon3) %>%
-  sapply(length) %>%
-  as.logical %>%
-  which
-# Adding buffer 0
-abnj_robinson[crosses2, ] %<>%
-  st_buffer(0) 
-# We can plot the object to see if it is correct
-ggplot() +
-  geom_sf(data = abnj_robinson) # Looks better
-# Save the object
-st_write(abnj_robinson, dsn = "inputs/shapefiles/PacificCenterABNJ", driver = "ESRI Shapefile", append = TRUE)
-
-##########################################################################################
+##################################
 # Creating Pacific-centered EEZs
-##########################################################################################
-eez_rs <- mask(ocean_rs, eez_sp, inverse = FALSE)
-plot(eez_rs)
-writeRaster(eez_rs, "inputs/rasterfiles/PacificCentredEEZ_05deg", format = "GTiff", overwrite = TRUE)
+##################################
+res = 0.5
+# Data from Marine Regions
+mask = st_read("inputs/shapefiles/World_EEZ_v11_20191118/eez_v11.shp") %>% 
+  filter(SOVEREIGN1 != "Antarctica")
+inverse = FALSE
+eez_robinson <- fCreateMaskedPolygon(ocean_sf, res, mask, inverse) %>% 
+  fConvert2PacificRobinson()
 
-# From Raster to Polygon
-eez_pol <- as(eez_rs,  "SpatialPolygonsDataFrame")
-eez_pol$layer <- seq(1, length(eez_pol))
-eez_pol <- spTransform(eez_pol, CRS(longlat))
-# Now to a sf object and create ONE BIG polygon that we can use to populate with PUs
-eez_pol_sf <- st_as_sf(eez_pol) %>% 
-  dplyr::select(layer) %>% 
-  summarise(total_layer = sum(layer, do_union = TRUE))
-# We can plot the object to see if it is correct
-ggplot() +
-  geom_sf(data = eez_pol_sf) # Looks GOOD!
+saveRDS(eez_robinson, "inputs/rdsfiles/PacificCenterEEZ.rds")
+# st_write(eez_robinson, dsn = "inputs/shapefiles/PacificCenterEEZ", driver = "ESRI Shapefile", append = TRUE)
 
-# Transform the High Seas object to a Pacific-centered projected shapefile  
-eez <- eez_pol_sf %>% 
-  st_difference(polygon)
-# Perform transformation
-eez_robinson <- eez %>% 
-  st_transform(crs = rob_pacific)
-# We can plot the object to see if it is correct
-ggplot() +
-  geom_sf(data = eez_robinson) # Looks weird and also there is some lines due the Split process
+#######################################################
+# Creating equal-sized grids (adapted from Jase's Code)
+#######################################################
+# Boundary: 140E, 78W, 51N, 60S (input in degrees)
+west = 78
+east = 140
+north = 51
+south = 60
 
-# To fix it the same code as above
-bbox3 <-  st_bbox(eez_robinson)
-bbox3[c(1,3)]  <-  c(-1e-5,1e-5)
-polygon4 <- st_as_sfc(bbox3)
-crosses3 <- eez_robinson %>%
-  st_intersects(polygon4) %>%
-  sapply(length) %>%
-  as.logical %>%
-  which
-# Adding buffer 0
-eez_robinson[crosses3, ] %<>%
-  st_buffer(0) 
-# We can plot the object to see if it is correct
-ggplot() +
-  geom_sf(data = eez_robinson) # Looks better
-# Save the object
-st_write(eez_robinson, dsn = "inputs/shapefiles/PacificCenterEEZ", driver = "ESRI Shapefile", append = TRUE)
-
-##########################################################################################
-# Create equal-size grids (adapted from Jase's Code)
-##########################################################################################
-
-#load Create_Planning Units function from Jase (modified by Tin; modifications found within the function itself)
-fCreate_PlanningUnits <- function(Bndry, LandMass, CellArea, Shape){
-  
-  if(Shape %in% c("hexagon", "Hexagon")){
-    sq <- FALSE
-    diameter <- 2 * sqrt((CellArea*1e6)/((3*sqrt(3)/2))) * sqrt(3)/2 # Diameter in m's
-  }
-  
-  if(Shape %in% c("square", "Square")){
-    sq < TRUE
-    diameter <- sqrt(CellArea*1e6) # Diameter in m's
-  }
-  
-  # First create planning units for the whole region
-  PUs <- st_make_grid(Bndry,
-                      square = sq,
-                      cellsize = c(diameter, diameter),
-                      what = "polygons") %>%
-    st_sf()
-  
-  # Check cell size worked ok.
-  print(paste0("Range of cellsize are ",
-               round(as.numeric(range(units::set_units(st_area(PUs), "km^2")))[1])," km2 to ",
-               round(as.numeric(range(units::set_units(st_area(PUs), "km^2")))[2])," km2")) # Check area
-  
-  # First get all the PUs partially/wholly within the planning region
-  logi_Reg <- st_centroid(PUs) %>%
-    st_intersects(Bndry) %>%
-    lengths > 0 # Get logical vector instead of sparse geometry binary
-  PUs <- PUs[logi_Reg == TRUE, ]
-  
-  # Second, get all the pu's with < 50 % area on land (approximated from the centroid)
-  logi_Ocean <- st_centroid(PUs) %>%
-    st_intersects(LandMass) %>%
-    lengths > 0 # Get logical vector instead of sparse geometry binary
-  PUs <- PUs[logi_Ocean==TRUE, ] #modified from ==FALSE to TRUE because LandMass = ABNJ areas
-  
-  return(PUs)
-}
-
-#first we need to get the xy coordinates of the boundaries of the study area
-#for me it will be the areal boundaries of the tuna-fisheries RFMOs: IATTC and WCPFC (140E, 78W; 51N, 60S)
-test<-cbind(c(140, -78, -78, 140), #TopLeft, TopRight, BottomRight, BottomLeft
-            c( 51, 51, -60, -60))
+test<-cbind(c(east, -west, -west, east), #TopLeft, TopRight, BottomRight, BottomLeft
+            c( north, north, -south, -south))
 Cnr <- proj4::project(test, proj = rob_pacific)
-print(Cnr)
 
-#then we create the parameters for the function fCreate_PlanningUnits (Bndry, LandMass, CellArea, Shape)
-
-#make sure that the boundary limits are in line with the current projection
-Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (51N)
-  bind_rows(as_tibble(project(as.matrix(tibble(x = -78, y = seq(51, -60, by = -1))), proj = rob_pacific))) %>% # Then bind to E boundary (-78E)
-  bind_rows(as_tibble(project(as.matrix(tibble(x = 140, y = seq(-60, 51, by = 1))), proj = rob_pacific))) %>% # Then W boundary (140E) - reverse x order
+Bndry <- tibble(x = Cnr[1:2,1] , y = Cnr[1:2,2]) %>% 
+  bind_rows(as_tibble(project(as.matrix(tibble(x = -west, y = seq(north, -south, by = -1))), proj = rob_pacific))) %>% 
+  bind_rows(as_tibble(project(as.matrix(tibble(x = east, y = seq(-south, north, by = 1))), proj = rob_pacific))) %>% 
   as.matrix() %>%
   list() %>%
   st_polygon() %>%
   st_sfc(crs = rob_pacific)
 
-LandMass <- abnj_robinson
-
-#check if the boundary is positioned right
-ggplot() +
-  geom_sf(data = world_robinson, colour = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
-  geom_sf(data = LandMass, colour = "grey66", fill = "grey66", size = 0.2, show.legend = "line") +
-  geom_sf(data = Bndry, colour = "black", fill = NA, size = 0.3, show.legend = "line") +
-  ggsave("pdfs/PacificABNJBoundaries.pdf", width = 20, height = 15, dpi = 300) + 
-  ggsave("pdfs/PacificABNJBoundaries.jpg", width = 20, height = 15, dpi = 300)
+# LandMass
+LandMass <- pacific_robinson
+# LandMass <- readRDS("inputs/rdsfiles/PacificCenterABNJ.rds")
   
+# CellArea & Shape
 #size of hexagons in km^2
 #approximately 0.1 deg = 11.1km
 #get the approximate area using the apothem (r) in https://www.omnicalculator.com/math/hexagon
@@ -309,22 +122,25 @@ ggplot() +
 CellArea <- 2667.6 # kms2 for 0.5 degree resolution
 Shape = "Hexagon" # Hexagon or Square
 
+# Running function
 PUsPac <- fCreate_PlanningUnits(Bndry, LandMass, CellArea, Shape)
 #saving the study area
-st_write(PUsPac, dsn = "inputs/shapefiles/PacificABNJGrid_05deg", driver = "ESRI Shapefile", append = FALSE)
-saveRDS(PUsPac, file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds")
-print(PUsPac) #to know how many features/polygons
 
-#plotting the study area with the planning units
+saveRDS(PUsPac, file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds")
+#st_write(PUsPac, dsn = "inputs/shapefiles/PacificABNJGrid_05deg", driver = "ESRI Shapefile", append = FALSE)
+
+##############
+## Plotting ##
+##############
 ggplot() +
-  geom_sf(data = LandMass, colour = NA, fill = NA, size = 0.2, show.legend = "line") +
+  geom_sf(data = pacific_robinson, colour = NA, fill = NA, size = 0.2, show.legend = "line") +
   geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
   geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = TRUE) + 
   scale_fill_manual(name = "Study Area",
     values = c("ABNJ" = "coral3")) +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
-           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
-           expand = TRUE) +
-  theme_bw() +
-  ggsave("pdfs/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300) +
-  ggsave("pdfs/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)
+          ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+          expand = TRUE) +
+  theme_bw()  #+
+#    ggsave("pdfs/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300) +
+#    ggsave("pdfs/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)

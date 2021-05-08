@@ -129,6 +129,8 @@ PRED_global_SWO <- commercial_feat(input = "SWO",
 
 #Defining generalities for plotting
 
+rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
+
 world_sf <- st_read("inputs/shapefiles/PacificCenterLand/PacificCenterLand.shp") %>% 
   st_transform(crs = rob_pacific)
 
@@ -159,7 +161,7 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p1 <- ggplot()+
-        geom_sf(data = run07, aes(color = Prob, fill = Prob)) +
+        geom_sf(data = PRED_global_YFT, aes(color = Prob, fill = Prob)) +
         sc +
         geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
         coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
@@ -175,7 +177,7 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p2 <- ggplot()+
-        geom_sf(data = run08, aes(color = Prob, fill = Prob)) +
+        geom_sf(data = PRED_global_ALB, aes(color = Prob, fill = Prob)) +
         sc +
         geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
         coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
@@ -191,7 +193,7 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p3 <- ggplot()+
-        geom_sf(data = run09, aes(color = Prob, fill = Prob)) +
+        geom_sf(data = PRED_global_SKP, aes(color = Prob, fill = Prob)) +
         sc +
         geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
         coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
@@ -207,7 +209,7 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p4 <- ggplot()+
-        geom_sf(data = run10, aes(color = Prob, fill = Prob)) +
+        geom_sf(data = PRED_global_SWO, aes(color = Prob, fill = Prob)) +
         sc +
         geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
         coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 

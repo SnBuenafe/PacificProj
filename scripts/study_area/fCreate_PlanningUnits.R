@@ -49,7 +49,7 @@ fCreate_PlanningUnits <- function(Bndry, LandMass, CellArea, Shape){
   logi_Ocean <- st_centroid(PUs) %>%
     st_within(st_union(LandMass)) %>%
     lengths > 0 # Get logical vector instead of sparse geometry binary
-  PUs <- PUs[logi_Ocean==FALSE, ]
+  PUs <- PUs[logi_Ocean==TRUE, ] #modified from ==FALSE to TRUE because LandMass = ABNJ areas
   
   return(PUs)
 }

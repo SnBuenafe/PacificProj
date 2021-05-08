@@ -22,8 +22,8 @@ layer_intersect <- function(input, scenario, inpdir, outdir, pu, ...) {
   ####################################################################################
   # List of pacakges that we will use
   list.of.packages <- c("raster", "sf", "tidyverse", "magrittr", "rnaturalearth",
-                        "rnaturalearthdata", "fasterize", "proj4", "kader", "exactextract")
-  # If is not installed, install the pacakge
+                        "rnaturalearthdata", "fasterize", "proj4", "kader", "exactextractr")
+  # If is not installed, install the package
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
   if(length(new.packages)) install.packages(new.packages)
   # Load packages

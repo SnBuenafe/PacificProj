@@ -30,7 +30,7 @@ represent_target <- function(number_PU, target_max, target_min, file_spec_info, 
       ##################################
       
       # List of packages that we will use
-      list.of.packages <- c("rredlist", "tidyverse", "readxl")
+      list.of.packages <- c("rredlist", "tidyverse", "readxl", "sf")
       # If is not installed, install the pacakge
       new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
       if(length(new.packages)) install.packages(new.packages)

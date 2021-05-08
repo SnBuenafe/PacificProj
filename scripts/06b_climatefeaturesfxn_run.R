@@ -19,11 +19,28 @@ source("scripts/06a_climatefeaturesfxn.R")
 
 library(RColorBrewer)
 library(patchwork)
+library(sf)
+library(proj4)
+library(tidyverse)
 # Defining palette
 pal <- c("#313695","#4575b4","#74add1","#abd9e9","#e0f3f8","#fee090","#fdae61","#f46d43","#d73027","#a50026")
 RCE_cat <- c("min","","","","","","","","","max")
 velo_cat <- c("< -50", "-50 to -20", "-20 to -10", "-10 to -5", "-5 to 5", "5 to 10", "10 to 20", "20 to 50", "50 to 100", "100 to 200", "> 200")
 pal1 <- rev(brewer.pal(11, "RdYlBu"))
+
+rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
+world_sf <- st_read("inputs/shapefiles/PacificCenterLand/PacificCenterLand.shp")
+test<-cbind(c(140, -78, -78, 140), #TopLeft, TopRight, BottomRight, BottomLeft
+            c( 51, 51, -60, -60))
+Cnr <- proj4::project(test, proj = rob_pacific)
+#make sure that the boundary limits are in line with the current projection
+Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (51N)
+  bind_rows(as_tibble(project(as.matrix(tibble(x = -78, y = seq(51, -60, by = -1))), proj = rob_pacific))) %>% # Then bind to E boundary (-78E)
+  bind_rows(as_tibble(project(as.matrix(tibble(x = 140, y = seq(-60, 51, by = 1))), proj = rob_pacific))) %>% # Then W boundary (140E) - reverse x order
+  as.matrix() %>%
+  list() %>%
+  st_polygon() %>%
+  st_sfc(crs = rob_pacific)
 
 run01 <- layer_intersect(input = "RCE",
                 scenario = "SSP126",
