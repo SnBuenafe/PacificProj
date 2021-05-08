@@ -41,22 +41,8 @@ prov_code <- c("ANTA" = "#b2182b","ARCH" = "#ef8a62","CCAL" = "#fddbc7","CHIL" =
                "NPPF" = "#8c510a","NPSW" = "#d8b365","NPTG" = "#f6e8c3", "PEQD" = "#c7eae5","PNEC" = "#5ab4ac","PSAE" = "#01665e",
                "PSAW" = "#762a83","SANT" = "#af8dc3","SPSG" = "#e7d4e8","SSTC" = "#d9f0d3","TASM" = "#7fbf7b","WARM" = "#1b7837")
 # Boundary: 140E, 78W, 51N, 60S (input in degrees)
-west = 78
-east = 140
-north = 51
-south = 60
-
-test<-cbind(c(east, -west, -west, east), #TopLeft, TopRight, BottomRight, BottomLeft
-            c( north, north, -south, -south))
-Cnr <- proj4::project(test, proj = rob_pacific)
-
-Bndry <- tibble(x = Cnr[1:2,1] , y = Cnr[1:2,2]) %>% # Start with N boundary (51N)
-  bind_rows(as_tibble(project(as.matrix(tibble(x = -west, y = seq(north, -south, by = -1))), proj = rob_pacific))) %>% # Then bind to E boundary (-78E)
-  bind_rows(as_tibble(project(as.matrix(tibble(x = east, y = seq(-south, north, by = 1))), proj = rob_pacific))) %>% # Then W boundary (140E) - reverse x order
-  as.matrix() %>%
-  list() %>%
-  st_polygon() %>%
-  st_sfc(crs = rob_pacific)
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
 
 world_sf <- st_read("inputs/shapefiles/PacificCenterLand/PacificCenterLand.shp")
 

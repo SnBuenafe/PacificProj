@@ -90,22 +90,8 @@ saveRDS(eez_robinson, "inputs/rdsfiles/PacificCenterEEZ.rds")
 # Creating equal-sized grids (adapted from Jase's Code)
 #######################################################
 # Boundary: 140E, 78W, 51N, 60S (input in degrees)
-west = 78
-east = 140
-north = 51
-south = 60
-
-test<-cbind(c(east, -west, -west, east), #TopLeft, TopRight, BottomRight, BottomLeft
-            c( north, north, -south, -south))
-Cnr <- proj4::project(test, proj = rob_pacific)
-
-Bndry <- tibble(x = Cnr[1:2,1] , y = Cnr[1:2,2]) %>% 
-  bind_rows(as_tibble(project(as.matrix(tibble(x = -west, y = seq(north, -south, by = -1))), proj = rob_pacific))) %>% 
-  bind_rows(as_tibble(project(as.matrix(tibble(x = east, y = seq(-south, north, by = 1))), proj = rob_pacific))) %>% 
-  as.matrix() %>%
-  list() %>%
-  st_polygon() %>%
-  st_sfc(crs = rob_pacific)
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
 
 # LandMass
 LandMass <- pacific_robinson

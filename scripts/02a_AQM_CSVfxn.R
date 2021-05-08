@@ -1,4 +1,4 @@
-#code modified by Tin Buenafe, 2021 (tinbuenafe@gmail.com)
+# code modified by Tin Buenafe, 2021 (tinbuenafe@gmail.com)
 
 # This code was written by Isaac Brito-Morales (i.britomorales@uq.edu.au)
 # Please do not distribute this code without permission.
@@ -13,6 +13,7 @@
 # sp_env: Species envelope. >= 10 good cells (1) or 3-9 good cells (2). If you want all, write 1|2; Ranks (1 or 2) related to the AQM model's confidence on predictions of spp. distributions
 # type: "Pacific" or "Normal"; "Pacific" = Pacific-centered.
 # region: a raster (or shapefile) of your region of interest. If you don't know how, just load a global raster or shapefile and then use 
+# res: resolution in degrees (e.g. 0.5 deg)
 # the interactive drawExtent() function to get a new crop raster (or shapefile). The use this object in region argument to rin the function; code accepts .tif, .grd or .rds files
 
 # Input Files
@@ -20,8 +21,9 @@
 # 2. information for each half-degree cell (e.g. max/min depth, salinity, temperature, etc) = hspen.csv
 # 3. species information (e.g. species ID, taxonomy, "reviewed" or not, but without spatial information)  = occursum.csv
 
+# Function is ran at 02b.
 
-aqua_start <- function(path, outdir, olayer, prob_threshold, sp_env, type, region, ...) {
+aqua_start <- function(path, outdir, olayer, prob_threshold, sp_env, type, region, res, ...) {
   
   ####################################################################################
   ####### Defining the main packages (trying to auto this)
@@ -35,6 +37,12 @@ aqua_start <- function(path, outdir, olayer, prob_threshold, sp_env, type, regio
   lapply(list.of.packages, require, character.only = TRUE)
   
   ####################################################################################
+  ####### Defining the generalities
+  ####################################################################################  
+  rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
+  longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+  
+  ####################################################################################
   ####### Establish the main data to use
   ####################################################################################
   # AquaMaps' directory path
@@ -43,7 +51,7 @@ aqua_start <- function(path, outdir, olayer, prob_threshold, sp_env, type, regio
   second_csv <- list.files(path = dir, pattern = "*hspen.*.csv$", full.names = TRUE)
   third_csv <- list.files(path = dir, pattern = "*occursum.*.csv$", full.names = TRUE)
   # An empty raster at 0.5 deg (AquaMaps resolution grid) that will be use to mask
-  rs <- raster(ncol = 720, nrow = 360)
+  rs <- raster(ncol = 360*(1/res), nrow = 180*(1/res)) 
   rs[] <- 1:ncell(rs)
   # Reading input files
   # If the region is a raster (.grd/tif) or a .rds, read it and then create a global extent for that file using the resample() 
@@ -108,41 +116,20 @@ aqua_start <- function(path, outdir, olayer, prob_threshold, sp_env, type, regio
       rs_final <- resample(rs1, rs, resample = "ngb") # projecting raster 0.5 deg just in case :-)
       # From Raster to Shapefile
       rs_final <- subset(rs_final, 1) # here I'm just getting the first layer (Probability) to avoid creating a big object per file.
-      if(is.na(rs_final@crs) == TRUE) {crs(rs_final) <- CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")} else {rs_final <- rs_final}
+      if(is.na(rs_final@crs) == TRUE) {crs(rs_final) <- CRS(longlat)} else {rs_final <- rs_final}
       rs_final <- mask(rs_final, region) # mask the species distribution with the region of interest
       # 
       if(is.nan(mean(rs_final[], na.rm = TRUE)) == FALSE) {
         # Transform AquaMaps species raster into an sf spatial polygon dataframe
         sd_rs1 <- as(rs_final, "SpatialPolygonsDataFrame")
-        sd_rs1 <- spTransform(sd_rs1, CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")) # just in case! # here there is an error... empty object needs to be
+        sd_rs1 <- spTransform(sd_rs1, CRS(longlat)) # just in case! # here there is an error... empty object needs to be
         sd_rs1$Probability <- seq(1, length(sd_rs1)) 
         # If you want maps by Pacific centred or NOT
         if(type == "Pacific") {
-          # Define a long & slim polygon that overlaps the meridian line & set its CRS to match that of world
-          polygon <- st_polygon(x = list(rbind(c(-0.0001, 90),
-                                               c(0, 90),
-                                               c(0, -90),
-                                               c(-0.0001, -90),
-                                               c(-0.0001, 90)))) %>%
-            st_sfc() %>%
-            st_set_crs("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
-          # Transform the species distribution polygon object to a Pacific-centred projection polygon object
+          source("scripts/study_area/fConvert2PacificRobinson.R")
           sd_rs1_robinson <- sd_rs1 %>% 
-            st_as_sf() %>% 
-            st_difference(polygon) %>% 
-            st_transform(crs = "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
-          # There is a line in the middle of Antarctica. This is because we have split the map after reprojection. We need to fix this:
-          bbox1 <-  st_bbox(sd_rs1_robinson)
-          bbox1[c(1,3)]  <-  c(-1e-5,1e-5)
-          polygon1 <- st_as_sfc(bbox1)
-          crosses1 <- sd_rs1_robinson %>%
-            st_intersects(polygon1) %>%
-            sapply(length) %>%
-            as.logical %>%
-            which
-          # Adding buffer 0
-          sd_rs1_robinson[crosses1, ] %<>%
-            st_buffer(0)
+            fConvert2PacificRobinson()
+          
           # Writing the object 
           name_sps <- paste(z[1,1], olayer, sep = "_") 
           saveRDS(sd_rs1_robinson, paste(outdir, name_sps, ".rds", sep = ""))
@@ -154,7 +141,7 @@ aqua_start <- function(path, outdir, olayer, prob_threshold, sp_env, type, regio
           # Transform the species distribution polygon object to a common projection polygon object
           sd_rs1_latlon <- sd_rs1 %>% 
             st_as_sf() %>% 
-            st_transform(crs = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+            st_transform(crs = longlat)
           # Writing the object 
           name_sps <- paste(z[1,1], olayer, sep = "_") 
           saveRDS(sd_rs1_latlon, paste(outdir, name_sps, ".rds", sep = ""))
@@ -181,36 +168,15 @@ aqua_start <- function(path, outdir, olayer, prob_threshold, sp_env, type, regio
   # Converting the richness data frame to a raster
   rs_richness <- rasterFromXYZ(sp_richness)
   rs_richness_final <- resample(rs_richness, rs, resample = "ngb")
-  if(is.na(rs_richness_final@crs) == TRUE) {crs(rs_richness_final) <- CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")} else {rs_richness_final <- rs_richness_final}
+  if(is.na(rs_richness_final@crs) == TRUE) {crs(rs_richness_final) <- CRS(longlat)} else {rs_richness_final <- rs_richness_final}
   # Transform richness raster to an sf spatial polygon dataframe
   rs1_richness <- as(rs_richness_final, "SpatialPolygonsDataFrame")
-  rs1_richness <- spTransform(rs1_richness, CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")) # just in case! # here there is an error... empty object needs to be
+  rs1_richness <- spTransform(rs1_richness, CRS(longlat)) # just in case! # here there is an error... empty object needs to be
   if(type == "Pacific") {
-    # Define a long & slim polygon that overlaps the meridian line & set its CRS to match that of world
-    polygon <- st_polygon(x = list(rbind(c(-0.0001, 90),
-                                         c(0, 90),
-                                         c(0, -90),
-                                         c(-0.0001, -90),
-                                         c(-0.0001, 90)))) %>%
-      st_sfc() %>%
-      st_set_crs("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
-    # Transform the species distribution polygon object to a Pacific-centred projection polygon object
+    source("scripts/study_area/fConvert2PacificRobinson.R")
     richness_robinson <- rs1_richness %>% 
-      st_as_sf() %>% 
-      st_difference(polygon) %>% 
-      st_transform(crs = "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
-    # There is a line in the middle of Antarctica. This is because we have split the map after reprojection. We need to fix this:
-    bbox1 <-  st_bbox(richness_robinson)
-    bbox1[c(1,3)]  <-  c(-1e-5,1e-5)
-    polygon1 <- st_as_sfc(bbox1)
-    crosses1 <- richness_robinson %>%
-      st_intersects(polygon1) %>%
-      sapply(length) %>%
-      as.logical %>%
-      which
-    # Adding buffer 0
-    richness_robinson[crosses1, ] %<>%
-      st_buffer(0)
+      fConvert2PacificRobinson()
+    
     # Writing the object 
     name_obj <- paste("01_spp-richness", olayer, sep = "_")
     saveRDS(richness_robinson, paste(outdir, name_obj, ".rds", sep = ""))
@@ -218,7 +184,7 @@ aqua_start <- function(path, outdir, olayer, prob_threshold, sp_env, type, regio
     # Transform the species distribution polygon object to a common projection polygon object
     richness_latlon <- rs1_richness %>% 
       st_as_sf() %>% 
-      st_transform(crs = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+      st_transform(crs = longlat)
     # Writing the object 
     name_obj <- paste("01_spp-richness", olayer, sep = "_")
     saveRDS(richness_robinson, paste(outdir, name_obj, ".rds", sep = ""))
