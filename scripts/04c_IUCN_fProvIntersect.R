@@ -17,19 +17,19 @@
 # 6. feature_file: .rds file with all the features together (relevant only for AQM)
 # 7. prov_file: .rds file of the Longhurst provinces
 
-source("scripts/03c_FeatProvFxn.R")
+source("scripts/03_Features_fProvIntersect.R")
 
 #########################
 ##### RUNS FOR IUCN #####
 #########################
 
-IUCN_prov_run01 <- prov_intersect(path = "outputs/IUCN_wflow/09b_IUCNxPU/",
-    pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
+IUCN_prov_run01 <- fProvIntersect(path = "outputs/04_IUCN/04b_fIUCNIntersect/",
+    pu_shp = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
     fit = "none",
-    outdir = "outputs/IUCN_wflow/09c_IUCNxProv/",
+    outdir = "outputs/04_IUCN/04c_fProvIntersect/",
     data = "IUCN",
     feature_file = NA,
-    prov_file = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst.rds"
+    prov_file = "outputs/01_StudyArea/01b_Longhurst/PacificABNJGrid_05deg_Longhurst.rds"
 )
 
 ####################
