@@ -9,14 +9,13 @@
 # CLIMATE-UNINFORMED
 # Ideally, after this, each feature should just be represented with the representation targets (depending on IUCN conservation status)
 
-source("scripts/07a_climatefeatures_25percentile.R")
+source("scripts/08a_Filter_fFilterQuartile.R")
 
 #########################################
 # Commercial Features (Global - Fitted)
 #########################################
-
-FILTER_GLOBALuninformed_run01 <- filter_quartile(feature_prov = "outputs/commercial/04d_CommercialxProvince/global/commercial_features.rds",
-                                       outdir = "outputs/final_features/07c_100perc/",
+FILTER_GLOBALuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/05_Commercial/05e_fProvIntersect/Global/commercial_features.rds",
+                                       outdir = "outputs/08_Filter/08c_Filter100/",
                                        scenario = "uninformed",
                                        feature_n = "commercial",
                                        data = "uninformed"
@@ -27,9 +26,8 @@ FILTER_GLOBALuninformed_run01
 ########################################
 # Commercial Features (Pacific-Fitted)
 ########################################
-
-FILTER_PACIFICuninformed_run01 <- filter_quartile(feature_prov = "outputs/commercial/04d_CommercialxProvince/pacific/commercial_features.rds",
-                                        outdir = "outputs/final_features/07c_100perc/",
+FILTER_PACIFICuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/05_Commercial/05e_fProvIntersect/Pacific/commercial_features.rds",
+                                        outdir = "outputs/08_Filter/08c_Filter100/",
                                         scenario = "uninformed",
                                         feature_n = "commercialpac",
                                         data = "uninformed"
@@ -40,9 +38,8 @@ FILTER_PACIFICuninformed_run01
 ########################################
 # AquaMaps Bycatch Features
 ########################################
-
-FILTER_AQMuninformed_run01 <- filter_quartile(feature_prov = "outputs/AQM_wflow/03d_AQMxProv/bycatch_features.rds",
-                                    outdir = "outputs/final_features/07c_100perc/",
+FILTER_AQMuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/03_AQM/03b_fProvIntersect/bycatch_features.rds",
+                                    outdir = "outputs/08_Filter/08c_Filter100/",
                                     scenario = "uninformed",
                                     feature_n = "bycatch",
                                     data = "uninformed"
@@ -53,9 +50,8 @@ FILTER_AQMuninformed_run01
 ########################################
 # IUCN Bycatch Features
 ########################################
-
-FILTER_IUCNuninformed_run01 <- filter_quartile(feature_prov = "outputs/IUCN_wflow/09c_IUCNxProv/bycatch_features.rds",
-                                     outdir = "outputs/final_features/07c_100perc/",
+FILTER_IUCNuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/04_IUCN/04c_fProvIntersect/bycatch_features.rds",
+                                     outdir = "outputs/08_Filter/08c_Filter100/",
                                      scenario = "uninformed",
                                      feature_n = "bycatchIUCN",
                                      data = "uninformed"

@@ -19,7 +19,7 @@
 
 # The function is run in 07b for different scenarios.
 
-filter_quartile <- function(velocity_file, RCE_file, feature_prov, outdir, scenario, feature_n, data, ...) {
+fFilterQuartile <- function(velocity_file, RCE_file, feature_prov, outdir, scenario, feature_n, data, ...) {
   
   ####################################################################################
   ####### Defining packages needed
