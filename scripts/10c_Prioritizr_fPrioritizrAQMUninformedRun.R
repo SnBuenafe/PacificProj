@@ -17,13 +17,17 @@
 
 # Function is found at 10a_PrioritizrFxn.R
 
-source("scripts/10a_PrioritizrFxn.R")
+source("scripts/10a_Prioritizr_fPrioritizr.R")
 
 # Plotting generalities
 library(RColorBrewer)
 library(patchwork)
-pal_rich <- c("FALSE" = NA, "TRUE" = "sienna3")
-solution <- c("FALSE", "TRUE")
+pal_rich <- c("FALSE" = "lightsteelblue2", "TRUE" = "sienna3")
+solution <- c("Not selected PUs", "Selected PUs")
+world_sf <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
+
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
 
 ##########################################################
 ## Climate-uninformed runs using AQM as bycatch + Plots ##
@@ -32,13 +36,13 @@ solution <- c("FALSE", "TRUE")
 ###############################
 ## Target 100% (0 - 1) ##
 ###############################
-PRIORITIZR_AQM_target100_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                 commercial_targetfile = "outputs/final_features/08c_targets/01_Target100/uninformed/target_commercialuninformed.rds",
-                                                 bycatch_targetfile = "outputs/final_features/08c_targets/01_Target100/uninformed/target_bycatchuninformed.rds",
-                                                 commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
-                                                 bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+PRIORITIZR_AQM_target100_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                 commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/uninformed/target_commercialuninformed.rds",
+                                                 bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/uninformed/target_bycatchuninformed.rds",
+                                                 commercial_file = "outputs/08_Filter/08c_Filter100/commercialuninformed_100percentile.rds",
+                                                 bycatch_file = "outputs/08_Filter/08c_Filter100/bycatchuninformed_100percentile.rds",
                                                  climate_scenario = "uninformed",
-                                                 outdir = "outputs/prioritizr_run/Uninformed/AQM/01_Target100/",
+                                                 outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/01_Target100/",
                                                  outexcel = "excel/AQM/",
                                                  target_name = "Target100")
 # Plotting
@@ -52,21 +56,21 @@ uninformed_target100_plot1 <- ggplot() +
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
   labs(title = "Climate uninformed solution using global-fitted commercial and AQM bycatch data:",
-       subtitle = "Maximum Target 100% (0 - 1)") +
+       subtitle = "Maximum Target 100% (0.1 - 1)") +
   theme_bw()
 uninformed_target100_plot1
-ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target100.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target100.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 90% (0.1 - 0.9) ##
 ###############################
-PRIORITIZR_AQM_target90_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                            commercial_targetfile = "outputs/final_features/08c_targets/02_Target90/uninformed/target_commercialuninformed.rds",
-                                                            bycatch_targetfile = "outputs/final_features/08c_targets/02_Target90/uninformed/target_bycatchuninformed.rds",
-                                                            commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
-                                                            bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+PRIORITIZR_AQM_target90_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                            commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/02_Target90/uninformed/target_commercialuninformed.rds",
+                                                            bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/02_Target90/uninformed/target_bycatchuninformed.rds",
+                                                            commercial_file = "outputs/08_Filter/08c_Filter100/commercialuninformed_100percentile.rds",
+                                                            bycatch_file = "outputs/08_Filter/08c_Filter100/bycatchuninformed_100percentile.rds",
                                                             climate_scenario = "uninformed",
-                                                            outdir = "outputs/prioritizr_run/Uninformed/AQM/02_Target90/",
+                                                            outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/02_Target90/",
                                                            outexcel = "excel/AQM/",
                                                            target_name = "Target90")
 # Plotting
@@ -83,17 +87,17 @@ uninformed_target90_plot1 <- ggplot() +
        subtitle = "Maximum Target 90% (0.1 - 0.9)") +
   theme_bw()
 uninformed_target90_plot1
-ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target90.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target90.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 80% (0.1 - 0.8) ##
 ###############################
-PRIORITIZR_AQM_target80_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                           commercial_targetfile = "outputs/final_features/08c_targets/03_Target80/uninformed/target_commercialuninformed.rds",
-                                                           bycatch_targetfile = "outputs/final_features/08c_targets/03_Target80/uninformed/target_bycatchuninformed.rds",
-                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
-                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+PRIORITIZR_AQM_target80_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/03_Target80/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/03_Target80/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/08_Filter/08c_Filter100/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/08_Filter/08c_Filter100/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/03_Target80/",
+                                                           outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/03_Target80/",
                                                            outexcel = "excel/AQM/",
                                                            target_name = "Target80")
 # Plotting
@@ -110,17 +114,17 @@ uninformed_target80_plot1 <- ggplot() +
        subtitle = "Maximum Target 80% (0.1 - 0.8)") +
   theme_bw()
 uninformed_target80_plot1
-ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target80.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target80.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 70% (0.1 - 0.7) ##
 ###############################
-PRIORITIZR_AQM_target70_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                           commercial_targetfile = "outputs/final_features/08c_targets/04_Target70/uninformed/target_commercialuninformed.rds",
-                                                           bycatch_targetfile = "outputs/final_features/08c_targets/04_Target70/uninformed/target_bycatchuninformed.rds",
-                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
-                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+PRIORITIZR_AQM_target70_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/04_Target70/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/04_Target70/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/08_Filter/08c_Filter100/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/08_Filter/08c_Filter100/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/04_Target70/",
+                                                           outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/04_Target70/",
                                                            outexcel = "excel/AQM/",
                                                            target_name = "Target70")
 # Plotting
@@ -137,17 +141,17 @@ uninformed_target70_plot1 <- ggplot() +
        subtitle = "Maximum Target 70% (0.1 - 0.7)") +
   theme_bw()
 uninformed_target70_plot1
-ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target70.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target70.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 60% (0.1 - 0.6) ##
 ###############################
-PRIORITIZR_AQM_target60_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                           commercial_targetfile = "outputs/final_features/08c_targets/05_Target60/uninformed/target_commercialuninformed.rds",
-                                                           bycatch_targetfile = "outputs/final_features/08c_targets/05_Target60/uninformed/target_bycatchuninformed.rds",
-                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
-                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+PRIORITIZR_AQM_target60_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/05_Target60/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/05_Target60/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/08_Filter/08c_Filter100/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/08_Filter/08c_Filter100/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/05_Target60/",
+                                                           outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/05_Target60/",
                                                            outexcel = "excel/AQM/",
                                                            target_name = "Target60")
 # Plotting
@@ -164,17 +168,17 @@ uninformed_target60_plot1 <- ggplot() +
        subtitle = "Maximum Target 60% (0.1 - 0.6)") +
   theme_bw()
 uninformed_target60_plot1
-ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target60.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target60.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 50% (0.1 - 0.5) ##
 ###############################
-PRIORITIZR_AQM_target50_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                           commercial_targetfile = "outputs/final_features/08c_targets/06_Target50/uninformed/target_commercialuninformed.rds",
-                                                           bycatch_targetfile = "outputs/final_features/08c_targets/06_Target50/uninformed/target_bycatchuninformed.rds",
-                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
-                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+PRIORITIZR_AQM_target50_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/06_Target50/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/06_Target50/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/08_Filter/08c_Filter100/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/08_Filter/08c_Filter100/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/06_Target50/",
+                                                           outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/06_Target50/",
                                                            outexcel = "excel/AQM/",
                                                            target_name = "Target50")
 # Plotting
@@ -191,17 +195,17 @@ uninformed_target50_plot1 <- ggplot() +
        subtitle = "Maximum Target 50% (0.1 - 0.5)") +
   theme_bw()
 uninformed_target50_plot1
-ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target50.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target50.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 40% (0.1 - 0.4) ##
 ###############################
-PRIORITIZR_AQM_target40_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                           commercial_targetfile = "outputs/final_features/08c_targets/07_Target40/uninformed/target_commercialuninformed.rds",
-                                                           bycatch_targetfile = "outputs/final_features/08c_targets/07_Target40/uninformed/target_bycatchuninformed.rds",
-                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
-                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+PRIORITIZR_AQM_target40_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/07_Target40/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/07_Target40/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/08_Filter/08c_Filter100/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/08_Filter/08c_Filter100/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/07_Target40/",
+                                                           outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/07_Target40/",
                                                            outexcel = "excel/AQM/",
                                                            target_name = "Target40")
 # Plotting
@@ -218,17 +222,17 @@ uninformed_target40_plot1 <- ggplot() +
        subtitle = "Maximum Target 40% (0.1 - 0.4)") +
   theme_bw()
 uninformed_target40_plot1
-ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target40.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target40.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 30% (0.1 - 0.3) ##
 ###############################
-PRIORITIZR_AQM_target30_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                           commercial_targetfile = "outputs/final_features/08c_targets/08_Target30/uninformed/target_commercialuninformed.rds",
-                                                           bycatch_targetfile = "outputs/final_features/08c_targets/08_Target30/uninformed/target_bycatchuninformed.rds",
-                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
-                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+PRIORITIZR_AQM_target30_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/08_Target30/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/08_Target30/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/08_Filter/08c_Filter100/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/08_Filter/08c_Filter100/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/08_Target30/",
+                                                           outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/08_Target30/",
                                                            outexcel = "excel/AQM/",
                                                            target_name = "Target30")
 # Plotting
@@ -245,17 +249,17 @@ uninformed_target30_plot1 <- ggplot() +
        subtitle = "Maximum Target 30% (0.1 - 0.3)") +
   theme_bw()
 uninformed_target30_plot1
-ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target30.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target30.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 20% (0.1 - 0.2) ##
 ###############################
-PRIORITIZR_AQM_target20_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                           commercial_targetfile = "outputs/final_features/08c_targets/09_Target20/uninformed/target_commercialuninformed.rds",
-                                                           bycatch_targetfile = "outputs/final_features/08c_targets/09_Target20/uninformed/target_bycatchuninformed.rds",
-                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
-                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+PRIORITIZR_AQM_target20_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/09_Target20/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/09_Target20/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/08_Filter/08c_Filter100/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/08_Filter/08c_Filter100/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/09_Target20/",
+                                                           outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/09_Target20/",
                                                            outexcel = "excel/AQM/",
                                                            target_name = "Target20")
 # Plotting
@@ -272,17 +276,17 @@ uninformed_target20_plot1 <- ggplot() +
        subtitle = "Maximum Target 20% (0.1 - 0.2)") +
   theme_bw()
 uninformed_target20_plot1
-ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target20.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target20.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 10% (0 - 0.1) ##
 ###############################
-PRIORITIZR_AQM_target10_uninformed_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                           commercial_targetfile = "outputs/final_features/08c_targets/10_Target10/uninformed/target_commercialuninformed.rds",
-                                                           bycatch_targetfile = "outputs/final_features/08c_targets/10_Target10/uninformed/target_bycatchuninformed.rds",
-                                                           commercial_file = "outputs/final_features/07c_100perc/commercialuninformed_100percentile.rds",
-                                                           bycatch_file = "outputs/final_features/07c_100perc/bycatchuninformed_100percentile.rds",
+PRIORITIZR_AQM_target10_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                           commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/10_Target10/uninformed/target_commercialuninformed.rds",
+                                                           bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/10_Target10/uninformed/target_bycatchuninformed.rds",
+                                                           commercial_file = "outputs/08_Filter/08c_Filter100/commercialuninformed_100percentile.rds",
+                                                           bycatch_file = "outputs/08_Filter/08c_Filter100/bycatchuninformed_100percentile.rds",
                                                            climate_scenario = "uninformed",
-                                                           outdir = "outputs/prioritizr_run/Uninformed/AQM/10_Target10/",
+                                                           outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/10_Target10/",
                                                            outexcel = "excel/AQM/",
                                                            target_name = "Target10")
 # Plotting
@@ -299,4 +303,4 @@ uninformed_target10_plot1 <- ggplot() +
        subtitle = "Maximum Target 10% (0 - 0.1)") +
   theme_bw()
 uninformed_target10_plot1
-ggsave("pdfs/solutions/AQM/Uninformed_Solutions_Target10.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target10.pdf", width = 21, height = 29.7)

@@ -17,13 +17,17 @@
 
 # Function is found at 10a_PrioritizrFxn.R
 
-source("scripts/10a_PrioritizrFxn.R")
+source("scripts/10a_Prioritizr_fPrioritizr.R")
 
 # Plotting generalities
 library(RColorBrewer)
 library(patchwork)
-pal_rich <- c("FALSE" = NA, "TRUE" = "sienna3")
-solution <- c("FALSE", "TRUE")
+pal_rich <- c("FALSE" = "lightsteelblue2", "TRUE" = "sienna3")
+solution <- c("Not selected PUs", "Selected PUs")
+world_sf <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
+
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
 
 #######################################
 ## Runs using AQM as bycatch + Plots ##
@@ -33,33 +37,33 @@ solution <- c("FALSE", "TRUE")
 ## Target 100% (0 - 1) ##
 ###############################
 
-PRIORITIZR_AQM_target100_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-      commercial_targetfile = "outputs/final_features/08b_targets/01_Target100/SSP126/target_commercialSSP126.rds",
-      bycatch_targetfile = "outputs/final_features/08b_targets/01_Target100/SSP126/target_bycatchSSP126.rds",
-      commercial_file = "outputs/final_features/07a_25perc/commercialSSP126_25percentile.rds",
-      bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP126_25percentile.rds",
+PRIORITIZR_AQM_target100_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+      commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/SSP126/target_commercialSSP126.rds",
+      bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/SSP126/target_bycatchSSP126.rds",
+      commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP126_25percentile.rds",
+      bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP126_25percentile.rds",
       climate_scenario = "SSP126",
-      outdir = "outputs/prioritizr_run/AQM/01_Target100/",
+      outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/01_Target100/",
       outexcel = "excel/AQM/",
       target_name = "Target100")
 
-PRIORITIZR_AQM_target100_run02 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-      commercial_targetfile = "outputs/final_features/08b_targets/01_Target100/SSP245/target_commercialSSP245.rds",
-      bycatch_targetfile = "outputs/final_features/08b_targets/01_Target100/SSP245/target_bycatchSSP245.rds",
-      commercial_file = "outputs/final_features/07a_25perc/commercialSSP245_25percentile.rds",
-      bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP245_25percentile.rds",
+PRIORITIZR_AQM_target100_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+      commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/SSP245/target_commercialSSP245.rds",
+      bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/SSP245/target_bycatchSSP245.rds",
+      commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP245_25percentile.rds",
+      bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP245_25percentile.rds",
       climate_scenario = "SSP245",
-      outdir = "outputs/prioritizr_run/AQM/01_Target100/",
+      outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/01_Target100/",
       outexcel = "excel/AQM/",
       target_name = "Target100")
 
-PRIORITIZR_AQM_target100_run03 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-      commercial_targetfile = "outputs/final_features/08b_targets/01_Target100/SSP585/target_commercialSSP585.rds",
-      bycatch_targetfile = "outputs/final_features/08b_targets/01_Target100/SSP585/target_bycatchSSP585.rds",
-      commercial_file = "outputs/final_features/07a_25perc/commercialSSP585_25percentile.rds",
-      bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP585_25percentile.rds",
+PRIORITIZR_AQM_target100_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+      commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/SSP585/target_commercialSSP585.rds",
+      bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/SSP585/target_bycatchSSP585.rds",
+      commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP585_25percentile.rds",
+      bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP585_25percentile.rds",
       climate_scenario = "SSP585",
-      outdir = "outputs/prioritizr_run/AQM/01_Target100/",
+      outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/01_Target100/",
       outexcel = "excel/AQM/",
       target_name = "Target100")
 
@@ -106,39 +110,39 @@ target100_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 100% (0.1 - 1)')
-ggsave("pdfs/solutions/AQM/Solutions_Target100.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Solutions_Target100.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 90% (0.1 - 0.9) ##
 ###############################
 
-PRIORITIZR_AQM_target90_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                 commercial_targetfile = "outputs/final_features/08b_targets/02_Target90/SSP126/target_commercialSSP126.rds",
-                                                 bycatch_targetfile = "outputs/final_features/08b_targets/02_Target90/SSP126/target_bycatchSSP126.rds",
-                                                 commercial_file = "outputs/final_features/07a_25perc/commercialSSP126_25percentile.rds",
-                                                 bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP126_25percentile.rds",
+PRIORITIZR_AQM_target90_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                 commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/02_Target90/SSP126/target_commercialSSP126.rds",
+                                                 bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/02_Target90/SSP126/target_bycatchSSP126.rds",
+                                                 commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP126_25percentile.rds",
+                                                 bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP126_25percentile.rds",
                                                  climate_scenario = "SSP126",
-                                                 outdir = "outputs/prioritizr_run/AQM/02_Target90/",
+                                                 outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/02_Target90/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target90")
 
-PRIORITIZR_AQM_target90_run02 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                 commercial_targetfile = "outputs/final_features/08b_targets/02_Target90/SSP245/target_commercialSSP245.rds",
-                                                 bycatch_targetfile = "outputs/final_features/08b_targets/02_Target90/SSP245/target_bycatchSSP245.rds",
-                                                 commercial_file = "outputs/final_features/07a_25perc/commercialSSP245_25percentile.rds",
-                                                 bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP245_25percentile.rds",
+PRIORITIZR_AQM_target90_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                 commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/02_Target90/SSP245/target_commercialSSP245.rds",
+                                                 bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/02_Target90/SSP245/target_bycatchSSP245.rds",
+                                                 commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP245_25percentile.rds",
+                                                 bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP245_25percentile.rds",
                                                  climate_scenario = "SSP245",
-                                                 outdir = "outputs/prioritizr_run/AQM/02_Target90/",
+                                                 outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/02_Target90/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target90")
 
-PRIORITIZR_AQM_target90_run03 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                 commercial_targetfile = "outputs/final_features/08b_targets/02_Target90/SSP585/target_commercialSSP585.rds",
-                                                 bycatch_targetfile = "outputs/final_features/08b_targets/02_Target90/SSP585/target_bycatchSSP585.rds",
-                                                 commercial_file = "outputs/final_features/07a_25perc/commercialSSP585_25percentile.rds",
-                                                 bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP585_25percentile.rds",
+PRIORITIZR_AQM_target90_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                 commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/02_Target90/SSP585/target_commercialSSP585.rds",
+                                                 bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/02_Target90/SSP585/target_bycatchSSP585.rds",
+                                                 commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP585_25percentile.rds",
+                                                 bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP585_25percentile.rds",
                                                  climate_scenario = "SSP585",
-                                                 outdir = "outputs/prioritizr_run/AQM/02_Target90/",
+                                                 outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/02_Target90/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target90")
 
@@ -185,39 +189,39 @@ target90_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 90% (0.1 - 0.9)')
-ggsave("pdfs/solutions/AQM/Solutions_Target90.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Solutions_Target90.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 80% (0.1 - 0.8) ##
 ###############################
 
-PRIORITIZR_AQM_target80_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/03_Target80/SSP126/target_commercialSSP126.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/03_Target80/SSP126/target_bycatchSSP126.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP126_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP126_25percentile.rds",
+PRIORITIZR_AQM_target80_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/03_Target80/SSP126/target_commercialSSP126.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/03_Target80/SSP126/target_bycatchSSP126.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP126_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP126_25percentile.rds",
                                                 climate_scenario = "SSP126",
-                                                outdir = "outputs/prioritizr_run/AQM/03_Target80/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/03_Target80/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target80")
 
-PRIORITIZR_AQM_target80_run02 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/03_Target80/SSP245/target_commercialSSP245.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/03_Target80/SSP245/target_bycatchSSP245.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP245_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP245_25percentile.rds",
+PRIORITIZR_AQM_target80_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/03_Target80/SSP245/target_commercialSSP245.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/03_Target80/SSP245/target_bycatchSSP245.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP245_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP245_25percentile.rds",
                                                 climate_scenario = "SSP245",
-                                                outdir = "outputs/prioritizr_run/AQM/03_Target80/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/03_Target80/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target80")
 
-PRIORITIZR_AQM_target80_run03 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/03_Target80/SSP585/target_commercialSSP585.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/03_Target80/SSP585/target_bycatchSSP585.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP585_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP585_25percentile.rds",
+PRIORITIZR_AQM_target80_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/03_Target80/SSP585/target_commercialSSP585.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/03_Target80/SSP585/target_bycatchSSP585.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP585_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP585_25percentile.rds",
                                                 climate_scenario = "SSP585",
-                                                outdir = "outputs/prioritizr_run/AQM/03_Target80/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/03_Target80/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target80")
 
@@ -264,39 +268,39 @@ target80_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 80% (0.1 - 0.8)')
-ggsave("pdfs/solutions/AQM/Solutions_Target80.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Solutions_Target80.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 70% (0.1 - 0.7) ##
 ###############################
 
-PRIORITIZR_AQM_target70_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/04_Target70/SSP126/target_commercialSSP126.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/04_Target70/SSP126/target_bycatchSSP126.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP126_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP126_25percentile.rds",
+PRIORITIZR_AQM_target70_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/04_Target70/SSP126/target_commercialSSP126.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/04_Target70/SSP126/target_bycatchSSP126.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP126_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP126_25percentile.rds",
                                                 climate_scenario = "SSP126",
-                                                outdir = "outputs/prioritizr_run/AQM/04_Target70/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/04_Target70/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target70")
 
-PRIORITIZR_AQM_target70_run02 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/04_Target70/SSP245/target_commercialSSP245.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/04_Target70/SSP245/target_bycatchSSP245.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP245_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP245_25percentile.rds",
+PRIORITIZR_AQM_target70_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/04_Target70/SSP245/target_commercialSSP245.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/04_Target70/SSP245/target_bycatchSSP245.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP245_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP245_25percentile.rds",
                                                 climate_scenario = "SSP245",
-                                                outdir = "outputs/prioritizr_run/AQM/04_Target70/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/04_Target70/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target70")
 
-PRIORITIZR_AQM_target70_run03 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/04_Target70/SSP585/target_commercialSSP585.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/04_Target70/SSP585/target_bycatchSSP585.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP585_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP585_25percentile.rds",
+PRIORITIZR_AQM_target70_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/04_Target70/SSP585/target_commercialSSP585.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/04_Target70/SSP585/target_bycatchSSP585.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP585_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP585_25percentile.rds",
                                                 climate_scenario = "SSP585",
-                                                outdir = "outputs/prioritizr_run/AQM/04_Target70/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/04_Target70/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target70")
 
@@ -343,39 +347,39 @@ target70_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 70% (0.1 - 0.7)')
-ggsave("pdfs/solutions/AQM/Solutions_Target70.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Solutions_Target70.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 60% (0.1 - 0.6) ##
 ###############################
 
-PRIORITIZR_AQM_target60_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/05_Target60/SSP126/target_commercialSSP126.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/05_Target60/SSP126/target_bycatchSSP126.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP126_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP126_25percentile.rds",
+PRIORITIZR_AQM_target60_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/05_Target60/SSP126/target_commercialSSP126.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/05_Target60/SSP126/target_bycatchSSP126.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP126_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP126_25percentile.rds",
                                                 climate_scenario = "SSP126",
-                                                outdir = "outputs/prioritizr_run/AQM/05_Target60/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/05_Target60/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target60")
 
-PRIORITIZR_AQM_target60_run02 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/05_Target60/SSP245/target_commercialSSP245.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/05_Target60/SSP245/target_bycatchSSP245.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP245_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP245_25percentile.rds",
+PRIORITIZR_AQM_target60_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/05_Target60/SSP245/target_commercialSSP245.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/05_Target60/SSP245/target_bycatchSSP245.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP245_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP245_25percentile.rds",
                                                 climate_scenario = "SSP245",
-                                                outdir = "outputs/prioritizr_run/AQM/05_Target60/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/05_Target60/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target60")
 
-PRIORITIZR_AQM_target60_run03 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/05_Target60/SSP585/target_commercialSSP585.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/05_Target60/SSP585/target_bycatchSSP585.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP585_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP585_25percentile.rds",
+PRIORITIZR_AQM_target60_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/05_Target60/SSP585/target_commercialSSP585.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/05_Target60/SSP585/target_bycatchSSP585.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP585_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP585_25percentile.rds",
                                                 climate_scenario = "SSP585",
-                                                outdir = "outputs/prioritizr_run/AQM/05_Target60/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/05_Target60/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target60")
 
@@ -422,39 +426,39 @@ target60_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 60% (0.1 - 0.6)')
-ggsave("pdfs/solutions/AQM/Solutions_Target60.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Solutions_Target60.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 50% (0.1 - 0.5) ##
 ###############################
 
-PRIORITIZR_AQM_target50_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/06_Target50/SSP126/target_commercialSSP126.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/06_Target50/SSP126/target_bycatchSSP126.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP126_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP126_25percentile.rds",
+PRIORITIZR_AQM_target50_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/06_Target50/SSP126/target_commercialSSP126.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/06_Target50/SSP126/target_bycatchSSP126.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP126_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP126_25percentile.rds",
                                                 climate_scenario = "SSP126",
-                                                outdir = "outputs/prioritizr_run/AQM/06_Target50/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/06_Target50/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target50")
 
-PRIORITIZR_AQM_target50_run02 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/06_Target50/SSP245/target_commercialSSP245.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/06_Target50/SSP245/target_bycatchSSP245.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP245_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP245_25percentile.rds",
+PRIORITIZR_AQM_target50_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/06_Target50/SSP245/target_commercialSSP245.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/06_Target50/SSP245/target_bycatchSSP245.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP245_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP245_25percentile.rds",
                                                 climate_scenario = "SSP245",
-                                                outdir = "outputs/prioritizr_run/AQM/06_Target50/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/06_Target50/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target50")
 
-PRIORITIZR_AQM_target50_run03 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/06_Target50/SSP585/target_commercialSSP585.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/06_Target50/SSP585/target_bycatchSSP585.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP585_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP585_25percentile.rds",
+PRIORITIZR_AQM_target50_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/06_Target50/SSP585/target_commercialSSP585.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/06_Target50/SSP585/target_bycatchSSP585.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP585_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP585_25percentile.rds",
                                                 climate_scenario = "SSP585",
-                                                outdir = "outputs/prioritizr_run/AQM/06_Target50/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/06_Target50/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target50")
 
@@ -501,39 +505,39 @@ target50_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 50% (0.1 - 0.5)')
-ggsave("pdfs/solutions/AQM/Solutions_Target50.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Solutions_Target50.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 40% (0.1 - 0.4) ##
 ###############################
 
-PRIORITIZR_AQM_target40_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/07_Target40/SSP126/target_commercialSSP126.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/07_Target40/SSP126/target_bycatchSSP126.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP126_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP126_25percentile.rds",
+PRIORITIZR_AQM_target40_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/07_Target40/SSP126/target_commercialSSP126.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/07_Target40/SSP126/target_bycatchSSP126.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP126_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP126_25percentile.rds",
                                                 climate_scenario = "SSP126",
-                                                outdir = "outputs/prioritizr_run/AQM/07_Target40/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/07_Target40/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target40")
 
-PRIORITIZR_AQM_target40_run02 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/07_Target40/SSP245/target_commercialSSP245.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/07_Target40/SSP245/target_bycatchSSP245.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP245_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP245_25percentile.rds",
+PRIORITIZR_AQM_target40_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/07_Target40/SSP245/target_commercialSSP245.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/07_Target40/SSP245/target_bycatchSSP245.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP245_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP245_25percentile.rds",
                                                 climate_scenario = "SSP245",
-                                                outdir = "outputs/prioritizr_run/AQM/07_Target40/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/07_Target40/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target40")
 
-PRIORITIZR_AQM_target40_run03 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/07_Target40/SSP585/target_commercialSSP585.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/07_Target40/SSP585/target_bycatchSSP585.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP585_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP585_25percentile.rds",
+PRIORITIZR_AQM_target40_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/07_Target40/SSP585/target_commercialSSP585.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/07_Target40/SSP585/target_bycatchSSP585.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP585_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP585_25percentile.rds",
                                                 climate_scenario = "SSP585",
-                                                outdir = "outputs/prioritizr_run/AQM/07_Target40/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/07_Target40/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target40")
 
@@ -580,39 +584,39 @@ target40_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 40% (0.1 - 0.4)')
-ggsave("pdfs/solutions/AQM/Solutions_Target40.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Solutions_Target40.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 30% (0.1 - 0.3) ##
 ###############################
 
-PRIORITIZR_AQM_target30_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/08_Target30/SSP126/target_commercialSSP126.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/08_Target30/SSP126/target_bycatchSSP126.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP126_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP126_25percentile.rds",
+PRIORITIZR_AQM_target30_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/08_Target30/SSP126/target_commercialSSP126.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/08_Target30/SSP126/target_bycatchSSP126.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP126_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP126_25percentile.rds",
                                                 climate_scenario = "SSP126",
-                                                outdir = "outputs/prioritizr_run/AQM/08_Target30/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/08_Target30/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target30")
 
-PRIORITIZR_AQM_target30_run02 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/08_Target30/SSP245/target_commercialSSP245.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/08_Target30/SSP245/target_bycatchSSP245.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP245_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP245_25percentile.rds",
+PRIORITIZR_AQM_target30_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/08_Target30/SSP245/target_commercialSSP245.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/08_Target30/SSP245/target_bycatchSSP245.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP245_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP245_25percentile.rds",
                                                 climate_scenario = "SSP245",
-                                                outdir = "outputs/prioritizr_run/AQM/08_Target30/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/08_Target30/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target30")
 
-PRIORITIZR_AQM_target30_run03 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/08_Target30/SSP585/target_commercialSSP585.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/08_Target30/SSP585/target_bycatchSSP585.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP585_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP585_25percentile.rds",
+PRIORITIZR_AQM_target30_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/08_Target30/SSP585/target_commercialSSP585.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/08_Target30/SSP585/target_bycatchSSP585.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP585_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP585_25percentile.rds",
                                                 climate_scenario = "SSP585",
-                                                outdir = "outputs/prioritizr_run/AQM/08_Target30/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/08_Target30/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target30")
 
@@ -659,39 +663,39 @@ target30_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 30% (0.1 - 0.3)')
-ggsave("pdfs/solutions/AQM/Solutions_Target30.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Solutions_Target30.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 20% (0.1 - 0.2) ##
 ###############################
 
-PRIORITIZR_AQM_target20_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/09_Target20/SSP126/target_commercialSSP126.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/09_Target20/SSP126/target_bycatchSSP126.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP126_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP126_25percentile.rds",
+PRIORITIZR_AQM_target20_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/09_Target20/SSP126/target_commercialSSP126.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/09_Target20/SSP126/target_bycatchSSP126.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP126_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP126_25percentile.rds",
                                                 climate_scenario = "SSP126",
-                                                outdir = "outputs/prioritizr_run/AQM/09_Target20/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/09_Target20/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target20")
 
-PRIORITIZR_AQM_target20_run02 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/09_Target20/SSP245/target_commercialSSP245.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/09_Target20/SSP245/target_bycatchSSP245.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP245_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP245_25percentile.rds",
+PRIORITIZR_AQM_target20_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/09_Target20/SSP245/target_commercialSSP245.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/09_Target20/SSP245/target_bycatchSSP245.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP245_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP245_25percentile.rds",
                                                 climate_scenario = "SSP245",
-                                                outdir = "outputs/prioritizr_run/AQM/09_Target20/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/09_Target20/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target20")
 
-PRIORITIZR_AQM_target20_run03 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/09_Target20/SSP585/target_commercialSSP585.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/09_Target20/SSP585/target_bycatchSSP585.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP585_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP585_25percentile.rds",
+PRIORITIZR_AQM_target20_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/09_Target20/SSP585/target_commercialSSP585.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/09_Target20/SSP585/target_bycatchSSP585.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP585_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP585_25percentile.rds",
                                                 climate_scenario = "SSP585",
-                                                outdir = "outputs/prioritizr_run/AQM/09_Target20/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/09_Target20/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target20")
 
@@ -738,39 +742,39 @@ target20_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 20% (0.1 - 0.2)')
-ggsave("pdfs/solutions/AQM/Solutions_Target20.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Solutions_Target20.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 10% (0 - 0.1) ##
 ###############################
 
-PRIORITIZR_AQM_target10_run01 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/10_Target10/SSP126/target_commercialSSP126.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/10_Target10/SSP126/target_bycatchSSP126.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP126_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP126_25percentile.rds",
+PRIORITIZR_AQM_target10_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/10_Target10/SSP126/target_commercialSSP126.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/10_Target10/SSP126/target_bycatchSSP126.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP126_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP126_25percentile.rds",
                                                 climate_scenario = "SSP126",
-                                                outdir = "outputs/prioritizr_run/AQM/10_Target10/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/10_Target10/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target10")
 
-PRIORITIZR_AQM_target10_run02 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/10_Target10/SSP245/target_commercialSSP245.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/10_Target10/SSP245/target_bycatchSSP245.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP245_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP245_25percentile.rds",
+PRIORITIZR_AQM_target10_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/10_Target10/SSP245/target_commercialSSP245.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/10_Target10/SSP245/target_bycatchSSP245.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP245_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP245_25percentile.rds",
                                                 climate_scenario = "SSP245",
-                                                outdir = "outputs/prioritizr_run/AQM/10_Target10/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/10_Target10/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target10")
 
-PRIORITIZR_AQM_target10_run03 <- prioritizr_run(cost_file = "outputs/cost_layer/large_medium/costlayer.rds",
-                                                commercial_targetfile = "outputs/final_features/08b_targets/10_Target10/SSP585/target_commercialSSP585.rds",
-                                                bycatch_targetfile = "outputs/final_features/08b_targets/10_Target10/SSP585/target_bycatchSSP585.rds",
-                                                commercial_file = "outputs/final_features/07a_25perc/commercialSSP585_25percentile.rds",
-                                                bycatch_file = "outputs/final_features/07a_25perc/bycatchSSP585_25percentile.rds",
+PRIORITIZR_AQM_target10_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/10_Target10/SSP585/target_commercialSSP585.rds",
+                                                bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/10_Target10/SSP585/target_bycatchSSP585.rds",
+                                                commercial_file = "outputs/08_Filter/08b_Filter25/commercialSSP585_25percentile.rds",
+                                                bycatch_file = "outputs/08_Filter/08b_Filter25/bycatchSSP585_25percentile.rds",
                                                 climate_scenario = "SSP585",
-                                                outdir = "outputs/prioritizr_run/AQM/10_Target10/",
+                                                outdir = "outputs/10_Prioritizr/10b-c_AQMRuns/10_Target10/",
                                                 outexcel = "excel/AQM/",
                                                 target_name = "Target10")
 
@@ -817,4 +821,4 @@ target10_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 10% (0 - 0.1)')
-ggsave("pdfs/solutions/AQM/Solutions_Target10.pdf")
+ggsave("pdfs/10_Prioritizr/AQM/Solutions_Target10.pdf", width = 21, height = 29.7)

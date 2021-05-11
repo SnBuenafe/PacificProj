@@ -19,18 +19,18 @@
 
 # Runs are found in 10b_PrioritizrRun.R and 10c_PrioritizrRunIUCN.R
 
-prioritizr_run <- function(cost_file, commercial_targetfile, bycatch_targetfile, 
+fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile, 
                            commercial_file, bycatch_file, climate_scenario, outdir, outexcel, target_name, ...) {
   ####################################################################################
   ####### Loading packages needed
   ####################################################################################
   
-  # install.packages("pacman", "BiocManager")
-  pacman::p_load(BiocManager)
-  # devtools::install_github("prioritizr/prioritizr")
-  # BiocManager::install("lpsymphony")
-  # install.packages("/Library/gurobi911/mac64/R/gurobi_9.1-1_R_4.0.2.tgz", repos = NULL)
-  # install.packages('slam')
+  #install.packages("pacman", "BiocManager")
+  #pacman::p_load(BiocManager)
+  #devtools::install_github("prioritizr/prioritizr")
+  #BiocManager::install("lpsymphony")
+  #install.packages("/Library/gurobi911/mac64/R/gurobi_9.1-1_R_4.0.2.tgz", repos = NULL)
+  #install.packages('slam')
   
   pacman::p_load(sf, dplyr, sp, rgeos, rgdal, raster, units, prioritizr, prioritizrdata, mapview, assertthat,
                  remotes, gridExtra, BiocManager, tidyverse, cli, fasterize, doParallel)
@@ -147,7 +147,7 @@ prioritizr_run <- function(cost_file, commercial_targetfile, bycatch_targetfile,
       summarize(sum_area = sum(area_km2), percent_area = (sum(area_km2)/total)*100, num_pu = length(st_geometry(summary)),
                 total_cost = sum(cost)) %>% 
       as_tibble() %>% 
-      select(-geometry)
+      dplyr::select(-geometry)
   }
   else{
   summary1 <- summary %>% 
@@ -155,7 +155,7 @@ prioritizr_run <- function(cost_file, commercial_targetfile, bycatch_targetfile,
               total_cost = sum(cost), median_velocity = median(velocity), median_tvelocity = median(velo_tvalue),
               median_RCE = median(RCE), median_RCEtvalue = median(RCE_tvalue)) %>% 
     as_tibble() %>% 
-    select(-geometry)
+    dplyr::select(-geometry)
   }
   summary1
   write_csv(summary1, paste0(outexcel,target_name,"_summary",climate_scenario,".csv"))
