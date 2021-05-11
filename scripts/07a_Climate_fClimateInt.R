@@ -15,7 +15,7 @@
 # outdir: directory where to save raster layers
 # pu: PU .shp or .rds file; "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp"
 
-layer_intersect <- function(input, scenario, inpdir, outdir, pu, ...) {
+fClimateInt <- function(input, scenario, inpdir, outdir, pu, ...) {
   
   ####################################################################################
   ####### Defining packages needed
@@ -29,32 +29,41 @@ layer_intersect <- function(input, scenario, inpdir, outdir, pu, ...) {
   # Load packages
   lapply(list.of.packages, require, character.only = TRUE)
 
-  # defining projections that will be used
-  
+  ###############################
+  #### Defining generalities ####
+  ###############################
   rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
   longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
   
-  # calling PU shapefile
-  
+  ###############################
+  #### Calling PU file ####
+  ###############################
   if(stringr::str_detect(string = pu, pattern = ".rds") == TRUE) {
     shp_PU_sf <- readRDS(pu)
   } else if (stringr::str_detect(string = pu, pattern = ".shp") == TRUE) {
     shp_PU_sf <- st_read(pu)
   }
-  
-  # making sure that PU shapefile is transformed to robinson's projection
+
   shp_PU_sf <- shp_PU_sf %>% 
     st_transform(crs = rob_pacific)
   
+  # assigning cellsID to each PU
   shp_PU_sf1 <- shp_PU_sf %>%
     dplyr::mutate (cellsID = 1:nrow(shp_PU_sf), 
                    area_km2 = as.numeric(st_area(shp_PU_sf)/1e+06)) %>% 
     dplyr::select(cellsID, geometry)
   pu_min_area <- min(shp_PU_sf1$area_km2)
   
+  ##########################################
+  #### Calling RCE/Velocity raster file ####
+  ##########################################
   # calling the raster file layer
   layer_rs <- readAll(raster(inpdir))
   crs(layer_rs) <- CRS(longlat)
+  
+  ##########################################
+  #### Manipulating raster file ####
+  ##########################################
   
   # Creating layer of weights.
   weight_rs <- raster::area(layer_rs)
