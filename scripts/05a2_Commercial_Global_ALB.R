@@ -1,12 +1,12 @@
 # All models (global-fitted) are from James Mercer's code.
-# 04a creates the GAMs for each of the species.
+# 05a creates the GAMs for each of the species.
 # It saves the predictions (with the environmental variables and the coordinates) as a .csv file. (dir: input/mercer/)
-# Saves the visreg plots and maps. (dir: outputs/commercial/GAM_plots/)
-# There are 4 parts to 04a:
-# 1. 04a_1: yellowfin
-# 2. 04a_2: albacore
-# 3. 04a_3: swordfish
-# 4. 04a_4: skipjack
+# Saves the visreg plots and maps. (dir: outputs/05_Commercial/05a_GAMPlots/)
+# There are 8 parts to 05a; the first 4 of which are global-fitted data:
+# 1. 05a1: yellowfin
+# 2. 05a2: albacore
+# 3. 05a3: swordfish
+# 4. 05a4: skipjack
 # The code must be run one after the other.
 
 ####################################################################################
@@ -46,7 +46,7 @@ fullplot_alb9 <- visreg(m6, "Chl", partial = FALSE, ylab = " ", xlab = "Chl", gg
 ALB_FullModel <- (fullplot_alb1 | fullplot_alb2 | fullplot_alb3) / (fullplot_alb4 | fullplot_alb5 | fullplot_alb6) / (fullplot_alb7 | fullplot_alb8 | fullplot_alb9) +
   plot_annotation(title = "Response of Variables for Full Model", subtitle = "Albacore Tuna", tag_levels = "i")
 ALB_FullModel
-ggsave("outputs/commercial/GAM_plots/ALB/ALB_FullModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a2_ALB/ALB_FullModel.pdf", width = 20, height = 20, dpi = 320)
 # Some of the relationships look too wiggly, and might not make sense
 
 # First, let's see what we can drop using BIC
@@ -99,11 +99,11 @@ bestplot_alba3 <- visreg(ALBA_BestModel, "Chl", partial = FALSE, ylab = "s(Chl, 
 bestplot_alba <- (bestplot_alba1 | bestplot_alba2) / (bestplot_alba3) +
   plot_annotation(title = "Response of Variables for Best Model", subtitle = "Albacore Tuna", tag_levels = "i")
 bestplot_alba
-ggsave("outputs/commercial/GAM_plots/ALB/ALBA_BestModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a2_ALB/ALBA_BestModel.pdf", width = 20, height = 20, dpi = 320)
 
 vis.gam(ALBA_BestModel, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (°)", 
         ylab = "Longitude (°)", zlab = "Presence", color = "cm", theta = 30, phi = 30, r = 100)
-dev.copy2pdf(file = "outputs/commercial/GAM_plots/ALB/ALBA_BestModelLatLong.pdf", paper = "A4r")
+dev.copy2pdf(file = "outputs/05_Commercial/05a_GAMPlots/05a2_ALB/ALBA_BestModelLatLong.pdf", paper = "A4r")
 
 #######################################
 # Plotting best model as a map
@@ -127,4 +127,4 @@ p <- p + geom_map(data = WorldData, map = WorldData,
                   aes(x = long, y = lat, group = group, map_id = region),
                   fill = "grey", colour = "grey", size = 0.5)
 p 
-ggsave("outputs/commercial/GAM_plots/ALB/ALB_map.png", p, dpi = 1200)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a2_ALB/ALB_map.png", p, dpi = 1200)

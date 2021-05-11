@@ -1,12 +1,12 @@
 # All models (global-fitted) are from James Mercer's code.
-# 04a creates the GAMs for each of the species.
+# 05a creates the GAMs for each of the species.
 # It saves the predictions (with the environmental variables and the coordinates) as a .csv file. (dir: input/mercer/)
-# Saves the visreg plots and maps. (dir: outputs/commercial/GAM_plots/)
-# There are 4 parts to 04a:
-# 1. 04a_1: yellowfin
-# 2. 04a_2: albacore
-# 3. 04a_3: swordfish
-# 4. 04a_4: skipjack
+# Saves the visreg plots and maps. (dir: outputs/05_Commercial/05a_GAMPlots/)
+# There are 8 parts to 05a; the first 4 of which are global-fitted data:
+# 1. 05a1: yellowfin
+# 2. 05a2: albacore
+# 3. 05a3: swordfish
+# 4. 05a4: skipjack
 # The code must be run one after the other.
 
 ####################################################################################
@@ -46,7 +46,7 @@ fullplot_swo9 <- visreg(m13, "Chl", partial = FALSE, ylab = " ", xlab = "Chl", g
 SWO_FullModel <- (fullplot_swo1 | fullplot_swo2 | fullplot_swo3) / (fullplot_swo4 | fullplot_swo5 | fullplot_swo6) / (fullplot_swo7 | fullplot_swo8 | fullplot_swo9) +
   plot_annotation(title = "Response of Variables for Full Model", subtitle = "Swordfish", tag_levels = "i")
 SWO_FullModel
-ggsave("outputs/commercial/GAM_plots/SWO/SWO_FullModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a3_SWO/SWO_FullModel.pdf", width = 20, height = 20, dpi = 320)
 
 # First, let's see what we can drop using BIC
 # JAMES EDIT: Left in Chl + Dist2Coast as a linear effect
@@ -105,11 +105,11 @@ bestplot_swo5 <- visreg(SWO_BestModel, "Dist2Coast", partial = FALSE, ylab = "f(
 bestplot_swo <- (bestplot_swo1 | bestplot_swo2 | bestplot_swo3) / ( bestplot_swo4 | bestplot_swo5) +
   plot_annotation(title = "Response of Variables for Best Model", subtitle = "Swordfish Tuna", tag_levels = "i")
 bestplot_swo
-ggsave("outputs/commercial/GAM_plots/SWO/SWO_BestModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a3_SWO/SWO_BestModel.pdf", width = 20, height = 20, dpi = 320)
 
 vis.gam(SWO_BestModel, c("Latitude", "Longitude"), ticktype = "detailed", xlab = "\nLatitude (oC)", 
         ylab = "Longitude", zlab = "\nPresence/Absence", color = "cm", theta = 45, phi = 10, r = 100)
-dev.copy2pdf(file = "outputs/commercial/GAM_plots/SWO/SWO_BestModelLatLong.pdf", paper = "A4r")
+dev.copy2pdf(file = "outputs/05_Commercial/05a_GAMPlots/05a3_SWO/SWO_BestModelLatLong.pdf", paper = "A4r")
 
 #######################################
 # Plotting best model as a map
@@ -133,5 +133,5 @@ p <- p + geom_map(data = WorldData, map = WorldData,
                   aes(x = long, y = lat, group = group, map_id = region),
                   fill = "grey", colour = "grey", size = 0.5)
 p 
-ggsave("outputs/commercial/GAM_plots/SWO/SWO_map.png", p, dpi = 1200)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a3_SWO/SWO_map.png", p, dpi = 1200)
 

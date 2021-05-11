@@ -1,12 +1,12 @@
 # All models (global-fitted) are from James Mercer's code.
-# 04a creates the GAMs for each of the species.
+# 05a creates the GAMs for each of the species.
 # It saves the predictions (with the environmental variables and the coordinates) as a .csv file. (dir: input/mercer/)
-# Saves the visreg plots and maps. (dir: outputs/commercial/GAM_plots/)
-# There are 4 parts to 04a:
-# 1. 04a_1: yellowfin
-# 2. 04a_2: albacore
-# 3. 04a_3: skipjack
-# 4. 04a_4: swordfish
+# Saves the visreg plots and maps. (dir: outputs/05_Commercial/05a_GAMPlots)
+# There are 8 parts to 05a; the first 4 of which are global-fitted data:
+# 1. 05a1: yellowfin
+# 2. 05a2: albacore
+# 3. 05a3: swordfish
+# 4. 05a4: skipjack
 # The code must be run one after the other.
 
 ####################################################################################
@@ -46,7 +46,7 @@ fullplot_skp9 <- visreg(m21, "Chl", partial = FALSE, ylab = " ", xlab = "Chl", g
 SKP_FullModel <- (fullplot_skp1 | fullplot_skp2 | fullplot_skp3) / (fullplot_skp4 | fullplot_skp5 | fullplot_skp6) / (fullplot_skp7 | fullplot_skp8 | fullplot_skp9) +
   plot_annotation(title = "Response of Variables for Full Model", subtitle = "Skipjack tuna", tag_levels = "i")
 SKP_FullModel
-ggsave("outputs/commercial/GAM_plots/SKP/SKP_FullModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a4_SKP/SKP_FullModel.pdf", width = 20, height = 20, dpi = 320)
 
 # JAMES EDIT: Left in Nitrate as a linear effect
 m22 <- gam(pa ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + Nitrate + s(Chl), data = skip, family = "binomial")
@@ -97,11 +97,11 @@ bestplot_skp5 <- visreg(SKP_BestModel, "Chl", partial = FALSE, ylab = "s(Chl, 1.
 bestplot_skp <- (bestplot_skp1 | bestplot_skp2 | bestplot_skp3) / ( bestplot_skp4 | bestplot_skp5) +
   plot_annotation(title = "Response of Variables for Best Model", subtitle = "Skipjack Tuna", tag_levels = "i")
 bestplot_skp
-ggsave("outputs/commercial/GAM_plots/SKP/SKP_BestModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a4_SKP/SKP_BestModel.pdf", width = 20, height = 20, dpi = 320)
 
 vis.gam(SKP_BestModel, c("Latitude", "Longitude"), ticktype = "detailed", xlab = "\nLatitude (oC)", 
         ylab = "Longitude", zlab = "\nPresence/Absence", color = "cm", theta = 45, phi = 10, r = 100)
-dev.copy2pdf(file = "outputs/commercial/GAM_plots/SKP/SKP_BestModelLatLong.pdf", paper = "A4r")
+dev.copy2pdf(file = "outputs/05_Commercial/05a_GAMPlots/05a4_SKP/SKP_BestModelLatLong.pdf", paper = "A4r")
 
 #######################################
 # Plotting best model as a map
@@ -125,4 +125,4 @@ p <- p + geom_map(data = WorldData, map = WorldData,
                   aes(x = long, y = lat, group = group, map_id = region),
                   fill = "grey", colour = "grey", size = 0.5)
 p 
-ggsave("outputs/commercial/GAM_plots/SKP/SKP_map.png", p, dpi = 1200)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a4_SKP/SKP_map.png", p, dpi = 1200)
