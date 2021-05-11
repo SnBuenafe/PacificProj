@@ -17,28 +17,28 @@
 # 6. feature_file: .rds file with all the features together (relevant only for AQM)
 # 7. prov_file: .rds file of the Longhurst provinces
 
-source("scripts/03c_FeatProvFxn.R")
+source("scripts/03_Features_fProvIntersect")
 
 ###############################
 ##### RUNS FOR COMMERCIAL #####
 ###############################
 
-COMMERCIAL_prov_run01 <- prov_intersect(path = "outputs/commercial/04b_CommercialPredictions",
-  pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-  fit = "global",
-  outdir = "outputs/commercial/04d_CommercialxProvince/global/",
-  data = "commercial",
-  feature_file = NA,
-  prov_file = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst.rds"
+COMMERCIAL_prov_run01 <- fProvIntersect(path = "outputs/05_Commercial/05b_fCommercialFeat",
+                                        pu_shp = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
+                                        fit = "global",
+                                        outdir = "outputs/05_Commercial/05e_fProvIntersect/Global/",
+                                        data = "commercial",
+                                        feature_file = NA,
+                                        prov_file = "outputs/01_StudyArea/01b_Longhurst/PacificABNJGrid_05deg_Longhurst.rds"
 )
 
-COMMERCIAL_prov_run02 <- prov_intersect(path = "outputs/commercial/04b_CommercialPredictions",
-  pu_shp = "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp",
-  fit = "pacific",
-  outdir = "outputs/commercial/04d_CommercialxProvince/pacific/",
-  data = "commercial",
-  feature_file = NA,
-  prov_file = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst.rds"
+COMMERCIAL_prov_run02 <- fProvIntersect(path = "outputs/05_Commercial/05b_fCommercialFeat",
+                                        pu_shp = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
+                                        fit = "pacific",
+                                        outdir = "outputs/05_Commercial/05e_fProvIntersect/Pacific/",
+                                        data = "commercial",
+                                        feature_file = NA,
+                                        prov_file = "outputs/01_StudyArea/01b_Longhurst/PacificABNJGrid_05deg_Longhurst.rds"
 )
 
 ####################
