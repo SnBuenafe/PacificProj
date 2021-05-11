@@ -12,7 +12,7 @@
 
 # Runs are found in 11b_NoRegretRunAQM, and 11c_NoRegretRunIUCN.
 
-create_noregret <- function(inpdir, outdir, target_name, pu_file, climate_scenario, ...) {
+fCreateNoRegret <- function(inpdir, outdir, target_name, pu_file, outexcel, climate_scenario, ...) {
   
   ##################################
   ### Defining the main packages ###
@@ -29,11 +29,12 @@ create_noregret <- function(inpdir, outdir, target_name, pu_file, climate_scenar
   #######################
   #### Calling Files ####
   #######################
-  files <- list.files(path = inpdir, pattern = "*.rds")
+  files <- list.files(path = inpdir, pattern = "*SSP")
   # Calling the Planning Unit files.
   temp_pu <- readRDS(pu_file)
   planning_units <- temp_pu %>%
-    dplyr::mutate(cellsID = 1:nrow(temp_pu)) %>% 
+    dplyr::mutate(cellsID = 1:nrow(temp_pu),
+                  area_km2 = as.numeric(st_area(temp_pu)/1e+06)) %>% 
     as_tibble()
   
   ###########################
@@ -41,13 +42,13 @@ create_noregret <- function(inpdir, outdir, target_name, pu_file, climate_scenar
   ###########################
   for(i in 1:length(files)){
     x <- unlist(strsplit(unlist(strsplit(basename(files[i]),"_"))[2],"[.]"))[1]
-    x_file <- list.files(path = inpdir, pattern = x)
+    x_file <- list.files(path = inpdir, pattern = paste0(x))
     temp_file <- readRDS(paste0(inpdir, x_file))
     
     temp_plan <- temp_file %>% 
-      select(cellsID, solution_1, geometry)
+      dplyr::select(cellsID, solution_1, geometry)
     
-    assign(x = paste0("plan_",x), value = temp_plan)
+    assign(x = paste0("plan_", x), value = temp_plan)
   }
   
   temp <- st_intersection(plan_SSP126, plan_SSP245) %>% 
@@ -58,7 +59,7 @@ create_noregret <- function(inpdir, outdir, target_name, pu_file, climate_scenar
   
   final_list <- temp_final %>% 
     dplyr::filter(solution_1 == TRUE & solution_1.1 == TRUE & solution_1.2 == TRUE) %>% 
-    select(solution_1, cellsID, geometry) %>% 
+    dplyr::select(solution_1, cellsID, geometry) %>% 
     rename(solution = solution_1) %>% 
     as_tibble()
 
@@ -66,9 +67,8 @@ create_noregret <- function(inpdir, outdir, target_name, pu_file, climate_scenar
   #### Join with PUs ####
   #######################
   no_regret <- left_join(planning_units, final_list, by = "cellsID") %>% 
-    dplyr::mutate(solution = replace_na(solution, "FALSE"),
-                  area_km2 = as.numeric(st_area(shp_PU_sf)/1e+06)) %>% 
-    select(-geometry.y) %>% 
+    dplyr::mutate(solution = replace_na(solution, "FALSE")) %>% 
+    dplyr::select(-geometry.y) %>% 
     rename(geometry = geometry.x) %>% 
     st_as_sf(sf_column_name = "geometry")
   
@@ -85,7 +85,7 @@ create_noregret <- function(inpdir, outdir, target_name, pu_file, climate_scenar
               num_pu = length(st_geometry(summary)),
               total_cost = sum(cost)) %>% 
     as_tibble() %>% 
-    select(-geometry)
+    dplyr::select(-geometry)
   
   write_csv(summary1, paste0(outexcel,target_name,"_summary",climate_scenario,".csv"))
   
