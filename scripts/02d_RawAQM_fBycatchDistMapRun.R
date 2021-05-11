@@ -24,9 +24,9 @@
 
 source("scripts/02d_AQM_DistMaps.R")
 
-####################################################################################
-####### Running function
-####################################################################################
+######################################
+#### Running function for turtles ####
+######################################
 
 turtle_plots <- bycatch_distmap(path = "outputs/AQM_wflow/02b_bycatch", 
                                 bycatch = "turtle",
@@ -48,34 +48,50 @@ turt_plot + plot_annotation(tag_levels = "i",
                             caption = "Data from AquaMaps (2019)") #+
 #  ggsave("pdfs/PacificTurtles.pdf", width = 20, height = 10, dpi = 300)
 
-#plots for mammals
-mam_plot1 <- (plots[[1]]) + (plots[[2]]) + (plots[[3]]) + (plots[[4]]) + (plots[[5]]) + (plots[[6]]) + (plots[[7]]) + (plots[[8]]) + (plots[[9]]) +
+######################################
+#### Running function for mammals ####
+######################################
+
+mammal_plots <- bycatch_distmap(path = "outputs/AQM_wflow/02b_bycatch", 
+                                bycatch = "mammal",
+                                land_file = "inputs/shapefiles/PacificCenterLand/PacificCenterLand.shp",
+                                eez_file = "inputs/shapefiles/PacificCenterEEZ/PacificCenterEEZ.shp",
+                                north = 51,
+                                south = 60,
+                                west = 78,
+                                east = 140)
+
+# plot for mammals
+mam_plot1 <- (mammal_plots[[1]]) + (mammal_plots[[2]]) + (mammal_plots[[3]]) + (mammal_plots[[4]]) + (mammal_plots[[5]]) + 
+  (mammal_plots[[6]]) + (mammal_plots[[7]]) + (mammal_plots[[8]]) + (mammal_plots[[9]]) +
   plot_layout(ncol = 3, nrow = 3)
 
 mam_plot1 + plot_annotation(tag_levels = "i",
                             tag_suffix = ".",
                             title = "Distribution of Marine Mammals in the Pacific Ocean ",
                             subtitle = "1 of 3",
-                            caption = "Data from AquaMaps (2019)") +
-  ggsave("pdfs/PacificMammals1.pdf", width = 20, height = 10, dpi = 300)
+                            caption = "Data from AquaMaps (2019)") #+
+#  ggsave("pdfs/PacificMammals1.pdf", width = 20, height = 10, dpi = 300)
 
-mam_plot2 <- (plots[[10]]) + (plots[[11]]) + (plots[[12]]) + (plots[[13]]) + (plots[[14]]) + (plots[[15]]) + (plots[[16]]) + (plots[[17]]) + (plots[[18]]) +
+mam_plot2 <- (mammal_plots[[10]]) + (mammal_plots[[11]]) + (mammal_plots[[12]]) + (mammal_plots[[13]]) + (mammal_plots[[14]]) + (mammal_plots[[15]]) + 
+  (mammal_plots[[16]]) + (mammal_plots[[17]]) + (mammal_plots[[18]]) +
   plot_layout(ncol = 3, nrow = 3)
 
 mam_plot2 + plot_annotation(tag_levels = "i",
                             tag_suffix = ".",
                             title = "Distribution of Marine Mammals in the Pacific Ocean ",
                             subtitle = "2 of 3",
-                            caption = "Data from AquaMaps (2019)") +
-  ggsave("pdfs/PacificMammals2.pdf", width = 20, height = 10, dpi = 300)
+                            caption = "Data from AquaMaps (2019)") #+
+#  ggsave("pdfs/PacificMammals2.pdf", width = 20, height = 10, dpi = 300)
 
-mam_plot3 <- (plots[[19]]) + (plots[[20]]) + (plots[[21]]) + (plots[[22]]) + (plots[[23]]) + (plots[[24]]) + (plots[[25]]) + (plots[[26]]) + (plots[[27]])
-plot_layout(ncol = 3, nrow = 3)
+mam_plot3 <- (mammal_plots[[19]]) + (mammal_plots[[20]]) + (mammal_plots[[21]]) + (mammal_plots[[22]]) + (mammal_plots[[23]]) + 
+  (mammal_plots[[24]]) + (mammal_plots[[25]]) + (mammal_plots[[26]]) + (mammal_plots[[27]]) +
+  plot_layout(ncol = 3, nrow = 3)
 
 mam_plot3 + plot_annotation(tag_levels = "i",
                             tag_suffix = ".",
                             title = "Distribution of Marine Mammals in the Pacific Ocean ",
                             subtitle = "3 of 3",
-                            caption = "Data from AquaMaps (2019)") +
-  ggsave("pdfs/PacificMammals3.pdf", width = 20, height = 10, dpi = 300)
+                            caption = "Data from AquaMaps (2019)") #+
+#  ggsave("pdfs/PacificMammals3.pdf", width = 20, height = 10, dpi = 300)
 

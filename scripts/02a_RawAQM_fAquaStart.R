@@ -23,7 +23,7 @@
 
 # Function is ran at 02b.
 
-aqua_start <- function(path, outdir, olayer, prob_threshold, sp_env, type, region, res, ...) {
+fAquaStart <- function(path, outdir, olayer, prob_threshold, sp_env, type, region, res, ...) {
   
   ####################################################################################
   ####### Defining the main packages (trying to auto this)

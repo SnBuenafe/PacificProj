@@ -14,15 +14,9 @@
 # 7. west: west boundary in degrees
 # 8. east: east boundary in degrees
 
-# The following must also be defined prior to running the code.
-# 1. Bndry: boundaries of study area;
-# 2. world_eez: eez in robinson's projection;
-# 3. world_sf: landmasses in robinson's projection;
-# 4. rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
+# Function is ran in 02d.
 
-# Function is ran in 02e.
-
-bycatch_distmap <- function(path, bycatch, land_file, eez_file, north, south, west, east, ...) {
+fBycatchDistMap <- function(path, bycatch, land_file, eez_file, north, south, west, east, ...) {
 
   ####################################################################################
   ####### Defining packages needed
@@ -38,29 +32,16 @@ bycatch_distmap <- function(path, bycatch, land_file, eez_file, north, south, we
   ####################################################################################
   ####### Defining generalities
   ####################################################################################
-  
   rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
-  world_eez <- st_read(eez_file)
-  world_sf <- st_read(land_file)
+  world_eez <- readRDS(eez_file)
+  world_sf <- readRDS(land_file)
   
-  #first we need to get the xy coordinates of the boundaries of the study area
-  test<-cbind(c(east, -west, -west, east), #TopLeft, TopRight, BottomRight, BottomLeft
-              c(north, north, -south, -south))
-  Cnr <- proj4::project(test, proj = rob_pacific)
-  
-  #make sure that the boundary limits are in line with the current projection
-  Bndry <- tibble(V1 = Cnr[1:2,1] , V2 = Cnr[1:2,2]) %>% # Start with N boundary (51N)
-    bind_rows(as_tibble(project(as.matrix(tibble(x = -west, y = seq(north, -south, by = -1))), proj = rob_pacific))) %>% # Then bind to E boundary
-    bind_rows(as_tibble(project(as.matrix(tibble(x = east, y = seq(-south, north, by = 1))), proj = rob_pacific))) %>% # Then W boundary - reverse x order
-    as.matrix() %>%
-    list() %>%
-    st_polygon() %>%
-    st_sfc(crs = rob_pacific)
+  source("scripts/study_area/fCreateRobinsonBoundary.R")
+  Bndry <- fCreateRobinsonBoundary(west, east, north, south)
   
   ####################################################################################
   ####### Creating bycatch data to be plotted
   ####################################################################################
-  
   dir <- path
   
   if(bycatch == "turtle") {
@@ -112,7 +93,7 @@ bycatch_distmap <- function(path, bycatch, land_file, eez_file, north, south, we
       }
       
       p <- ggplot() +
-        geom_sf(data = rds_file, color = pal_dist[x]) +
+        geom_sf(data = rds_file, fill = pal_dist[x], color = pal_dist[x], size = 0.1) +
         geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
         geom_sf(data = world_eez, size = 1, fill = NA, show.legend = FALSE) +
         scale_color_manual(values = "grey30") +
@@ -124,5 +105,5 @@ bycatch_distmap <- function(path, bycatch, land_file, eez_file, north, south, we
       
       plots[[i]] <- p
     } 
-  return(plots) #gahd this was the only line i needed for it to work :(; took 60438090321 hrs to figure it out...
+  return(plots)
 }
