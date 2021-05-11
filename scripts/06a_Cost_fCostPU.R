@@ -15,7 +15,7 @@
 
 # Function is run in 05b
   
-cost_pu <- function(input, pu_shp, outdir, layer, stack_num, ...) {
+fCostPU <- function(input, pu_shp, outdir, layer, stack_num, ...) {
 
   ####################################################################################
   ####### Defining packages needed
