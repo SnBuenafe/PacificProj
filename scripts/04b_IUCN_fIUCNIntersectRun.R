@@ -15,15 +15,15 @@
 
 # Function is detailed in 10a_IUCNdata.R
 
-source("scripts/09a_IUCNdata.R")
+source("scripts/04a_IUCN_fIUCNIntersect.R")
 
 ############################
 # RUNNING THE CODE
 ############################
 
-run29 <- iucn_int(input = "inputs/rasterfiles/IUCN/data_0.shp",
-                  pu_file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds",
-                  outdir = "outputs/IUCN_wflow/09b_IUCNxPU/"
+IUCN_run01 <- fIUCNIntersect(input = "inputs/rasterfiles/IUCN/data_0.shp",
+                  pu_file = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
+                  outdir = "outputs/04_IUCN/04b_fIUCNIntersect/"
 )
 
 #################################
@@ -34,15 +34,17 @@ run29 <- iucn_int(input = "inputs/rasterfiles/IUCN/data_0.shp",
 library(RColorBrewer)
 library(patchwork)
 pal_dist <- rev(brewer.pal(6, "Set3"))
-world_sf <- st_read("inputs/shapefiles/PacificCenterLand/PacificCenterLand.shp") %>% 
-  st_transform(crs = rob_pacific)
+world_sf <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
 
-loggerhead <- readRDS("outputs/IUCN_wflow/09b_IUCNxPU/Caretta_caretta_IUCN.rds")
-green <- readRDS("outputs/IUCN_wflow/09b_IUCNxPU/Chelonia_mydas_IUCN.rds")
-leatherback <- readRDS("outputs/IUCN_wflow/09b_IUCNxPU/Dermochelys_coriacea_IUCN.rds")
-hawksbill <- readRDS("outputs/IUCN_wflow/09b_IUCNxPU/Eretmochelys_imbricata_IUCN.rds")
-kemp <- readRDS("outputs/IUCN_wflow/09b_IUCNxPU/Lepidochelys_kempii_IUCN.rds")
-olive <- readRDS("outputs/IUCN_wflow/09b_IUCNxPU/Lepidochelys_olivacea_IUCN.rds")
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
+
+loggerhead <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Caretta_caretta_IUCN.rds")
+green <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Chelonia_mydas_IUCN.rds")
+leatherback <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Dermochelys_coriacea_IUCN.rds")
+hawksbill <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Eretmochelys_imbricata_IUCN.rds")
+kemp <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Lepidochelys_kempii_IUCN.rds")
+olive <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Lepidochelys_olivacea_IUCN.rds")
 
 loggerhead_plot <- ggplot() + 
                       geom_sf(data = loggerhead, colour = pal_dist[1]) + 
@@ -52,9 +54,8 @@ loggerhead_plot <- ggplot() +
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                expand = TRUE) +
-                      labs(title = "Loggerhead sea turtles' distribution") +
+                      labs(title = "Loggerhead sea turtles") +
                       theme_bw()
-loggerhead_plot
 
 green_plot <- ggplot() + 
                   geom_sf(data = green, colour = pal_dist[2]) + 
@@ -64,9 +65,8 @@ green_plot <- ggplot() +
                   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                            expand = TRUE) +
-                  labs(title = "Green sea turtles' distribution") +
+                  labs(title = "Green sea turtles") +
                   theme_bw()
-green_plot
 
 leatherback_plot <- ggplot() + 
                         geom_sf(data = leatherback, colour = pal_dist[3]) + 
@@ -76,9 +76,8 @@ leatherback_plot <- ggplot() +
                     coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                              ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                              expand = TRUE) +
-                    labs(title = "Leatherback sea turtles' distribution") +
+                    labs(title = "Leatherback sea turtles") +
                     theme_bw()
-leatherback_plot
 
 hawksbill_plot <- ggplot() + 
                       geom_sf(data = hawksbill, colour = pal_dist[4]) + 
@@ -88,9 +87,8 @@ hawksbill_plot <- ggplot() +
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                expand = TRUE) +
-                      labs(title = "Hawksbill sea turtles' distribution") +
+                      labs(title = "Hawksbill sea turtles") +
                       theme_bw()
-hawksbill_plot
 
 kemp_plot <- ggplot() + 
                 geom_sf(data = kemp, colour = pal_dist[5]) + 
@@ -100,9 +98,8 @@ kemp_plot <- ggplot() +
                 coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                          ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                          expand = TRUE) +
-                labs(title = "Kemp's ridley sea turtles' distribution") +
+                labs(title = "Kemp's ridley sea turtles") +
                 theme_bw()
-kemp_plot
 
 olive_plot <- ggplot() + 
                 geom_sf(data = olive, colour = pal_dist[6]) + 
@@ -112,7 +109,7 @@ olive_plot <- ggplot() +
                 coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                          ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                          expand = TRUE) +
-                labs(title = "Olive ridley sea turtles' distribution") +
+                labs(title = "Olive ridley sea turtles") +
                 theme_bw()
 
 # removing kemp_plot because there are no planning units
@@ -122,4 +119,4 @@ iucn_turtle_plots <- (loggerhead_plot | green_plot | leatherback_plot) / (hawksb
                   title = "Distribution of Sea Turtles in the Pacific Ocean ",
                   caption = "Data from IUCN")
 iucn_turtle_plots
-ggsave("pdfs/PacificTurtles_IUCN.pdf", width = 20, height = 10, dpi = 300)
+ggsave("pdfs/04_IUCN/PacificTurtles_IUCN.pdf", width = 29.7, height = 21, dpi = 300)
