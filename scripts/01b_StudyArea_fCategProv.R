@@ -15,7 +15,7 @@
 
 # Function is ran at 01c.
 
-pu_by_provinces <- function(pu_file, province_file, prov_name, olayer, outdir) {
+fCategProv <- function(pu_file, province_file, prov_name, olayer, outdir, ...) {
   
   ##########################################
   ####### Defining the main packages #######
@@ -71,7 +71,7 @@ pu_by_provinces <- function(pu_file, province_file, prov_name, olayer, outdir) {
   #  geom_sf(data = bioprovince_rob, aes(fill = ProvCode)) 
   
   #writing Pacific-Centered shapefile
-  saveRDS(bioprovince_rob, "inputs/rdsfiles/PacificCenterLonghurst.rds")
+  saveRDS(bioprovince_rob, "outputs/01_StudyArea/01b_Longhurst/PacificCenterLonghurst.rds")
   #st_write(bioprovince_rob, dsn = "inputs/shapefiles/PacificCenterLonghurst", driver = "ESRI Shapefile", append = FALSE)
   
   ##########################################
@@ -102,10 +102,10 @@ pu_by_provinces <- function(pu_file, province_file, prov_name, olayer, outdir) {
   pu_region$province <- pus_prov$province[match(pu_region$geometry, pus_prov$geometry)]
   pu_region$prov_descr <- pus_prov$ProvDescr[match(pu_region$geometry, pus_prov$geometry)]
   pu_region$province <- ifelse(is.na(pu_region$province), 
-                               paste("non-categ", prov_name, sep = "_"), 
+                               paste("No-Category", sep = "_"), 
                                paste(pu_region$province, sep = "_"))
   pu_region$prov_descr <- ifelse(is.na(pu_region$prov_descr), 
-                               paste("non-categ", prov_name, sep = "_"), 
+                               paste("No-Category", sep = "_"), 
                                paste(pu_region$prov_descr, sep = "_"))
   
   pu_region <- as.data.frame(pu_region)
@@ -120,10 +120,10 @@ pu_by_provinces <- function(pu_file, province_file, prov_name, olayer, outdir) {
   ############################
 
   #st_write(pu_region, dsn = "inputs/shapefiles/PacificABNJGrid_05deg_Longhurst", driver = "ESRI Shapefile", append = FALSE)
-  #st_write(pu_region, dsn = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst", driver = "ESRI Shapefile", append = FALSE)
+  #st_write(pu_region, dsn = "outputs/01_StudyArea/01b_Longhurst/PacificABNJGrid_05deg_Longhurst", driver = "ESRI Shapefile", append = FALSE)
   
-  saveRDS(pu_region, file = "inputs/rdsfiles/PacificABNJGrid_05deg_Longhurst.rds")
-  saveRDS(pu_region, file = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst.rds")
+  #saveRDS(pu_region, file = "inputs/rdsfiles/PacificABNJGrid_05deg_Longhurst.rds")
+  saveRDS(pu_region, file = "outputs/01_StudyArea/01b_Longhurst/PacificABNJGrid_05deg_Longhurst.rds")
   
   return(pu_region)
 }
