@@ -23,7 +23,7 @@
 
 # The function is run in 08b for different scenarios (for climate-smart) and 08c for cliamte-uninformed.
 
-represent_target <- function(number_PU, target_max, target_min, file_spec_info, inpdir, scenario, outdir, ...) {
+fRepresentTarget <- function(number_PU, target_max, target_min, file_spec_info, inpdir, scenario, outdir, ...) {
 
       ##################################
       ### Defining the main packages ###

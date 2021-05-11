@@ -24,106 +24,106 @@
 # These runs are for CLIMATE-UNINFORMED.
 # Note: .rds files saved without the scenario attached at the end of the filename are pacific-fitted commercial spp. distributions.
 
-source("scripts/08a_targetfxn.R")
+source("scripts/09a_Target_fRepresentTarget.R")
 
 ####################################
 #### 100%, 0 - 1 RUN ####
 ####################################
-TARGET100uninformed_run01 <- represent_target(number_PU <- 31917,
+TARGET100uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                     target_max <- 1,
                                     target_min <- 0.1,
-                                    file_spec_info <- "outputs/final_features/spec_info.xlsx",
-                                    inpdir <- "outputs/final_features/07c_100perc/",
+                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
+                                    inpdir <- "outputs/08_Filter/08c_Filter100/",
                                     scenario <- "uninformed",
-                                    outdir <- "outputs/final_features/08c_targets/01_Target100/")
+                                    outdir <- "outputs/09_Target/09b-c_TargetRuns/01_Target100/")
 
 ####################################
 #### 90%, 0.1 - 0.9 RUNS ####
 ####################################
-TARGET90uninformed_run01 <- represent_target(number_PU <- 31917,
+TARGET90uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    target_max <- 0.9,
                                    target_min <- 0.1,
-                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
-                                   inpdir <- "outputs/final_features/07c_100perc/",
+                                   file_spec_info <- "outputs/09_Target/spec_info.xlsx",
+                                   inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/final_features/08c_targets/02_Target90/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/02_Target90/")
 ####################################
 #### 80%, 0.1 - 0.8 RUNS ####
 ####################################
-TARGET80uninformed_run01 <- represent_target(number_PU <- 31917,
+TARGET80uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    target_max <- 0.8,
                                    target_min <- 0.1,
-                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
-                                   inpdir <- "outputs/final_features/07c_100perc/",
+                                   file_spec_info <- "outputs/09_Target/spec_info.xlsx",
+                                   inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/final_features/08c_targets/03_Target80/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/03_Target80/")
 ####################################
 #### 70%, 0.1 - 0.7 RUNS ####
 ####################################
-TARGET70uninformed_run01 <- represent_target(number_PU <- 31917,
+TARGET70uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    target_max <- 0.7,
                                    target_min <- 0.1,
-                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
-                                   inpdir <- "outputs/final_features/07c_100perc/",
+                                   file_spec_info <- "outputs/09_Target/spec_info.xlsx",
+                                   inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/final_features/08c_targets/04_Target70/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/04_Target70/")
 ####################################
 #### 60%, 0.1 - 0.6 RUNS ####
 ####################################
-TARGET60uninformed_run01 <- represent_target(number_PU <- 31917,
+TARGET60uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                              target_max <- 0.6,
                                              target_min <- 0.1,
-                                             file_spec_info <- "outputs/final_features/spec_info.xlsx",
-                                             inpdir <- "outputs/final_features/07c_100perc/",
+                                             file_spec_info <- "outputs/09_Target/spec_info.xlsx",
+                                             inpdir <- "outputs/08_Filter/08c_Filter100/",
                                              scenario <- "uninformed",
-                                             outdir <- "outputs/final_features/08c_targets/05_Target60/")
+                                             outdir <- "outputs/09_Target/09b-c_TargetRuns/05_Target60/")
 ####################################
 #### 50%, 0.1 - 0.5 RUNS ####
 ####################################
-TARGET50uninformed_run01 <- represent_target(number_PU <- 31917,
+TARGET50uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    target_max <- 0.5,
                                    target_min <- 0.1,
-                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
-                                   inpdir <- "outputs/final_features/07c_100perc/",
+                                   file_spec_info <- "outputs/09_Target/spec_info.xlsx",
+                                   inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/final_features/08c_targets/06_Target50/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/06_Target50/")
 ####################################
 #### 40%, 0.1 - 0.4 RUNS ####
 ####################################
-TARGET40uninformed_run01 <- represent_target(number_PU <- 31917,
+TARGET40uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    target_max <- 0.4,
                                    target_min <- 0.1,
-                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
-                                   inpdir <- "outputs/final_features/07c_100perc/",
+                                   file_spec_info <- "outputs/09_Target/spec_info.xlsx",
+                                   inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/final_features/08c_targets/07_Target40/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/07_Target40/")
 ####################################
 #### 30%, 0.1 - 0.3 RUNS ####
 ####################################
-TARGET30uninformed_run01 <- represent_target(number_PU <- 31917,
+TARGET30uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    target_max <- 0.3,
                                    target_min <- 0.1,
-                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
-                                   inpdir <- "outputs/final_features/07c_100perc/",
+                                   file_spec_info <- "outputs/09_Target/spec_info.xlsx",
+                                   inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/final_features/08c_targets/08_Target30/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/08_Target30/")
 ####################################
 #### 20%, 0.1 - 0.2 RUNS ####
 ####################################
-TARGET20uninformed_run01 <- represent_target(number_PU <- 31917,
+TARGET20uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    target_max <- 0.2,
                                    target_min <- 0.1,
-                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
-                                   inpdir <- "outputs/final_features/07c_100perc/",
+                                   file_spec_info <- "outputs/09_Target/spec_info.xlsx",
+                                   inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/final_features/08c_targets/09_Target20/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/09_Target20/")
 ####################################
 #### 10%, 0 - 0.1 RUNS ####
 ####################################
-TARGET10uninformed_run01 <- represent_target(number_PU <- 31917,
+TARGET10uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    target_max <- 0.1,
                                    target_min <- 0,
-                                   file_spec_info <- "outputs/final_features/spec_info.xlsx",
-                                   inpdir <- "outputs/final_features/07c_100perc/",
+                                   file_spec_info <- "outputs/09_Target/spec_info.xlsx",
+                                   inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/final_features/08c_targets/10_Target10/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/10_Target10/")
