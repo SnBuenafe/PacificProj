@@ -18,7 +18,7 @@
 # 6. feature_file: .rds file with all the features together (relevant only for AQM)
 # 7. prov_file: .rds file of the Longhurst provinces
 
-prov_intersect <- function(path, pu_shp, fit, outdir, data, feature_file, prov_file, ...) {
+fProvIntersect <- function(path, pu_shp, fit, outdir, data, feature_file, prov_file, ...) {
   
   ##################################
   ### Defining the main packages ###

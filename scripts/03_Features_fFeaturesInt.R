@@ -10,10 +10,10 @@
 # outdir: where to put the final sf-.rds object
 # pu_shp: 
 
-features_pus <- function(path, outdir, pu_shp, data, olayer) { 
+fFeaturesInt <- function(path, outdir, pu_shp, data, ...) { 
   
   ####################################################################################
-  ####### Defining the main packages (tryining to auto this)
+  ####### Defining the main packages (trying to auto this)
   ####################################################################################
   # List of pacakges that we will use
   list.of.packages <- c("raster", "rgdal", "rgeos", "sf", "dplyr", "doParallel", "stringr", "sf", "lwgeom", "data.table")
@@ -23,17 +23,15 @@ features_pus <- function(path, outdir, pu_shp, data, olayer) {
   # Load packages
   lapply(list.of.packages, require, character.only = TRUE)
   
-  ####################################################################################
-  ####### 
-  ####################################################################################
-  #
+  #######################
+  #### Calling files ####
+  #######################
   if(stringr::str_detect(string = pu_shp, pattern = ".rds") == TRUE) {
     shp_PU_sf <- readRDS(pu_shp)
   } else if (stringr::str_detect(string = pu_shp, pattern = ".shp") == TRUE) {
     shp_PU_sf <- st_read(pu_shp)
   }
-  
-  # If no cellsID values were assinged to the original
+  # If no cellsID values were assigned to the original
   shp_PU_sf <- shp_PU_sf %>%
     dplyr::mutate (cellsID = 1:nrow(shp_PU_sf), 
                    area_km2 = as.numeric(st_area(shp_PU_sf)/1e+06)) %>% 
@@ -51,21 +49,23 @@ features_pus <- function(path, outdir, pu_shp, data, olayer) {
     pattern1 <-  c("ALB_pac.rds","SKP_pac.rds","SWO_pac.rds","YFT_pac.rds")
     files <- list.files(path = dir, pattern = paste0(pattern1, collapse = "|"), full.names = TRUE)
   }else {
-      # Reading conservation features .rds files (AquaMaps)
+      # Reading conservation features .rds files (AquaMaps/IUCN)
       dir <- path
       pattern1 <-  c(paste0("*", ".*.rds$"), paste0("*", ".*shp$"))
       files <- list.files(path = dir, pattern = paste0(pattern1, collapse = "|"), full.names = TRUE)
   }
   
-  ####################################################################################
-  ####### 
-  ####################################################################################
+  ########################################
+  #### Intersecting features with PUs ####
+  ########################################
   # Loop through each file
   files_list <- vector("list", length = length(files)) # to allocate results
+  
   # Begin the parallel structure
   ncores <- detectCores() - 1 
   cl <- makeCluster(ncores)
   registerDoParallel(cl)
+  
   # A parallel Loop
   PU_list <- foreach(i = 1:length(files), .packages = c("raster", "sf", "dplyr", "stringr", "lwgeom", "data.table")) %dopar% {
     # Reading conservation features
@@ -88,11 +88,11 @@ features_pus <- function(path, outdir, pu_shp, data, olayer) {
       
       if(data %in% c("global","pacific")) {
         files_list[[i]] <- files_list[[i]] %>% 
-          mutate(feature_names = paste(unlist(strsplit(basename(files[i]), "[.]"))[1], olayer, sep = "_")) %>% 
+          mutate(feature_names = paste(unlist(strsplit(basename(files[i]), "[.]"))[1])) %>% 
           ungroup()
       }else if(data == "AQM") {
         files_list[[i]] <- files_list[[i]] %>% 
-          mutate(feature_names = paste(unlist(strsplit(basename(files[i]), "_"))[1], olayer, sep = "_")) %>% 
+          mutate(feature_names = paste(unlist(strsplit(basename(files[i]), "_"))[1])) %>% 
           ungroup()
       }
       # dplyr::filter(area_km2 >= pu_min_area) %>% 
@@ -100,16 +100,16 @@ features_pus <- function(path, outdir, pu_shp, data, olayer) {
   }
   stopCluster(cl)
   
-  ####################################################################################
-  ####### 
-  ####################################################################################
-  # Final sf with all species information and write that object (main object to develop marxan input files)
+  # Final sf with all species information and write that object
   PU_list_b <- do.call(rbind, PU_list)
-  # Write the object
+  
+  #################
+  ## Save object ##
+  #################
   if(data %in% c("global","pacific")) {
-    pu_rds <- paste("commercial_features_",olayer,".rds", sep = "")
+    pu_rds <- paste("commercial_features",".rds", sep = "")
   } else {
-    pu_rds <- paste("bycatch_features_",olayer, ".rds", sep = "")
+    pu_rds <- paste("bycatch_features", ".rds", sep = "")
   }
   saveRDS(PU_list_b, paste(outdir, pu_rds, sep = ""))
   return(PU_list_b)

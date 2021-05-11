@@ -18,19 +18,19 @@
 # 6. feature_file: .rds file with all the features together (relevant only for AQM)
 # 7. prov_file: .rds file of the Longhurst provinces
 
-source("scripts/03c_FeatProvFxn.R")
+source("scripts/03_Features_fProvIntersect.R")
 
 #############################
 ##### RUNS FOR AQUAMAPS #####
 #############################
 
-AQM_prov_run01 <- prov_intersect(path = NA,
-                  pu_shp = "inputs/rdsfiles/PacificABNJGrid_05deg.rds",
+AQM_prov_run01 <- fProvIntersect(path = NA,
+                  pu_shp = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
                   fit = "none",
-                  outdir = "outputs/AQM_wflow/03d_AQMxProv/",
+                  outdir = "outputs/03_AQM/03b_fProvIntersect/",
                   data = "AQM",
-                  feature_file = "outputs/AQM_wflow/03b_features/bycatch_features_surface.rds",
-                  prov_file = "outputs/Provinces/PacificABNJGrid_05deg_Longhurst.rds"
+                  feature_file = "outputs/03_AQM/03a_fFeaturesInt/bycatch_features.rds",
+                  prov_file = "outputs/01_StudyArea/01b_Longhurst/PacificABNJGrid_05deg_Longhurst.rds"
                   )
 
 #############################
@@ -38,11 +38,11 @@ AQM_prov_run01 <- prov_intersect(path = NA,
 #############################
 library(ggplot2)
 # to check if it works
-ggplot()+
-  geom_sf(data = AQM_prov_run01, aes(color = feature))
+#ggplot()+
+#  geom_sf(data = AQM_prov_run01, aes(color = feature))
 
 # to calculate for the total area per feature (per province)
-total_PU_area <- 2667.6 * 31917
-AQM_temp <- AQM_prov_run01 %>% 
-  dplyr::group_by(feature) %>% 
-  dplyr::summarise(total_area = sum(area_km2), percent_area = (sum(area_km2)/total_PU_area)*100)
+# total_PU_area <- 2667.6 * 31917
+# AQM_temp <- AQM_prov_run01 %>% 
+#  dplyr::group_by(feature) %>% 
+#  dplyr::summarise(total_area = sum(area_km2), percent_area = (sum(area_km2)/total_PU_area)*100)
