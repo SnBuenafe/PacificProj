@@ -3,10 +3,11 @@
 # Please do not distribute this code without permission.
 # There are no guarantees that this code will work perfectly.
 
+# This code creates the study area (boundaries, grid) for the PacificProj.
+
 ##################################
 ### Defining the main packages ###
 ##################################
-
 library(raster)
 library(sf)
 library(tidyverse)
@@ -17,7 +18,6 @@ library(proj4)
 #######################################################
 ### Defining the generalities and calling functions ###
 #######################################################
-
 rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
 longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
@@ -29,7 +29,6 @@ source("scripts/study_area/fCreate_PlanningUnits.R")
 #######################################
 ### Polygons of seas in the Pacific ###
 #######################################
-
 ocean_sf <- ne_download(scale = "large", category = "physical", type = "geography_marine_polys", returnclass = "sf") %>% 
   filter(name %in% c("North Pacific Ocean", "South Pacific Ocean", "Philippine Sea", "Coral Sea", "Tasman Sea", "South China Sea", 
                      "Sea of Japan", "Sea of Okhotsk", "Celebes Sea", "Sulu Sea", "Banda Sea", "Luzon Strait", "Java Sea", 
@@ -48,7 +47,6 @@ ocean_sf <- ne_download(scale = "large", category = "physical", type = "geograph
                      "Dixon Entrance", "Smith Sound", "Queen Charlotte Strait", "Cordova Bay" ))
 # "Chukchi Sea""Gulf of Olen‘k""Chaun Bay", "Ozero Mogotoyevo","Guba Gusinaya", "Strait of Malacca"
 
-
 ############################################################
 # Creating Pacific-centered and Robinson projected land .shp
 ############################################################
@@ -56,8 +54,9 @@ ocean_sf <- ne_download(scale = "large", category = "physical", type = "geograph
 world <- ne_countries(scale = 'small', returnclass = 'sf')
 
 world_robinson <- fConvert2PacificRobinson(world)
-saveRDS(world_robinson, "inputs/rdsfiles/PacificCenterLand.rds")
+saveRDS(world_robinson, "outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
 # st_write(world_robinson, dsn = "files/shapefiles/PacificCenterLand", driver = "ESRI Shapefile")
+
 #############################################################
 # Creating Pacific-centered and Robinson projected ABNJ .shp
 #############################################################
@@ -69,7 +68,7 @@ inverse = TRUE
 pacific_robinson <- fCreateMaskedPolygon(ocean_sf, res, mask, inverse) %>% 
   fConvert2PacificRobinson()
 
-saveRDS(pacific_robinson, "inputs/rdsfiles/PacificCenterABNJ.rds")
+saveRDS(pacific_robinson, "outputs/01_StudyArea/01a_StudyArea/PacificCenterABNJ.rds")
 # st_write(pacific_robinson, dsn = "inputs/shapefiles/PacificCenterABNJ", driver = "ESRI Shapefile", append = TRUE)
 
 ##################################
@@ -83,7 +82,7 @@ inverse = FALSE
 eez_robinson <- fCreateMaskedPolygon(ocean_sf, res, mask, inverse) %>% 
   fConvert2PacificRobinson()
 
-saveRDS(eez_robinson, "inputs/rdsfiles/PacificCenterEEZ.rds")
+saveRDS(eez_robinson, "outputs/01_StudyArea/01a_StudyArea/PacificCenterEEZ.rds")
 # st_write(eez_robinson, dsn = "inputs/shapefiles/PacificCenterEEZ", driver = "ESRI Shapefile", append = TRUE)
 
 #######################################################
@@ -112,21 +111,22 @@ Shape = "Hexagon" # Hexagon or Square
 PUsPac <- fCreate_PlanningUnits(Bndry, LandMass, CellArea, Shape)
 #saving the study area
 
-saveRDS(PUsPac, file = "inputs/rdsfiles/PacificABNJGrid_05deg.rds")
+saveRDS(PUsPac, file = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds")
 #st_write(PUsPac, dsn = "inputs/shapefiles/PacificABNJGrid_05deg", driver = "ESRI Shapefile", append = FALSE)
 
 ##############
 ## Plotting ##
 ##############
-ggplot() +
-  geom_sf(data = pacific_robinson, colour = NA, fill = NA, size = 0.2, show.legend = "line") +
-  geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
-  geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = TRUE) + 
-  scale_fill_manual(name = "Study Area",
-    values = c("ABNJ" = "coral3")) +
-  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
-          ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
-          expand = TRUE) +
-  theme_bw()  #+
-#    ggsave("pdfs/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300) +
-#    ggsave("pdfs/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)
+study_area <- ggplot() +
+    geom_sf(data = pacific_robinson, colour = NA, fill = NA, size = 0.2, show.legend = "line") +
+    geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
+    geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = TRUE) + 
+    scale_fill_manual(name = "Study Area",
+      values = c("ABNJ" = "coral3")) +
+    coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
+            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+            expand = TRUE) +
+    theme_bw()
+study_area
+ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300)
+#ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)
