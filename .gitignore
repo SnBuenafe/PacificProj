@@ -8,3 +8,9 @@ outputs
 excel
 statistics
 pdfs
+.RDataTmp
+.dbf.dbf
+.prj
+.shp.shp
+.shp.shx
+scripts/trash
