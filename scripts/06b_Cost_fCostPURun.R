@@ -13,7 +13,7 @@
 # 4. layer: "all" or "pelagics"
 # 5. stack_num: if layer == "all": NA, if layer == "pelagics", input the stack number (if multiple use c())
 
-# Function is found in 05a
+# Function is found in 06a
 
 source("scripts/06a_Cost_fCostPU.R")
 
@@ -43,7 +43,7 @@ source("scripts/06a_Cost_fCostPU.R")
 #                      stack_num = 14
 #)
 
-# running 
+# running using large + medium pelagics
 COST_largexmedium <- fCostPU(input = "inputs/rasterfiles/CostLayer/Cost_RasterStack_byFunctionalGroup.grd",
                       pu_shp = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
                       outdir = "outputs/06_Cost/Large_Medium/",
