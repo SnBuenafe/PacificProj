@@ -6,7 +6,7 @@
 
 # This code creates a function intersects the climate features (RCE and climate velocity values for different scenarios) and the study area (in PUs).
 # creates a .rds file PUs x features layer.
-# Function is found in code 06a
+# Function is found in code 07a
 
 # Inputs include the following:
 # input: layer to be intersected; e.g. "RCE" or "velocity"
@@ -196,7 +196,8 @@ plot_RCE <- (p1 | p2 | p3)
 final_RCE <- plot_RCE +
   plot_layout(guides = "collect") +
   plot_annotation(tag_levels = 'i', tag_prefix = '(', tag_suffix = ')',
-                  title = "RCE Plots") #+
+                  title = "RCE Plots")
+final_RCE
 #  ggsave("pdfs/07_Climate/RCE.pdf", width = 20, height = 10, dpi = 300)  
 
 # Plotting Climate Velocity
@@ -204,5 +205,6 @@ plot_velo <- (q1 | q2 | q3)
 final_velo <- plot_velo +
   plot_layout(guides = "collect") +
   plot_annotation(tag_levels = 'i', tag_prefix = '(', tag_suffix = ')',
-                  title = "Climate Velocity Plots") #+
+                  title = "Climate Velocity Plots")
+final_velo
 #  ggsave("pdfs/07_Climate/ClimateVelo.pdf", width = 20, height = 10, dpi = 300)  

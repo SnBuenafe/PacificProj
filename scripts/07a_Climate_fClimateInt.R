@@ -6,7 +6,7 @@
 
 # This code creates a function that intersects the climate features (RCE and climate velocity values for different scenarios) and the study area (in PUs).
 # creates a .rds file PUs x features layer.
-# Function is run in code 06b
+# Function is run in code 07b
 
 # Inputs include the following:
 # input: layer to be intersected; e.g. "RCE" or "velocity"
@@ -17,9 +17,9 @@
 
 fClimateInt <- function(input, scenario, inpdir, outdir, pu, ...) {
   
-  ####################################################################################
-  ####### Defining packages needed
-  ####################################################################################
+  ########################################
+  ####### Defining packages needed #######
+  ########################################
   # List of pacakges that we will use
   list.of.packages <- c("raster", "sf", "tidyverse", "magrittr", "rnaturalearth",
                         "rnaturalearthdata", "fasterize", "proj4", "kader", "exactextractr")
@@ -35,9 +35,9 @@ fClimateInt <- function(input, scenario, inpdir, outdir, pu, ...) {
   rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
   longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
   
-  ###############################
+  #########################
   #### Calling PU file ####
-  ###############################
+  #########################
   if(stringr::str_detect(string = pu, pattern = ".rds") == TRUE) {
     shp_PU_sf <- readRDS(pu)
   } else if (stringr::str_detect(string = pu, pattern = ".shp") == TRUE) {
@@ -61,10 +61,9 @@ fClimateInt <- function(input, scenario, inpdir, outdir, pu, ...) {
   layer_rs <- readAll(raster(inpdir))
   crs(layer_rs) <- CRS(longlat)
   
-  ##########################################
+  ##################################
   #### Manipulating raster file ####
-  ##########################################
-  
+  ##################################
   # Creating layer of weights.
   weight_rs <- raster::area(layer_rs)
   
@@ -119,7 +118,9 @@ fClimateInt <- function(input, scenario, inpdir, outdir, pu, ...) {
                                                        ifelse(trans_value >100 & trans_value <= 200, 10, 11)))))))))))
   }else {print("fail; input N/A")}
   
-  # Saving RDS
+  #####################
+  #### Saving file ####
+  #####################
   saveRDS(pu_filef, paste0(outdir, input, scenario, ".rds"))
   
   return(pu_filef)
