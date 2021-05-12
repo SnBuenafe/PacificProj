@@ -20,8 +20,7 @@
 # 6. scenario = climate scenario (e.g. SSP126)
 # 7. outdir = directory where the .rds files will be saved.
 
-# Function is found in 08a.
-# Note: .rds files saved without the scenario attached at the end of the filename are pacific-fitted commercial spp. distributions.
+# Function is found in 09a.
 
 source("scripts/09a_Target_fRepresentTarget.R")
 
@@ -337,7 +336,6 @@ TARGET10_run03 <- fRepresentTarget(number_PU <- 31917,
 #############
 ## testing ##
 #############
-
-df_temp <- readRDS("outputs/final_features/08b_targets/04_Target70/SSP245/target_commercialSSP245.rds")
+#df_temp <- readRDS("outputs/09_Target/09b-c_TargetRuns/04_Target70/SSP245/target_commercialSSP245.rds")
 
 

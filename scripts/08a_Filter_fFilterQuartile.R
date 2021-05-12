@@ -8,7 +8,7 @@
 # under the lower quartile of RCE | climate velocity for the specific climate scenario
 # It saves a new .rds file (sf object). commercialSSP126_25percentile.rds
 
-# The function filter_quartile() requires the following inputs:
+# The function fFilterQuartile() requires the following inputs:
 # 1. feature = "commercial" or "bycatch"
 # 2. scenario = e.g. "SSP126"
 # 3. velocity_file = .rds file for climate velocity of the scenario
@@ -17,13 +17,13 @@
 # 6. outdir = path of the output
 # 7. data = "smart" for climate-smart and NA for uninformed
 
-# The function is run in 07b for different scenarios.
+# The function is run in 08b for different scenarios.
 
 fFilterQuartile <- function(velocity_file, RCE_file, feature_prov, outdir, scenario, feature_n, data, ...) {
   
-  ####################################################################################
-  ####### Defining packages needed
-  ####################################################################################
+  ########################################
+  ####### Defining packages needed #######
+  ########################################
   # List of pacakges that we will use
   list.of.packages <- c("sf", "tidyverse", "doParallel")
   # If is not installed, install the pacakge
@@ -32,52 +32,56 @@ fFilterQuartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
   # Load packages
   lapply(list.of.packages, require, character.only = TRUE)
   
+  ########################################################
+  ####### Retaining PUs lower than 25th percentile #######
+  ########################################################
   if(data == "smart") {
-  
-  velocity <- readRDS(velocity_file) %>% 
-    dplyr::rename(velocity = value, velo_tvalue = trans_value)
-  RCE <- readRDS(RCE_file) %>% 
-    dplyr::rename(RCE = value, RCE_tvalue = trans_value)
+    # Calling climate files
+    velocity <- readRDS(velocity_file) %>% 
+      dplyr::rename(velocity = value, velo_tvalue = trans_value)
+    RCE <- readRDS(RCE_file) %>% 
+      dplyr::rename(RCE = value, RCE_tvalue = trans_value)
   
   # Intersects climate features for all PUs
-  climate_int <- st_intersection(velocity, RCE) %>% 
-    dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>% # we want just the polygons/multi not extra geometries
-    dplyr::select(-area_km2, -area_km2.1, -velo_categ, -rce_categ)
+    climate_int <- st_intersection(velocity, RCE) %>% 
+      dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>% # we want just the polygons/multi not extra geometries
+      dplyr::select(-area_km2, -area_km2.1, -velo_categ, -rce_categ)
   
   # Calling features that are intersected with provinces
-  feature <- readRDS(feature_prov) %>% 
-    group_by(feature) %>% 
-    mutate(total_area = sum(area_km2)) %>% 
-    ungroup()
+    feature <- readRDS(feature_prov) %>% 
+      group_by(feature) %>% 
+      mutate(total_area = sum(area_km2)) %>% 
+      ungroup()
   
-  feat_int <- st_intersection(feature, climate_int) %>% 
-    dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>%  # we want just the polygons/multi not extra geometries
-    dplyr::rename(new_features = feature, species = feature_names)
+  # Intersect conservation features with climate-smart features
+    feat_int <- st_intersection(feature, climate_int) %>% 
+      dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>%  # we want just the polygons/multi not extra geometries
+      dplyr::rename(new_features = feature, species = feature_names)
   
   # Begin the parallel structure  
-  list <- unique(feat_int$new_features)
-  temp <- list()
-  temp_x <- list()
+    list <- unique(feat_int$new_features)
+    temp <- list()
+    temp_x <- list()
+    
+    ncores <- detectCores() - 1 
+    cl <- makeCluster(ncores)
+    registerDoParallel(cl)
   
-  ncores <- detectCores() - 1 
-  cl <- makeCluster(ncores)
-  registerDoParallel(cl)
-  
-  filter_PU <- foreach(i = 1:length(list), .packages = c("raster", "sf", "dplyr")) %dopar% {
-      temp[[i]] <- feat_int %>% 
-        dplyr::filter(new_features == list[i])
-      
-      qrt_RCE <- quantile(temp[[i]]$RCE_tvalue)
-      qrt_velocity <- quantile(temp[[i]]$velo_tvalue)
-      
-      temp_x[[i]] <- temp[[i]] %>% 
-        dplyr::filter((RCE_tvalue <= qrt_RCE[2]) | (velo_tvalue <= qrt_velocity[2]))
-  }
-  stopCluster(cl)
-  
-  filter_PU_final <- do.call(rbind, filter_PU)
-  filter_PU_final <- filter_PU_final %>% 
-    dplyr::select(-cellsID.1)
+    filter_PU <- foreach(i = 1:length(list), .packages = c("raster", "sf", "dplyr")) %dopar% {
+        temp[[i]] <- feat_int %>% 
+          dplyr::filter(new_features == list[i])
+        
+        qrt_RCE <- quantile(temp[[i]]$RCE_tvalue)
+        qrt_velocity <- quantile(temp[[i]]$velo_tvalue)
+        
+        temp_x[[i]] <- temp[[i]] %>% 
+          dplyr::filter((RCE_tvalue <= qrt_RCE[2]) | (velo_tvalue <= qrt_velocity[2]))
+    }
+    stopCluster(cl)
+    
+    filter_PU_final <- do.call(rbind, filter_PU)
+    filter_PU_final <- filter_PU_final %>% 
+      dplyr::select(-cellsID.1)
   
 # if(feature_n == "bycatch") {
 #    filter_PU_final <- filter_PU_final %>% 

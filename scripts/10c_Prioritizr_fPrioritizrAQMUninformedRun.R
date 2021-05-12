@@ -15,11 +15,13 @@
 # 6. climate_scenario: climate scenario (e.g. SSP126)
 # 7. outdir: path where the solution will be saved.
 
-# Function is found at 10a_PrioritizrFxn.R
+# Function is found at 10a
 
 source("scripts/10a_Prioritizr_fPrioritizr.R")
 
-# Plotting generalities
+#######################################
+## Defining plotting generalities ##
+#######################################
 library(RColorBrewer)
 library(patchwork)
 pal_rich <- c("FALSE" = "lightsteelblue2", "TRUE" = "sienna3")
@@ -34,7 +36,7 @@ Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
 ##########################################################
 
 ###############################
-## Target 100% (0 - 1) ##
+## Target 100% (0.1 - 1) ##
 ###############################
 PRIORITIZR_AQM_target100_uninformed_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/uninformed/target_commercialuninformed.rds",
@@ -59,7 +61,7 @@ uninformed_target100_plot1 <- ggplot() +
        subtitle = "Maximum Target 100% (0.1 - 1)") +
   theme_bw()
 uninformed_target100_plot1
-ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target100.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target100.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 90% (0.1 - 0.9) ##
@@ -87,7 +89,7 @@ uninformed_target90_plot1 <- ggplot() +
        subtitle = "Maximum Target 90% (0.1 - 0.9)") +
   theme_bw()
 uninformed_target90_plot1
-ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target90.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target90.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 80% (0.1 - 0.8) ##
 ###############################
@@ -114,7 +116,7 @@ uninformed_target80_plot1 <- ggplot() +
        subtitle = "Maximum Target 80% (0.1 - 0.8)") +
   theme_bw()
 uninformed_target80_plot1
-ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target80.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target80.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 70% (0.1 - 0.7) ##
 ###############################
@@ -141,7 +143,7 @@ uninformed_target70_plot1 <- ggplot() +
        subtitle = "Maximum Target 70% (0.1 - 0.7)") +
   theme_bw()
 uninformed_target70_plot1
-ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target70.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target70.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 60% (0.1 - 0.6) ##
 ###############################
@@ -168,7 +170,7 @@ uninformed_target60_plot1 <- ggplot() +
        subtitle = "Maximum Target 60% (0.1 - 0.6)") +
   theme_bw()
 uninformed_target60_plot1
-ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target60.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target60.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 50% (0.1 - 0.5) ##
 ###############################
@@ -195,7 +197,7 @@ uninformed_target50_plot1 <- ggplot() +
        subtitle = "Maximum Target 50% (0.1 - 0.5)") +
   theme_bw()
 uninformed_target50_plot1
-ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target50.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target50.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 40% (0.1 - 0.4) ##
 ###############################
@@ -222,7 +224,7 @@ uninformed_target40_plot1 <- ggplot() +
        subtitle = "Maximum Target 40% (0.1 - 0.4)") +
   theme_bw()
 uninformed_target40_plot1
-ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target40.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target40.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 30% (0.1 - 0.3) ##
 ###############################
@@ -249,7 +251,7 @@ uninformed_target30_plot1 <- ggplot() +
        subtitle = "Maximum Target 30% (0.1 - 0.3)") +
   theme_bw()
 uninformed_target30_plot1
-ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target30.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target30.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 20% (0.1 - 0.2) ##
 ###############################
@@ -276,7 +278,7 @@ uninformed_target20_plot1 <- ggplot() +
        subtitle = "Maximum Target 20% (0.1 - 0.2)") +
   theme_bw()
 uninformed_target20_plot1
-ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target20.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target20.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 10% (0 - 0.1) ##
 ###############################
@@ -303,4 +305,4 @@ uninformed_target10_plot1 <- ggplot() +
        subtitle = "Maximum Target 10% (0 - 0.1)") +
   theme_bw()
 uninformed_target10_plot1
-ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target10.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM/Uninformed_Solutions_Target10.pdf", width = 21, height = 29.7)

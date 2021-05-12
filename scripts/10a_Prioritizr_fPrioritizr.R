@@ -17,14 +17,14 @@
 # 8. outexcel: where to save the .csv files of the summaries 
 # 9. target_name: e.g. Target100
 
-# Runs are found in 10b_PrioritizrRun.R and 10c_PrioritizrRunIUCN.R
+# Runs are found in 10b and 10c
 
 fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile, 
                            commercial_file, bycatch_file, climate_scenario, outdir, outexcel, target_name, ...) {
-  ####################################################################################
-  ####### Loading packages needed
-  ####################################################################################
   
+  #######################################
+  ####### Loading packages needed #######
+  #######################################
   #install.packages("pacman", "BiocManager")
   #pacman::p_load(BiocManager)
   #devtools::install_github("prioritizr/prioritizr")
@@ -36,10 +36,9 @@ fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile,
                  remotes, gridExtra, BiocManager, tidyverse, cli, fasterize, doParallel)
   pacman::p_load(lpsymphony, prioritizr, gurobi, slam)
   
-  ####################################################################################
-  ####### Calling data
-  ####################################################################################
-  
+  ############################
+  ####### Calling data #######
+  ############################
   # Load PUs with the cost (don't really need PUs as cost is complete)
   cost <- readRDS(cost_file) %>% 
     as_tibble()
@@ -62,14 +61,13 @@ fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile,
     as_tibble() %>% 
     dplyr::select(-geometry)
   
-  ####################################################################################
-  ####### Manipulating data formats
-  ####################################################################################
+  #########################################
+  ####### Manipulating data formats #######
+  #########################################
   
-  ####################################
-  ### TARGETS
-  ####################################
-  
+  ###############
+  ### TARGETS ###
+  ###############
   # joining all targets
   targets <- full_join(commercial_target, bycatch_target)
   
@@ -80,10 +78,9 @@ fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile,
   
   target_listf <- target_list$target_prop # creating a list of the targets arranged according to new_features
   
-  ####################################
-  ### FEATURES
-  ####################################
-  
+  ################
+  ### FEATURES ###
+  ################
   # joining all the features
   if(climate_scenario == "uninformed"){
     features <- full_join(commercial_features, bycatch_features, by = c("cellsID", "new_features", "province",
@@ -106,10 +103,9 @@ fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile,
     pivot_wider(names_from = new_features, values_from = Presence) %>% 
     replace(is.na(.), 0)
   
-  ####################################
-  ### FINAL OBJECT (x)
-  ####################################
-  
+  ########################
+  ### FINAL OBJECT (x) ###
+  ########################
   # x has the cost, the features, ...
   x <- features %>%
     dplyr::select(-new_features) %>% 
@@ -118,10 +114,9 @@ fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile,
     right_join(cost, by = "cellsID") %>% 
     st_as_sf(sf_column_name = "geometry")
   
-  ####################################################################################
-  ####### Solving the problem using prioritizr!
-  ####################################################################################
-  
+  #####################################################
+  ####### Solving the problem using prioritizr! #######
+  #####################################################
   p1 <- prioritizr::problem(x, features_list, "cost") %>% 
     add_min_set_objective() %>%
     add_relative_targets(target_listf) %>%
@@ -133,6 +128,9 @@ fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile,
   solution <- s1 %>% 
     mutate(solution_1 = as.logical(solution_1)) # Change solution to logical for plotting
   
+  ####################################
+  ###### Summaries of solutions ######
+  ####################################
   # Printing important figures.
   total = 31917*2667.6
   rep <- eval_feature_representation_summary(p1, s1[, "solution_1"])

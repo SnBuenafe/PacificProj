@@ -15,11 +15,13 @@
 # 6. climate_scenario: climate scenario (e.g. SSP126)
 # 7. outdir: path where the solution will be saved.
 
-# Function is found at 10a_PrioritizrFxn.R
+# Function is found at 10a
 
 source("scripts/10a_Prioritizr_fPrioritizr.R")
 
-# Plotting generalities
+#######################################
+## Defining plotting generalities ##
+#######################################
 library(RColorBrewer)
 library(patchwork)
 pal_rich <- c("FALSE" = "lightsteelblue2", "TRUE" = "sienna3")
@@ -33,7 +35,7 @@ Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
 ## Runs using IUCN as bycatch + Plots ##
 ########################################
 ###############################
-## Target 100% (0 - 1) ##
+## Target 100% (0.1 - 1) ##
 ###############################
 
 PRIORITIZR_IUCN_target100_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
@@ -109,7 +111,7 @@ target100_iucn +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and IUCN bycatch data:',
                   subtitle = 'Maximum Target 100% (0.1 - 1)')
-ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target100.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target100.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 90% (0.1 - 0.9) ##
@@ -189,7 +191,7 @@ target90_iucn +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and IUCN bycatch data:',
                   subtitle = 'Maximum Target 90% (0.1 - 0.9)')
-ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target90.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target90.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 80% (0.1 - 0.8) ##
@@ -269,7 +271,7 @@ target80_iucn +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and IUCN bycatch data:',
                   subtitle = 'Maximum Target 80% (0.1 - 0.8)')
-ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target80.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target80.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 70% (0.1 - 0.7) ##
@@ -349,7 +351,7 @@ target70_iucn +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and IUCN bycatch data:',
                   subtitle = 'Maximum Target 70% (0.1 - 0.7)')
-ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target70.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target70.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 60% (0.1 - 0.6) ##
@@ -429,7 +431,7 @@ target60_iucn +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and IUCN bycatch data:',
                   subtitle = 'Maximum Target 60% (0.1 - 0.6)')
-ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target60.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target60.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 50% (0.1 - 0.5) ##
@@ -509,7 +511,7 @@ target50_iucn +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and IUCN bycatch data:',
                   subtitle = 'Maximum Target 50% (0.1 - 0.5)')
-ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target50.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target50.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 40% (0.1 - 0.4) ##
@@ -589,7 +591,7 @@ target40_iucn +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and IUCN bycatch data:',
                   subtitle = 'Maximum Target 40% (0.1 - 0.4)')
-ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target40.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target40.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 30% (0.1 - 0.3) ##
@@ -669,7 +671,7 @@ target30_iucn +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and IUCN bycatch data:',
                   subtitle = 'Maximum Target 30% (0.1 - 0.3)')
-ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target30.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target30.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 20% (0.1 - 0.2) ##
@@ -749,7 +751,7 @@ target20_iucn +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and IUCN bycatch data:',
                   subtitle = 'Maximum Target 20% (0.1 - 0.2)')
-ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target20.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target20.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 10% (0 - 0.1) ##
@@ -829,4 +831,4 @@ target10_iucn +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and IUCN bycatch data:',
                   subtitle = 'Maximum Target 10% (0 - 0.1)')
-ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target10.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Solutions_Target10.pdf", width = 21, height = 29.7)

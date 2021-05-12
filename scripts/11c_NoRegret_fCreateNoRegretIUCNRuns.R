@@ -8,11 +8,13 @@
 # 2. outdir: where to save the results of this function.
 # 3. target: e.g. Target100
 
-# Function is found in 11a_NoRegretFxn.R.
+# Function is found in 11a
 
 source("scripts/11a_NoRegret_fCreateNoRegret.R")
 
-# Plotting generalities
+#######################################
+## Defining plotting generalities ##
+#######################################
 library(RColorBrewer)
 library(patchwork)
 pal_rich <- c("FALSE" = "lightsteelblue2", "TRUE" = "sienna3")
@@ -48,7 +50,7 @@ noregret_IUCNtarget100 <- ggplot() +
            expand = TRUE) +
   labs(title = "Target 100% (0.1 - 1)") +
   theme_bw()
-noregret_IUCNtarget100
+#noregret_IUCNtarget100
 ###############################
 ## Target 90% (0.1 - 0.9) ##
 ###############################
@@ -71,7 +73,7 @@ noregret_IUCNtarget90 <- ggplot() +
            expand = TRUE) +
   labs(title = "Target 90% (0.1 - 0.9)") +
   theme_bw()
-noregret_IUCNtarget90
+#noregret_IUCNtarget90
 ###############################
 ## Target 80% (0.1 - 0.8) ##
 ###############################
@@ -94,7 +96,7 @@ noregret_IUCNtarget80 <- ggplot() +
            expand = TRUE) +
   labs(title = "Target 80% (0.1 - 0.8)") +
   theme_bw()
-noregret_IUCNtarget80
+#noregret_IUCNtarget80
 ###############################
 ## Target 70% (0.1 - 0.7) ##
 ###############################
@@ -117,7 +119,7 @@ noregret_IUCNtarget70 <- ggplot() +
            expand = TRUE) +
   labs(title = "Target 70% (0.1 - 0.7)") +
   theme_bw()
-noregret_IUCNtarget70
+#noregret_IUCNtarget70
 ###############################
 ## Target 60% (0.1 - 0.6) ##
 ###############################
@@ -140,7 +142,7 @@ noregret_IUCNtarget60 <- ggplot() +
            expand = TRUE) +
   labs(title = "Target 60% (0.1 - 0.6)") +
   theme_bw()
-noregret_IUCNtarget60
+#noregret_IUCNtarget60
 ###############################
 ## Target 50% (0.1 - 0.5) ##
 ###############################
@@ -163,7 +165,7 @@ noregret_IUCNtarget50 <- ggplot() +
            expand = TRUE) +
   labs(title = "Target 50% (0.1 - 0.5)") +
   theme_bw()
-noregret_IUCNtarget50
+#noregret_IUCNtarget50
 ###############################
 ## Target 40% (0.1 - 0.4) ##
 ###############################
@@ -186,7 +188,7 @@ noregret_IUCNtarget40 <- ggplot() +
            expand = TRUE) +
   labs(title = "Target 40% (0.1 - 0.4)") +
   theme_bw()
-noregret_IUCNtarget40
+#noregret_IUCNtarget40
 ###############################
 ## Target 30% (0.1 - 0.3) ##
 ###############################
@@ -209,7 +211,7 @@ noregret_IUCNtarget30 <- ggplot() +
            expand = TRUE) +
   labs(title = "Target 30% (0.1 - 0.3)") +
   theme_bw()
-noregret_IUCNtarget30
+#noregret_IUCNtarget30
 ###############################
 ## Target 20% (0.1 - 0.2) ##
 ###############################
@@ -232,7 +234,7 @@ noregret_IUCNtarget20 <- ggplot() +
            expand = TRUE) +
   labs(title = "Target 20% (0.1 - 0.2)") +
   theme_bw()
-noregret_IUCNtarget20
+#noregret_IUCNtarget20
 ###############################
 ## Target 10% (0 - 0.1) ##
 ###############################
@@ -255,7 +257,7 @@ noregret_IUCNtarget10 <- ggplot() +
            expand = TRUE) +
   labs(title = "Target 10% (0 - 0.1)") +
   theme_bw()
-noregret_IUCNtarget10
+#noregret_IUCNtarget10
 ###############################
 ## Plot Everything ##
 ###############################
@@ -266,4 +268,4 @@ IUCN_noregret <- (noregret_IUCNtarget100 + noregret_IUCNtarget90 + noregret_IUCN
                   title = 'No-Regret Closures',
                   subtitle = 'Using IUCN Bycatch & Global-fitted Commercial Data')
 IUCN_noregret
-ggsave("pdfs/10_Prioritizr/IUCN/NoRegret_IUCN.pdf", width = 30, height = 21)
+#ggsave("pdfs/10_Prioritizr/IUCN/NoRegret_IUCN.pdf", width = 30, height = 21)

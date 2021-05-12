@@ -10,7 +10,7 @@
 # 4. pu_file: 
 # 5. climate_scenario: noregret
 
-# Runs are found in 11b_NoRegretRunAQM, and 11c_NoRegretRunIUCN.
+# Runs are found in 11b and 11c.
 
 fCreateNoRegret <- function(inpdir, outdir, target_name, pu_file, outexcel, climate_scenario, ...) {
   

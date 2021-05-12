@@ -20,9 +20,8 @@
 # 6. scenario = climate scenario (e.g. SSP126)
 # 7. outdir = directory where the .rds files will be saved.
 
-# Function is found in 08a.
+# Function is found in 09a.
 # These runs are for CLIMATE-UNINFORMED.
-# Note: .rds files saved without the scenario attached at the end of the filename are pacific-fitted commercial spp. distributions.
 
 source("scripts/09a_Target_fRepresentTarget.R")
 

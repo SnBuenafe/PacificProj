@@ -4,10 +4,20 @@
 # There are no guarantees that this code will work perfectly.
 # most are modified from IBM's code.
 
-# It is divided into 1) commercial features (global-fitted), 2) (pacific-fitted) and 3) bycatch and also by scenario.
-# Ideally, after this, each feature should just be represented with the representation targets (depending on IUCN conservation status)
+# This code filters the planning units whose conservation features (feature x Province) fall 
+# under the lower quartile of RCE | climate velocity for the specific climate scenario
+# It saves a new .rds file (sf object). commercialSSP126_25percentile.rds
 
-# Function is 07a.
+# The function fFilterQuartile() requires the following inputs:
+# 1. feature = "commercial" or "bycatch"
+# 2. scenario = e.g. "SSP126"
+# 3. velocity_file = .rds file for climate velocity of the scenario
+# 4. RCE_file = .rds file for RCE of the scenario
+# 5. feature_prov = .rds file for the features x province
+# 6. outdir = path of the output
+# 7. data = "smart" for climate-smart and NA for uninformed
+
+# The function is in 08a.
 
 source("scripts/08a_Filter_fFilterQuartile.R")
 
