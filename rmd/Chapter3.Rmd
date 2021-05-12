@@ -1,0 +1,60 @@
+---
+title: "Climate-smart Features"
+output: html_document
+---
+
+### Climate-smart Features
+
+To create climate-smart closures, we prioritized protection of areas with:
+
+1. low levels of **exposure** to climate warming, and
+2. high levels of potential **retention** of biodiversity.
+
+We determined these areas using the following metrics:
+
+1. **Relative Climate Exposure (RCE) index**
+
+    $\large RCE(yr^{-1}) = \frac{{\text Slope \hspace{2mm}} (^{\circ}Cyr^{-1} \hspace{2mm} 2050 - 2100)}{{\text             Seasonal \hspace{2mm} Range} \hspace{2mm} (^{\circ}C \hspace{2mm} 2015 - 2020)}$
+      
+  * numerator is the slope of the linear regression of projected mean annual temperatures
+  * denominator is the current mean seasonal temperature range
+
+Areas with low RCE index values are areas that will be exposed to low levels of warming relative to their current seasonal fluctuations of temperature. Areas of **low RCE index values** are prioritized for selection.
+
+2. **Climate velocity**
+
+    $\large Climate \hspace{2mm} velocity \hspace{2mm} (kmyr^{-1}) = 
+    \frac{{\text Slope \hspace{2mm}} (^{\circ}Cyr^{-1} \hspace{2mm} 2050 - 2100)}{{\text Spatial \hspace{2mm}             gradient} \hspace{2mm} (^{\circ}Ckm^{-1} \hspace{2mm} 2050 - 2100)}$
+  
+  * numerator is the slope of the linear regression of projected mean annual temperatures
+  * denominator is calculated from the vector sum of the latitudinal and longitudinal pairwise differences of the mean temperature at each focal cell using a *3 x 3 neighborhood window*
+  
+Areas of slow climate velocity are areas that are more likely to retain their current environmental conditions and consequentially, their biodiversity. Areas of **slow climate velocity** are prioritized for selection.
+
+The temperatures used to calculate the aforementioned metrics were derived from 12 Global Circulation Models (GCMs) from the Couple Model Intercomparison Project Phase 6 (CMIP6; https://esgf-node.llnl.gov). The GCMs are under these three climate scenarios:
+
+1. SSP1-2.6: optimistic scenario
+2. SSP2-4.5: intermediate scenario
+3. SSP5-8.5: pessimistic scenario
+
+#### RCE
+
+We intersected the RCE values with the PUs using `fClimateInt()`. The relevant scripts for creating the climate-smart features layer are found in `~/scripts/` with the prefix `07`.
+
+``` {r eval = FALSE, echo = TRUE}
+# function is found at:
+source("scripts/07a_Climate_fClimateInt.R")
+# function is ran at:
+source("scripts/07b_Climate_fClimateIntRun.R")
+```
+``` {r eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.width=8, fig.height=3}
+source("scripts/07b_Climate_fClimateIntRun.R")
+final_RCE
+```
+
+#### Climate velocity
+
+We intersected the climate velocity values with the PUs using the same function, `fClimateInt()`.
+``` {r eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.width=8, fig.height=3}
+final_velo
+```

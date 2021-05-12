@@ -1,0 +1,122 @@
+---
+title: "Fisheries Conservation Features"
+output: html_document
+---
+
+### Fisheries Conservation Features
+
+The following were used in this study:
+
+1. Distribution of selected bycatch species
+2. Distribution of larval spawning grounds of selected commercially targeted species
+
+#### Bycatch Distribution
+
+First, we compiled a list of bycatch reported in the Pacific ABNJ. Then, we extracted their **AquaMaps** distribution. AquaMaps (Kaschner et al., 2019) is a niche-based model that predicts the relative occurrences of species from their environmental envelopes or their environmental and oceanographic preferences (Kesner-Reyes et al., 2016).
+
+We limited the bycatch included in this study to **sea turtles**, but this workflow can be easily replicated and expanded to include more species.
+
+The following were the sea turtles reported as bycatch and intersected with the study area:
+
+* Loggerhead turtle (*Caretta caretta*)
+* Green turtle (*Chelonia mydas*)
+* Leatherback turtle (*Dermochelys coriacea*)
+* Hawksbill turtle (*Eretmochelys imbricata*)
+* Olive ridley turtle (*Lepidochelys olivacea*)
+
+The relevant scripts for creating the bycatch distribution layer are labeled with a prefix of `02_RawAQM` and `03_AQM` in `~/scripts/`.
+
+The plots below show the distribution of these species using a probability threshold of 0.5 and the functions `fAquaStart()` and `fBycatchDistMap()`.
+
+```{r, eval = FALSE, echo = TRUE}
+# to extract the distribution of all species that are included in the AquaMaps dataset:
+# the function is found in:
+source("scripts/02a_RawAQM_fAquaStart.R")
+# the function is ran in:
+source("scripts/02b_RawAWM_fAquaStartRun.R")
+
+# to create the distribution maps of the sea turtle species included in this study:
+# the function is found in:
+source("scripts/02c_RawAQM_fBycatchDistMap.R")
+# the function is ran in:
+source("scripts/02d_RawAQM_fBycatchDistMapRun.R")
+```
+```{r, eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.width=10, fig.height=7}
+source("scripts/02d_RawAQM_fBycatchDistMapRun.R")
+turt_plot + plot_annotation(tag_levels = "i",
+                            tag_suffix = ".",
+                            title = "Distribution of Marine Turtles in the Pacific Ocean ",
+                            caption = "Data from AquaMaps (2019)")
+```
+
+#### Spawning grounds of Commercially Targeted Species
+
+Just like the bycatch layer, we compiled a list of commercially targeted large pelagic species managed in the Pacific from different sources. From this list, we have 4 species with available data on their global larval spawning grounds:
+
+* Yellowfin Tuna (*Thunnus albacares*)
+* Albacore (*Thunnus alalunga*)
+* Skipjack Tuna (*Katsuwonus pelamis*)
+* Swordfish (*Xiphias gladius*)
+
+The models for these species are from a report by Mercer (2019) where he created Generalized Additive Models (GAMs) to predict spawning grounds. He used average seasonal abundance from a historical dataset of longline fisheries surveys (dated back to the 1950s), and oceanographic and environmental conditions from global databases.
+
+We reran his models (see scripts labeled with a prefix `05a` in `~/scripts/` for complete reruns) and used the medians of the predictions for each species as probability thresholds to create the distribution maps and the function `fCommercialFeat()`.
+
+```{r, eval = FALSE, echo = TRUE}
+# to intersect the results of the GAMs with the PUs
+# the function is in:
+source("scripts/05b_Commercial_fCommercialFeat.R")
+# the function is ran at:
+source("scripts/05c_Commercial_fCommercialFeatRun.R")
+global_plots
+```
+```{r, eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.width=10, fig.height=7}
+source("scripts/05c_Commercial_fCommercialFeatRun.R")
+global_plots
+```
+
+#### Joining the conservation features' layers with Longhurst provinces' layer
+
+Each province is expected to be biogeographically and ecologically unique. Including this layer in the spatial prioritization spreads the risk of exposure of populations to calamities, diseases or pollution. We joined the features' layers with the provinces' layer, creating multifaceted features, with each feature **subtyped by provinces**. This increased the number of features from 9 (5 from bycatch and 4 from large pelagics) to 66 features.
+
+We used the function `fProvIntersect()`.
+
+``` {r, eval = FALSE, echo = TRUE}
+# to intersect the conservation features with the provinces
+source("scripts/03_Features_fProvIntersect.R")
+
+# function ran with the bycatch layer:
+source("scripts/03b_AQM_fProvIntersectRun.R")
+# function ran with the commercially targeted species layer:
+source("scripts/05e_Commercial_fProvIntersect.R")
+```
+
+This is an example of how the data looks like (so far) for bycatch:
+``` {r, eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE}
+library(tidyverse)
+bycatch <- readRDS("outputs/03_AQM/03b_fProvIntersect/bycatch_features.rds") %>% 
+  dplyr::select(-prov_descr, -area_km2) %>% 
+  rename(species = feature_names, new_feature = feature)
+```
+``` {r, eval = TRUE, echo = TRUE}
+head(bycatch)
+```
+
+And for the large pelagics:
+``` {r, eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE}
+library(tidyverse)
+pelagic <- readRDS("outputs/05_Commercial/05e_fProvIntersect/Global/commercial_features.rds") %>% 
+  dplyr::select(-prov_descr, -area_km2) %>% 
+  rename(species = feature_names, new_feature = feature)
+```
+``` {r, eval = TRUE, echo = TRUE}
+head(pelagic)
+```
+
+Each `sf` object has the following columns:
+
+  * `province` is the longhurst province code
+  * `cellsID` is the unique ID for each hexagonal PU
+  * `species` is the species code (e.g. ALB = Albacore)
+  * `new_feature` is the subtyped features code (e.g. WARM-ALB = Albacore in the Western Pacific Warm Pool)
+  * `geometry`

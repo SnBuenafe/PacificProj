@@ -1,0 +1,33 @@
+---
+title: "Cost Layer"
+output: html_document
+---
+
+### Cost layer
+
+The cost layer represents the **opportunity cost** to fishing of establishing the proposed fisheries closures.
+
+The cost layer for each planning unit was represented in US Dollars, and was calculated by multiplying the:
+
+* estimated total catch of **medium - large pelagics** in *kg* (from Watson, 2017),and 
+* the ex-vessel price of the same species in the aforementioned functional groups in *US$* $kg^{-1}$ (from Tai et al., 2017)
+
+``` {r eval = FALSE, echo = TRUE}
+# function is found at:
+source("scripts/06a_Cost_fCostPU.R")
+# function is ran at:
+source("scripts/06b_Cost_fCostPURun.R")
+```
+``` {r eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE}
+source("scripts/06b_Cost_fCostPURun.R")
+```
+``` {r eval = TRUE, echo = FALSE}
+print(paste("minimum:", min(COST_largexmedium$cost), "maximum:", max(COST_largexmedium$cost), sep = " "))
+```
+We used *log-transformed* cost for the figure below:
+
+```{r eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.width=8, fig.height=5, fig.align = 'center'}
+costplot_largexmedium +
+  labs(title = "Cost Layer", subtitle = "Sum of costs of all medium and large pelagics",
+       caption = "Used 2006 - 2015 catch data from Watson (2017) and ex-vessel prices from Tai et al. (2017)")
+```

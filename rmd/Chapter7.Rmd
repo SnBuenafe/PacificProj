@@ -1,0 +1,67 @@
+---
+title: "Summary"
+output: html_document
+---
+
+## Summary
+
+Since we ran *prioritizr* from 10 - 100% maximum target representation (in increments of 10%), we're showing a summary of how cost and percent protection varied with increasing target representation.
+
+```{r eval = TRUE, echo = TRUE, message = FALSE, fig.height = 3, fig.align = 'center'}
+source("scripts/12c_Stat_SomeAnalyses.R")
+# log-transformed cost with increasing target representation:
+log_plot
+# % area protected with increasing target representation:
+area_plot
+# number of planning units that achieved 30% or more protection (maximum is 66)
+protected_features
+```
+
+We also determined **Cohen's Kappa Coefficient** between plans created for each run. Below are the summaries for each run as well as a matrix plot of the correlations between plans.
+
+The relevant scripts for this part are found in `~/scripts/` with prefix `12`.
+```{r eval = FALSE, echo = TRUE}
+# the function for creating the correlation plots is found in:
+source("scripts/12d_Stat_fKappaCorrplot.R")
+# the runs are found in:
+source("scripts/12e_Stat_fKappaCorrplotRun.R")
+```
+
+**Summary for Run 2: Maximum Target = 90%**
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.height = 5, fig.align = 'center'}
+library(tidyverse)
+summary <- read_csv("statistics/stats.csv") %>% 
+  filter(target == 90)
+summary
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 4}
+source("scripts/12d_Stat_fKappaCorrplot.R")
+fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run3/",
+  name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+```
+
+**Summary for Run 5: Maximum Target = 60%**
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.height = 5, fig.align = 'center'}
+library(tidyverse)
+summary <- read_csv("statistics/stats.csv") %>% 
+  filter(target == 60)
+summary
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 4}
+source("scripts/12d_Stat_fKappaCorrplot.R")
+fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run4/",
+  name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+```
+
+**Summary for Run 8: Maximum Target = 30%**
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.height = 5, fig.align = 'center'}
+library(tidyverse)
+summary <- read_csv("statistics/stats.csv") %>% 
+  filter(target == 30)
+summary
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 4}
+source("scripts/12d_Stat_fKappaCorrplot.R")
+fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run5/",
+  name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+```
