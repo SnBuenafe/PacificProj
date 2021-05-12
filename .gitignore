@@ -3,4 +3,8 @@
 .RData
 .Ruserdata
 .DS_Store
-eez_v11.*
+inputs
+outputs
+excel
+statistics
+pdfs
