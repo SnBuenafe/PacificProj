@@ -173,11 +173,34 @@ pre code {
 <h3>Creating conservation-sensitive, climate-smart fisheries closures for the ABNJ of the Pacific Ocean</h3>
 <p>Scripts that have been adapted are written/modified by multiple authors, all are part of the Mathematical Marine Ecology Laboratory of the University of Queensland, Australia:</p>
 <ul>
-<li>Kristine (Tin) Buenafe</li>
+<li>Kristine (“Tin”) Buenafe</li>
 <li>Isaac Brito-Morales</li>
 <li>Jason Everett</li>
+<li>Anthony J. Richardson</li>
 </ul>
-<p>Data (inputs and outputs) are not pushed to this repo as files are too big.</p>
+<p>The sequencing of the <code>scripts</code> reflect the sequence of the workflow. Therefore, it is recommended to go through the scripts in sequential order to fully understand the workflow.</p>
+<ul>
+<li><code>01</code>: creating the Robinson projected study area</li>
+<li><code>02</code>: organizing raw AquaMaps data</li>
+<li><code>03</code>: setting up bycatch data layer (using AquaMaps distributions) by intersecting the data with the study area</li>
+<li><code>04</code>: setting up bycatch data layer (using IUCN distributions) by intersecting the data with the study area</li>
+<li><code>05</code>: rerunning Mercer’s GAMs and setting up the commercial layer by intersecting the data with the study area</li>
+<li><code>06</code>: setting up cost layer</li>
+<li><code>07</code>: organizing climate-smart features (RCE &amp; climate velocity)</li>
+<li><code>08</code>: retains PUs that belong to &lt; 25th percentile of RCE and/or climate velocity</li>
+<li><code>09</code>: assigning representation targets per feature</li>
+<li><code>10</code>: running <em>prioritizr</em></li>
+<li><code>11</code>: creating no-regret plans</li>
+<li><code>12</code>: creating summary statistics</li>
+</ul>
+<p>The following folders are not pushed to this repository:</p>
+<ul>
+<li>inputs</li>
+<li>outputs</li>
+<li>pdfs</li>
+<li>excel</li>
+<li>statistics</li>
+</ul>
 </div>
 </div>
 
