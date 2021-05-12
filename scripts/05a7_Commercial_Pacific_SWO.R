@@ -1,17 +1,17 @@
 # All models (global-fitted) are from James Mercer's code.
-# 04a creates the GAMs for each of the species.
+# 05a creates the GAMs for each of the species.
 # It saves the predictions (with the environmental variables and the coordinates) as a .csv file. (dir: input/mercer/)
-# Saves the visreg plots and maps. (dir: outputs/commercial/GAM_plots/)
+# Saves the visreg plots and maps. (dir: outputs/05_Commercial/05a_GAMPlots)
 # There are 8 parts to 04a; the last 4 of which are pacific-fitted:
-# 1. 04a_5: yellowfin
-# 2. 04a_6: albacore
-# 3. 04a_7: swordfish
-# 4. 04a_8: skipjack
+# 1. 05a5: yellowfin
+# 2. 05a6: albacore
+# 3. 05a7: swordfish
+# 4. 05a8: skipjack
 # The code must be run one after the other.
 
-####################################################################################
-####### Defining packages needed
-####################################################################################
+####################################
+##### Defining packages needed #####
+####################################
 # List of pacakges that we will use
 list.of.packages <- c("tidyverse", "effects", "splines", "devtools", "ggiraphExtra",
                       "ggiraph", "mgcv", "visreg", "patchwork", "MBA", "reshape2",
@@ -46,7 +46,7 @@ fullplot_swopac9 <- visreg(m09, "Chl", partial = FALSE, ylab = " ", xlab = "Chl"
 SWOPAC_FullModel <- (fullplot_swopac1 | fullplot_swopac2 | fullplot_swopac3) / (fullplot_swopac4 | fullplot_swopac5 | fullplot_swopac6) / (fullplot_swopac7 | fullplot_swopac8 | fullplot_swopac9) +
   plot_annotation(title = "Response of Variables for Full Model", subtitle = "Swordfish (Pacific-fitted)", tag_levels = "i")
 SWOPAC_FullModel
-ggsave("outputs/commercial/GAM_plots/SWO/SWOPAC_FullModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a7_SWO/SWOPAC_FullModel.pdf", width = 20, height = 20, dpi = 320)
 
 # First, let's see what we can drop using BIC
 summary(m09) # Bathymetry and Dist2Coast are not significant.
@@ -91,11 +91,11 @@ bestplot_swopac4 <- visreg(SWOPAC_BestModel, "Nitrate", partial = FALSE, ylab = 
 bestplot_swopac <- (bestplot_swopac1 | bestplot_swopac2) / (bestplot_swopac3 | bestplot_swopac4)  +
   plot_annotation(title = "Response of Variables for Best Model", subtitle = "Swordfish (Pacific-fitted)", tag_levels = "i")
 bestplot_swopac
-ggsave("outputs/commercial/GAM_plots/SWO/SWOPAC_BestModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a7_SWO/SWOPAC_BestModel.pdf", width = 20, height = 20, dpi = 320)
 
 vis.gam(SWOPAC_BestModel, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (°)", 
         ylab = "Longitude (°)", zlab = "Presence", color = "cm", theta = 30, phi = 30, r = 100)
-dev.copy2pdf(file = "outputs/commercial/GAM_plots/SWO/SWOPAC_BestModelLatLong.pdf", paper = "A4r")
+dev.copy2pdf(file = "outputs/05_Commercial/05a_GAMPlots/05a7_SWO/SWOPAC_BestModelLatLong.pdf", paper = "A4r")
 
 #######################################
 # Plotting best model as a map
@@ -119,4 +119,4 @@ p <- p + geom_map(data = WorldData, map = WorldData,
                   aes(x = long, y = lat, group = group, map_id = region),
                   fill = "grey", colour = "grey", size = 0.5)
 p 
-ggsave("outputs/commercial/GAM_plots/SWO/SWOPAC_map.png", p, dpi = 1200)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a7_SWO/SWOPAC_map.png", p, dpi = 1200)

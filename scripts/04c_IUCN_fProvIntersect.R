@@ -17,6 +17,7 @@
 # 6. feature_file: .rds file with all the features together (relevant only for AQM)
 # 7. prov_file: .rds file of the Longhurst provinces
 
+# Function is in 03_fProvIntersect
 source("scripts/03_Features_fProvIntersect.R")
 
 #########################

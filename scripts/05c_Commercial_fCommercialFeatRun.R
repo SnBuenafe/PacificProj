@@ -8,19 +8,22 @@
 # Yellowfin Tuna, Albacore, Bigeye Tuna and Swordfish, and the study area (in PUs).
 # creates a .rds file PUs x features layer.
 
-# Function is found in 04b.
+# Function is found in 05b.
 
 # Inputs include the following:
-# input: species codes: YFT, SKP, ALB, SWO
-# inpdir: directory where the layer is found in .csv format
-# outdir: directory where to save raster layers (in .rds)
-# pu: PU .shp file; "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp"
-# prob_threshold: median of the predictions; everything else < the prob_threshold is not included in the data.
+# 1. input: species codes: YFT, SKP, ALB, SWO
+# 2. inpdir: directory where the layer is found in .csv format
+# 3. outdir: directory where to save raster layers (in .rds)
+# 4. PU: .rds file
+# 5. prob_threshold: median of the predictions; everything else < the prob_threshold is not included in the data.
 
 source("scripts/05b_Commercial_fCommercialFeat.R")
 
-#Defining generalities for plotting
-
+######################################
+# Defining generalities for plotting #
+######################################
+library(patchwork)
+library(RColorBrewer)
 rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
 world_sf <- st_read("inputs/shapefiles/PacificCenterLand/PacificCenterLand.shp") %>% 
   st_transform(crs = rob_pacific)
@@ -63,9 +66,6 @@ PRED_global_SWO <- fCommercialFeat(input = "SWO",
 #####################################
 # Plotting globally fitted models  #
 #####################################
-library(patchwork)
-library(RColorBrewer)
-
 # YFT
 myPalette <- colorRampPalette(brewer.pal(9, "BuGn"))
 sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 

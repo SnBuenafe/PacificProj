@@ -21,6 +21,7 @@ library(proj4)
 rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
 longlat <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
+# different functions for creating the study area
 source("scripts/study_area/fConvert2PacificRobinson.R")
 source("scripts/study_area/fCreateSinglePolygon.R")
 source("scripts/study_area/fCreateMaskedPolygon.R")

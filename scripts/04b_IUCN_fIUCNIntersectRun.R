@@ -13,8 +13,7 @@
 # 2. pu_file = PUs .rds file;
 # 3. outdir = path of the outputs of the function.
 
-# Function is detailed in 10a_IUCNdata.R
-
+# Function is in 04a.
 source("scripts/04a_IUCN_fIUCNIntersect.R")
 
 ############################

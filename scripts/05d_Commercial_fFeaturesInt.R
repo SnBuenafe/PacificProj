@@ -5,12 +5,13 @@
 # most are modified from IBM's code.
 
 # This uses the same function as the function that intersects AquaMaps distribution maps with the PUs.
-# See 03a_AQM_Featuresfxn.R for full function,
-# and 03b_AQM_FeaturesfxnRun.R for the runs for AquaMaps
+# See 03_Features_fFeaturesInt.R for full function,
+# and 03b_AQM_fFeaturesIntRun.R for the runs for AquaMaps
 # What this code does is it intersects the commercial features with the PUs
-# This makes distribution maps. 
+# This makes distribution maps.
+
 # This is just an extra script and not really part of the workflow.
-# 04d script automatically makes distribution maps per new feature (Province x Commercial spp.)
+# 05e script automatically makes distribution maps per new feature (Province x Commercial spp.)
 
 source("scripts/03_Features_fFeaturesInt.R")
 

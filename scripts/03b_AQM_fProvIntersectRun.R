@@ -8,7 +8,6 @@
 # it can intersect commercial and bycatch features (IUCN and AQM)
 # code creates an .rds file of the feature x province
 
-
 # Function requires the following inputs:
 # 1. path: where the .rds files for each of the features are located (relevant only for commercial and IUCN)
 # 2. pu_shp: .shp or .rds file of the PUs

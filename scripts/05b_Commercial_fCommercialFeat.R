@@ -8,14 +8,14 @@
 # Yellowfin Tuna, Albacore, Bigeye Tuna and Swordfish, and the study area (in PUs).
 # creates a .rds file PUs x features layer.
 
-# Function is run in 04b Run.
+# Function is run in 05c Run.
 
 # Inputs include the following:
-# input: species codes: YFT, SKP, ALB, SWO
-# inpdir: directory where the layer is found in .csv format
-# outdir: directory where to save raster layers (in .rds)
-# pu: PU .shp file; "inputs/shapefiles/PacificABNJGrid_05deg/PacificABNJGrid_05deg.shp"
-# prob_threshold: median of the predictions; everything else < the prob_threshold is not included in the data.
+# 1. input: species codes: YFT, SKP, ALB, SWO
+# 2. inpdir: directory where the layer is found in .csv format
+# 3. outdir: directory where to save raster layers (in .rds)
+# 4. PU: .rds file
+# 5. prob_threshold: median of the predictions; everything else < the prob_threshold is not included in the data.
 
 fCommercialFeat <- function(input, inpdir, prob_threshold, PU, outdir, ...) {
 

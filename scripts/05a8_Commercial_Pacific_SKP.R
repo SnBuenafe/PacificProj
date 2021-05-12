@@ -1,17 +1,17 @@
 # All models (global-fitted) are from James Mercer's code.
-# 04a creates the GAMs for each of the species.
+# 05a creates the GAMs for each of the species.
 # It saves the predictions (with the environmental variables and the coordinates) as a .csv file. (dir: input/mercer/)
-# Saves the visreg plots and maps. (dir: outputs/commercial/GAM_plots/)
+# Saves the visreg plots and maps. (dir: outputs/05_Commercial/05a_GAMPlots)
 # There are 8 parts to 04a; the last 4 of which are pacific-fitted:
-# 1. 04a_5: yellowfin
-# 2. 04a_6: albacore
-# 3. 04a_7: swordfish
-# 4. 04a_8: skipjack
+# 1. 05a5: yellowfin
+# 2. 05a6: albacore
+# 3. 05a7: swordfish
+# 4. 05a8: skipjack
 # The code must be run one after the other.
 
-####################################################################################
-####### Defining packages needed
-####################################################################################
+####################################
+##### Defining packages needed #####
+####################################
 # List of pacakges that we will use
 list.of.packages <- c("tidyverse", "effects", "splines", "devtools", "ggiraphExtra",
                       "ggiraph", "mgcv", "visreg", "patchwork", "MBA", "reshape2",
@@ -46,7 +46,7 @@ fullplot_skppac9 <- visreg(m014, "Chl", partial = FALSE, ylab = " ", xlab = "Chl
 SKPPAC_FullModel <- (fullplot_skppac1 | fullplot_skppac2 | fullplot_skppac3) / (fullplot_skppac4 | fullplot_skppac5 | fullplot_skppac6) / (fullplot_skppac7 | fullplot_skppac8 | fullplot_skppac9) +
   plot_annotation(title = "Response of Variables for Full Model", subtitle = "Skipjack Tuna (Pacific-fitted)", tag_levels = "i")
 SKPPAC_FullModel
-ggsave("outputs/commercial/GAM_plots/SKP/SKPPAC_FullModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a8_SKP/SKPPAC_FullModel.pdf", width = 20, height = 20, dpi = 320)
 
 # First, let's see what we can drop using BIC
 summary(m014) # Dist2Coast is not significant.
@@ -77,11 +77,11 @@ bestplot_skppac7 <- visreg(SKPPAC_BestModel, "Dist2Coast", partial = FALSE, ylab
 bestplot_skppac <- (bestplot_skppac1 | bestplot_skppac2 | bestplot_skppac3 | bestplot_skppac4) / (bestplot_skppac5 | bestplot_skppac6 | bestplot_skppac7) + 
   plot_annotation(title = "Response of Variables for Best Model", subtitle = "Skipjack Tuna (Pacific-fitted)", tag_levels = "i")
 bestplot_skppac
-ggsave("outputs/commercial/GAM_plots/SKP/SKPPAC_BestModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a8_SKP/SKPPAC_BestModel.pdf", width = 20, height = 20, dpi = 320)
 
 vis.gam(SKPPAC_BestModel, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (°)", 
         ylab = "Longitude (°)", zlab = "Presence", color = "cm", theta = 30, phi = 30, r = 100)
-dev.copy2pdf(file = "outputs/commercial/GAM_plots/SKP/SKPPAC_BestModelLatLong.pdf", paper = "A4r")
+dev.copy2pdf(file = "outputs/05_Commercial/05a_GAMPlots/05a8_SKP/SKPPAC_BestModelLatLong.pdf", paper = "A4r")
 
 #######################################
 # Plotting best model as a map
@@ -105,4 +105,4 @@ p <- p + geom_map(data = WorldData, map = WorldData,
                   aes(x = long, y = lat, group = group, map_id = region),
                   fill = "grey", colour = "grey", size = 0.5)
 p 
-ggsave("outputs/commercial/GAM_plots/SKP/SKPPAC_map.png", p, dpi = 1200)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a8_SKP/SKPPAC_map.png", p, dpi = 1200)

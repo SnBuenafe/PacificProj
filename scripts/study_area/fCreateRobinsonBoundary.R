@@ -1,6 +1,10 @@
 fCreateRobinsonBoundary <- function(west, east, north, south, ...) {
   library(proj4)
   library(tidyverse)
+  library(sf)
+  library(rgdal)
+  
+  rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
   
   test<-cbind(c(east, -west, -west, east), #TopLeft, TopRight, BottomRight, BottomLeft
               c( north, north, -south, -south))

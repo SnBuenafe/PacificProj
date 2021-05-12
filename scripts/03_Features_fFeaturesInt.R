@@ -8,7 +8,8 @@
 # AIM: Create a general dataframe that would be the core for generate input file for prioritizr analyses (conventional MARXAN)
 # path: folder's name where species conservation feature files are located
 # outdir: where to put the final sf-.rds object
-# pu_shp: 
+# pu_shp: .shp or .rds of the PUs
+# data: "global", "pacific", "AQM"
 
 fFeaturesInt <- function(path, outdir, pu_shp, data, ...) { 
   

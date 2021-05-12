@@ -9,20 +9,9 @@
 # 4. 05a4: skipjack
 # The code must be run one after the other.
 
-####################################################################################
+####################################
 ####### Defining packages needed
-####################################################################################
-# List of pacakges that we will use
-list.of.packages <- c("tidyverse", "effects", "splines", "devtools", "ggiraphExtra",
-                      "ggiraph", "mgcv", "visreg", "patchwork", "MBA", "reshape2",
-                      "colorRamps", "ggthemes")
-# MBA: for bilinear interpolation; reshape2: for melt
-# If is not installed, install the pacakge
-new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-if(length(new.packages)) install.packages(new.packages)
-# Load packages
-lapply(list.of.packages, require, character.only = TRUE)
-
+####################################
 ###################################
 # Skipjack Tuna
 ###################################

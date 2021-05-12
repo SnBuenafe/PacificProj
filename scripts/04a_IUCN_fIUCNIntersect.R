@@ -13,7 +13,7 @@
 # 2. pu_file = PUs .rds file;
 # 3. outdir = path of the outputs of the function.
 
-# Code is run in 04a.
+# Code is run in 04b.
 
 fIUCNIntersect <- function(input, pu_file, outdir, ...) {
   

@@ -4,7 +4,7 @@
 # There are no guarantees that this code will work perfectly.
 # most are modified from IBM's code.
 
-# prov_intersect function generally intersects the features with the provinces.
+# fProvIntersect() generally intersects the features with the provinces.
 # it can intersect commercial and bycatch features (IUCN and AQM)
 # code creates an .rds file of the feature x province
 
@@ -44,28 +44,26 @@ COMMERCIAL_prov_run02 <- fProvIntersect(path = "outputs/05_Commercial/05b_fComme
 ####################
 ##### PLOTTING #####
 ####################
-
 # checking if it works
-ggplot() +
-  geom_sf(data = COMMERCIAL_prov_run01, aes(color = feature, fill = feature))
+#ggplot() +
+#  geom_sf(data = COMMERCIAL_prov_run01, aes(color = feature, fill = feature))
 # checking if it works
-ggplot() +
-  geom_sf(data = COMMERCIAL_prov_run02, aes(color = feature, fill = feature))
+#ggplot() +
+#  geom_sf(data = COMMERCIAL_prov_run02, aes(color = feature, fill = feature))
 # both work!
 
-library(wesanderson)
-library(RColorBrewer)
-nb.cols <- 34
-mycolors <- colorRampPalette(brewer.pal(8, "Set2"))(nb.cols)
+#library(wesanderson)
+#library(RColorBrewer)
+#nb.cols <- 34
+#mycolors <- colorRampPalette(brewer.pal(8, "Set2"))(nb.cols)
 
-ggplot() +
-  geom_sf(data = COMMERCIAL_prov_run02, aes(color = feature, fill = feature)) +
-  scale_color_manual(values = mycolors) +
-  scale_fill_manual(values = mycolors) +
-  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
-  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
-           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
-           expand = TRUE) +
-  labs(title = "Commercial Species") +
-  theme_bw()
-
+#ggplot() +
+#  geom_sf(data = COMMERCIAL_prov_run02, aes(color = feature, fill = feature)) +
+#  scale_color_manual(values = mycolors) +
+#  scale_fill_manual(values = mycolors) +
+#  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+#  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+#           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+#           expand = TRUE) +
+#  labs(title = "Commercial Species") +
+#  theme_bw()

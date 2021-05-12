@@ -13,7 +13,7 @@
 # 4. olayer: surface
 # 5. outdir: path of the output
 
-# Function is ran at 01b.
+# Function fCategProv() is found in 01b.
 
 source("scripts/01b_StudyArea_fCategProv.R")
 

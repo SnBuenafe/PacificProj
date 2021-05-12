@@ -1,17 +1,17 @@
 # All models (global-fitted) are from James Mercer's code.
-# 04a creates the GAMs for each of the species.
+# 05a creates the GAMs for each of the species.
 # It saves the predictions (with the environmental variables and the coordinates) as a .csv file. (dir: input/mercer/)
-# Saves the visreg plots and maps. (dir: outputs/commercial/GAM_plots/)
+# Saves the visreg plots and maps. (dir: outputs/05_Commercial/05a_GAMPlots)
 # There are 8 parts to 04a; the last 4 of which are pacific-fitted:
-# 1. 04a_5: yellowfin
-# 2. 04a_6: albacore
-# 3. 04a_7: swordfish
-# 4. 04a_8: skipjack
+# 1. 05a5: yellowfin
+# 2. 05a6: albacore
+# 3. 05a7: swordfish
+# 4. 05a8: skipjack
 # The code must be run one after the other.
 
-####################################################################################
-####### Defining packages needed
-####################################################################################
+####################################
+##### Defining packages needed #####
+####################################
 # List of pacakges that we will use
 list.of.packages <- c("tidyverse", "effects", "splines", "devtools", "ggiraphExtra",
                       "ggiraph", "mgcv", "visreg", "patchwork", "MBA", "reshape2",
@@ -46,7 +46,7 @@ fullplot_albpac9 <- visreg(m04, "Chl", partial = FALSE, ylab = " ", xlab = "Chl"
 ALBPAC_FullModel <- (fullplot_albpac1 | fullplot_albpac2 | fullplot_albpac3) / (fullplot_albpac4 | fullplot_albpac5 | fullplot_albpac6) / (fullplot_albpac7 | fullplot_albpac8 | fullplot_albpac9) +
   plot_annotation(title = "Response of Variables for Full Model", subtitle = "Albacore Tuna (Pacific-fitted)", tag_levels = "i")
 ALBPAC_FullModel
-ggsave("outputs/commercial/GAM_plots/ALB/ALBPAC_FullModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a6_ALB/ALBPAC_FullModel.pdf", width = 20, height = 20, dpi = 320)
 
 # First, let's see what we can drop using BIC
 summary(m04) # MLD, Bathymetry, Dist2Coast, Nitrate are not significant.
@@ -88,11 +88,11 @@ bestplot_albpac3 <- visreg(ALBPAC_BestModel, "Chl", partial = FALSE, ylab = "s(C
 bestplot_albpac <- (bestplot_albpac1 | bestplot_albpac2) + (bestplot_albpac3)  +
   plot_annotation(title = "Response of Variables for Best Model", subtitle = "Albacore Tuna (Pacific-fitted)", tag_levels = "i")
 bestplot_albpac
-ggsave("outputs/commercial/GAM_plots/ALB/ALBPAC_BestModel.pdf", width = 20, height = 20, dpi = 320)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a6_ALB/ALBPAC_BestModel.pdf", width = 20, height = 20, dpi = 320)
 
 vis.gam(ALBPAC_BestModel, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (°)", 
         ylab = "Longitude (°)", zlab = "Presence", color = "cm", theta = 30, phi = 30, r = 100)
-dev.copy2pdf(file = "outputs/commercial/GAM_plots/ALB/ALBPAC_BestModelLatLong.pdf", paper = "A4r")
+dev.copy2pdf(file = "outputs/05_Commercial/05a_GAMPlots/05a6_ALB/ALBPAC_BestModelLatLong.pdf", paper = "A4r")
 
 #######################################
 # Plotting best model as a map
@@ -116,4 +116,4 @@ p <- p + geom_map(data = WorldData, map = WorldData,
                   aes(x = long, y = lat, group = group, map_id = region),
                   fill = "grey", colour = "grey", size = 0.5)
 p 
-ggsave("outputs/commercial/GAM_plots/ALB/ALBPAC_map.png", p, dpi = 1200)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a6_ALB/ALBPAC_map.png", p, dpi = 1200)

@@ -15,8 +15,11 @@ fCreateMaskedPolygon <- function(df, res, mask, inverse){
   # Fasterize the land object
   df_rs <- fasterize(df, rs)
   
+  if(is.na(mask)) { 
+    masked_df <- df_rs
+  }else{
   mask_sp <- as(mask, "Spatial")
-  masked_df <- mask(df_rs, mask_sp, inverse = inverse)
+  masked_df <- mask(df_rs, mask_sp, inverse = inverse)}
   
   # Remove land pixels that are still present / delete certain aggrupation of pixels.
   masked_clump <- clump(masked_df, directions = 8) 
