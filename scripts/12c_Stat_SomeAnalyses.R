@@ -1,6 +1,7 @@
 library(tidyverse)
 library(stats)
 library(grid)
+library(patchwork)
 
 
 stats <- read_csv("statistics/stats.csv")
@@ -12,7 +13,7 @@ stats
 
 # RUNS FOR COST
 shapiro.test(log10(stats$cost))
-hist(log10(stats$cost))
+#hist(log10(stats$cost))
 cost_model1 <- aov(log10(cost) ~ as.factor(target) + as.factor(scenario), data = stats)
 cost_model1
 summary(cost_model1)
@@ -20,7 +21,7 @@ TukeyHSD(cost_model1)
 
 # RUNS FOR PERC_AREA_PROTECTED: binomially distributed
 shapiro.test(log10(stats$perc_area_protected))
-hist(log10(stats$perc_area_protected))
+#hist(log10(stats$perc_area_protected))
 
 area_protected_model1 <- aov(log10(perc_area_protected) ~ as.factor(target) + as.factor(scenario),
                              data = stats)
@@ -30,7 +31,7 @@ TukeyHSD(area_protected_model1)
 
 # RUNS FOR PROTECTED PUs
 shapiro.test(log10(stats$protected_PU))
-hist(stats$protected_PU)
+#hist(stats$protected_PU)
 
 protected_PU_model1 <- glm(protected_PU ~ as.factor(target) + as.factor(scenario), 
                            family = poisson(link = "log"), data = stats)
@@ -85,6 +86,6 @@ log_plot1 <- log_plot + theme(axis.text.x = element_blank(),
 area_plot1 <- area_plot + theme(axis.text.x = element_blank(),
                            axis.title.x = element_blank() )
 
-log_plot1 / area_plot1 / protected_features +
-  plot_annotation(tag_levels = 'i')
-ggsave("pdfs/stats.pdf", width = 21, height = 29.7, units = "cm")
+#log_plot1 / area_plot1 / protected_features +
+#  plot_annotation(tag_levels = 'i')
+#ggsave("pdfs/12_stat/stats.pdf", width = 21, height = 29.7, units = "cm")

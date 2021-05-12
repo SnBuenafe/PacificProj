@@ -16,7 +16,7 @@
 ##### KAPPA COEFFICIENT #####
 #############################
 
-kappa_corrplot <- function(inpdir, name_cols, ...) {
+fKappaCorrplot <- function(inpdir, name_cols, ...) {
 
 ##################################
 ### Defining the main packages ###
@@ -38,7 +38,7 @@ list <- list()
 for(i in 1:length(files)){
   list[[i]] <- readRDS(paste0(inpdir, files[i])) %>% 
     as_tibble() %>% 
-    select(solution_1)
+    dplyr::select(solution_1)
 }
 
 list_final <- do.call(cbind, list)
@@ -64,7 +64,7 @@ colnames(matrix_final)[1:2] <- c("scenario1","scenario2")
 
 matrix_final1 <- matrix_final %>% 
   as_tibble() %>% 
-  select(-kappa_pvalue) %>% 
+  dplyr::select(-kappa_pvalue) %>% 
   pivot_wider(names_from = scenario2, values_from = kappa_value) %>% 
   as.matrix()
 

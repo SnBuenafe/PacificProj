@@ -14,7 +14,7 @@
 
 # Function is run at 12b.
 
-solution_summary <- function(inpdir, outdir, plans, ...){
+fSolutionSummary <- function(inpdir, outdir, plans, ...){
   ##################################
   ### Defining the main packages ###
   ##################################
@@ -30,7 +30,6 @@ solution_summary <- function(inpdir, outdir, plans, ...){
   ################################################################################
   ## Creating one .csv file for the summaries for each target and each scenario ##
   ################################################################################
-  
   pat <- paste0("+summary")
   temp_list <- list.files(path = inpdir, pattern = pat)
   
