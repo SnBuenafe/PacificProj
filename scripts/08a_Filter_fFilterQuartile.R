@@ -16,10 +16,11 @@
 # 5. feature_prov = .rds file for the features x province
 # 6. outdir = path of the output
 # 7. data = "smart" for climate-smart and NA for uninformed
+# 8. prov = TRUE/FALSE (including provinces or not)
 
 # The function is run in 08b for different scenarios.
 
-fFilterQuartile <- function(velocity_file, RCE_file, feature_prov, outdir, scenario, feature_n, data, ...) {
+fFilterQuartile <- function(velocity_file, RCE_file, feature_prov, outdir, scenario, feature_n, data, prov, ...) {
   
   ########################################
   ####### Defining packages needed #######
@@ -47,17 +48,29 @@ fFilterQuartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
       dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>% # we want just the polygons/multi not extra geometries
       dplyr::select(-area_km2, -area_km2.1, -velo_categ, -rce_categ)
   
-  # Calling features that are intersected with provinces
-    feature <- readRDS(feature_prov) %>% 
-      group_by(feature) %>% 
-      mutate(total_area = sum(area_km2)) %>% 
-      ungroup()
-  
+  # Calling features
+    feature <- readRDS(feature_prov)
+    
+    if(prov == TRUE){
+      feature %<>% group_by(feature) %>% 
+        mutate(total_area = sum(area_km2)) %>% 
+        ungroup()
+    }else if(prov == FALSE){
+      feature %<>% group_by(feature_names) %>% 
+        mutate(total_area = sum(area_km2)) %>% 
+        ungroup()
+    }
+      
   # Intersect conservation features with climate-smart features
     feat_int <- st_intersection(feature, climate_int) %>% 
-      dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>%  # we want just the polygons/multi not extra geometries
-      dplyr::rename(new_features = feature, species = feature_names)
-  
+      dplyr::filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) # we want just the polygons/multi not extra geometries
+    
+    if(prov == TRUE){
+      feat_int %<>% dplyr::rename(new_features = feature, species = feature_names)
+    }else if(prov == FALSE){
+      feat_int %<>% dplyr::rename(new_features = feature_names)
+    }  
+      
   # Begin the parallel structure  
     list <- unique(feat_int$new_features)
     temp <- list()
@@ -94,13 +107,21 @@ fFilterQuartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
   saveRDS(filter_PU_final, paste0(outdir,feature_n,scenario,"_25percentile.rds"))
   
   }else{
-    # Calling features that are intersected with provinces
-    feature <- readRDS(feature_prov) %>% 
-      group_by(feature) %>% 
-      mutate(total_area = sum(area_km2)) %>% 
-      ungroup() %>% 
-      dplyr::rename(new_features = feature, species = feature_names)
-    
+    # Calling features
+    feature <- readRDS(feature_prov)
+
+    if(prov == TRUE){
+      feature %<>% group_by(feature) %>% 
+        mutate(total_area = sum(area_km2)) %>% 
+        ungroup() %>% 
+        dplyr::rename(new_features = feature, species = feature_names)
+    }else if(prov == FALSE){
+      feature %<>% group_by(feature_names) %>% 
+        mutate(total_area = sum(area_km2)) %>% 
+        ungroup() %>% 
+        dplyr::rename(new_features = feature_names)
+    }
+      
     filter_PU_final <- feature
     
     saveRDS(filter_PU_final, paste0(outdir,feature_n,scenario,"_100percentile.rds"))

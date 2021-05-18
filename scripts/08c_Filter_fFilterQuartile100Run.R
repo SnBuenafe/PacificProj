@@ -16,6 +16,7 @@
 # 5. feature_prov = .rds file for the features x province
 # 6. outdir = path of the output
 # 7. data = "smart" for climate-smart and NA for uninformed
+# 8. prov = TRUE/FALSE (including provinces or not)
 
 # The function is in 08a.
 
@@ -28,7 +29,8 @@ FILTER_GLOBALuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/05_Comm
                                        outdir = "outputs/08_Filter/08c_Filter100/",
                                        scenario = "uninformed",
                                        feature_n = "commercial",
-                                       data = "uninformed"
+                                       data = "uninformed",
+                                       prov = TRUE
 )
 
 FILTER_GLOBALuninformed_run01
@@ -40,7 +42,8 @@ FILTER_PACIFICuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/05_Com
                                         outdir = "outputs/08_Filter/08c_Filter100/",
                                         scenario = "uninformed",
                                         feature_n = "commercialpac",
-                                        data = "uninformed"
+                                        data = "uninformed",
+                                        prov = TRUE
 )
 
 FILTER_PACIFICuninformed_run01
@@ -52,7 +55,8 @@ FILTER_AQMuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/03_AQM/03b
                                     outdir = "outputs/08_Filter/08c_Filter100/",
                                     scenario = "uninformed",
                                     feature_n = "bycatch",
-                                    data = "uninformed"
+                                    data = "uninformed",
+                                    prov = TRUE
 )
 
 FILTER_AQMuninformed_run01
@@ -64,7 +68,8 @@ FILTER_IUCNuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/04_IUCN/0
                                      outdir = "outputs/08_Filter/08c_Filter100/",
                                      scenario = "uninformed",
                                      feature_n = "bycatchIUCN",
-                                     data = "uninformed"
+                                     data = "uninformed",
+                                     prov = TRUE
 )
 
 FILTER_IUCNuninformed_run01
