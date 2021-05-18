@@ -14,7 +14,7 @@
 source("scripts/03_Features_fFeaturesInt.R") 
 
 #######################################
-#### Running features_pus function ####
+#### Running fFeaturesInt function ####
 #######################################
 #running with .rds
 AQM_FeatInt_run01 <- fFeaturesInt(path = "outputs/02_RawAQM/02b_fAquaStart_filtered/",

@@ -87,7 +87,7 @@ fFeaturesInt <- function(path, outdir, pu_shp, data, ...) {
         dplyr::select(cellsID, geometry) %>% 
         dplyr::mutate(area_km2 = as.numeric(st_area(geometry)/1e+06))
       
-      if(data %in% c("global","pacific")) {
+      if(data %in% c("global","pacific","IUCN")) {
         files_list[[i]] <- files_list[[i]] %>% 
           mutate(feature_names = paste(unlist(strsplit(basename(files[i]), "[.]"))[1])) %>% 
           ungroup()
