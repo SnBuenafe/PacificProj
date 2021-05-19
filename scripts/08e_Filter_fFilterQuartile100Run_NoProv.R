@@ -61,7 +61,7 @@ FILTER_noprov_AQMuninformed_run01
 ########################################
 # IUCN Bycatch Features
 ########################################
-FILTER_IUCNuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/04_IUCN/04d_fFeaturesInt/bycatch_features.rds",
+FILTER_noprov_IUCNuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/04_IUCN/04d_fFeaturesInt/bycatch_features.rds",
                                                outdir = "outputs/08_Filter/08e_Filter100_NoProv/",
                                                scenario = "uninformed",
                                                feature_n = "bycatchIUCN",
@@ -69,4 +69,4 @@ FILTER_IUCNuninformed_run01 <- fFilterQuartile(feature_prov = "outputs/04_IUCN/0
                                                prov = FALSE
 )
 
-FILTER_IUCNuninformed_run01
+FILTER_noprov_IUCNuninformed_run01

@@ -19,6 +19,7 @@
 # 5. inpdir = directory where the .rds files of the conservation features for each scenario are
 # 6. scenario = climate scenario (e.g. SSP126)
 # 7. outdir = directory where the .rds files will be saved.
+# 8. prov = TRUE/FALSE (including provinces or not)
 
 # Function is found in 09a.
 # These runs are for CLIMATE-UNINFORMED.
@@ -34,7 +35,8 @@ TARGET100uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                     file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                     inpdir <- "outputs/08_Filter/08c_Filter100/",
                                     scenario <- "uninformed",
-                                    outdir <- "outputs/09_Target/09b-c_TargetRuns/01_Target100/")
+                                    outdir <- "outputs/09_Target/09b-c_TargetRuns/01_Target100/",
+                                    prov = TRUE)
 
 ####################################
 #### 90%, 0.1 - 0.9 RUNS ####
@@ -45,7 +47,8 @@ TARGET90uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/02_Target90/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/02_Target90/",
+                                   prov = TRUE)
 ####################################
 #### 80%, 0.1 - 0.8 RUNS ####
 ####################################
@@ -55,7 +58,8 @@ TARGET80uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/03_Target80/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/03_Target80/",
+                                   prov = TRUE)
 ####################################
 #### 70%, 0.1 - 0.7 RUNS ####
 ####################################
@@ -65,7 +69,8 @@ TARGET70uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/04_Target70/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/04_Target70/",
+                                   prov = TRUE)
 ####################################
 #### 60%, 0.1 - 0.6 RUNS ####
 ####################################
@@ -75,7 +80,8 @@ TARGET60uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                              file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                              inpdir <- "outputs/08_Filter/08c_Filter100/",
                                              scenario <- "uninformed",
-                                             outdir <- "outputs/09_Target/09b-c_TargetRuns/05_Target60/")
+                                             outdir <- "outputs/09_Target/09b-c_TargetRuns/05_Target60/",
+                                             prov = TRUE)
 ####################################
 #### 50%, 0.1 - 0.5 RUNS ####
 ####################################
@@ -85,7 +91,8 @@ TARGET50uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/06_Target50/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/06_Target50/",
+                                   prov = TRUE)
 ####################################
 #### 40%, 0.1 - 0.4 RUNS ####
 ####################################
@@ -95,7 +102,8 @@ TARGET40uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/07_Target40/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/07_Target40/",
+                                   prov = TRUE)
 ####################################
 #### 30%, 0.1 - 0.3 RUNS ####
 ####################################
@@ -105,7 +113,8 @@ TARGET30uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/08_Target30/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/08_Target30/",
+                                   prov = TRUE)
 ####################################
 #### 20%, 0.1 - 0.2 RUNS ####
 ####################################
@@ -115,7 +124,8 @@ TARGET20uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/09_Target20/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/09_Target20/",
+                                   prov = TRUE)
 ####################################
 #### 10%, 0 - 0.1 RUNS ####
 ####################################
@@ -125,4 +135,5 @@ TARGET10uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08c_Filter100/",
                                    scenario <- "uninformed",
-                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/10_Target10/")
+                                   outdir <- "outputs/09_Target/09b-c_TargetRuns/10_Target10/",
+                                   prov = TRUE)

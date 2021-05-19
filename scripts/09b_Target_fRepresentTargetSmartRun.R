@@ -19,6 +19,7 @@
 # 5. inpdir = directory where the .rds files of the conservation features for each scenario are
 # 6. scenario = climate scenario (e.g. SSP126)
 # 7. outdir = directory where the .rds files will be saved.
+# 8. prov = TRUE/FALSE (including provinces or not)
 
 # Function is found in 09a.
 
@@ -35,7 +36,8 @@ TARGET100_run01 <- fRepresentTarget(number_PU <- 31917,
                     file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                     inpdir <- "outputs/08_Filter/08b_Filter25/",
                     scenario <- "SSP126",
-                    outdir <- "outputs/09_Target/09b-c_FilterRuns/01_Target100/")
+                    outdir <- "outputs/09_Target/09b-c_FilterRuns/01_Target100/",
+                    prov = TRUE)
 
 # Run for SSP245
 TARGET100_run02 <- fRepresentTarget(number_PU <- 31917,
@@ -44,7 +46,8 @@ TARGET100_run02 <- fRepresentTarget(number_PU <- 31917,
                     file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                     inpdir <- "outputs/08_Filter/08b_Filter25/",
                     scenario <- "SSP245",
-                    outdir <- "outputs/09_Target/09b-c_FilterRuns/01_Target100/")
+                    outdir <- "outputs/09_Target/09b-c_FilterRuns/01_Target100/",
+                    prov = TRUE)
 
 # Run for SSP585
 TARGET100_run03 <- fRepresentTarget(number_PU <- 31917,
@@ -53,7 +56,8 @@ TARGET100_run03 <- fRepresentTarget(number_PU <- 31917,
                     file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                     inpdir <- "outputs/08_Filter/08b_Filter25/",
                     scenario <- "SSP585",
-                    outdir <- "outputs/09_Target/09b-c_FilterRuns/01_Target100/")
+                    outdir <- "outputs/09_Target/09b-c_FilterRuns/01_Target100/",
+                    prov = TRUE)
 
 ####################################
 #### 90%, 0.1 - 0.9 RUNS ####
@@ -66,7 +70,8 @@ TARGET90_run01 <- fRepresentTarget(number_PU <- 31917,
                                     file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                     inpdir <- "outputs/08_Filter/08b_Filter25/",
                                     scenario <- "SSP126",
-                                    outdir <- "outputs/09_Target/09b-c_FilterRuns/02_Target90/")
+                                    outdir <- "outputs/09_Target/09b-c_FilterRuns/02_Target90/",
+                                   prov = TRUE)
 
 # Run for SSP245
 TARGET90_run02 <- fRepresentTarget(number_PU <- 31917,
@@ -75,7 +80,8 @@ TARGET90_run02 <- fRepresentTarget(number_PU <- 31917,
                                     file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                     inpdir <- "outputs/08_Filter/08b_Filter25/",
                                     scenario <- "SSP245",
-                                    outdir <- "outputs/09_Target/09b-c_FilterRuns/02_Target90/")
+                                    outdir <- "outputs/09_Target/09b-c_FilterRuns/02_Target90/",
+                                   prov = TRUE)
 
 # Run for SSP585
 TARGET90_run03 <- fRepresentTarget(number_PU <- 31917,
@@ -84,7 +90,8 @@ TARGET90_run03 <- fRepresentTarget(number_PU <- 31917,
                                     file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                     inpdir <- "outputs/08_Filter/08b_Filter25/",
                                     scenario <- "SSP585",
-                                    outdir <- "outputs/09_Target/09b-c_FilterRuns/02_Target90/")
+                                    outdir <- "outputs/09_Target/09b-c_FilterRuns/02_Target90/",
+                                   prov = TRUE)
 
 ####################################
 #### 80%, 0.1 - 0.8 RUNS ####
@@ -97,7 +104,8 @@ TARGET80_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP126",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/03_Target80/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/03_Target80/",
+                                   prov = TRUE)
 
 # Run for SSP245
 TARGET80_run02 <- fRepresentTarget(number_PU <- 31917,
@@ -106,7 +114,8 @@ TARGET80_run02 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP245",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/03_Target80/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/03_Target80/",
+                                   prov = TRUE)
 
 # Run for SSP585
 TARGET80_run03 <- fRepresentTarget(number_PU <- 31917,
@@ -115,7 +124,8 @@ TARGET80_run03 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP585",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/03_Target80/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/03_Target80/",
+                                   prov = TRUE)
 
 ####################################
 #### 70%, 0.1 - 0.7 RUNS ####
@@ -128,7 +138,8 @@ TARGET70_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP126",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/04_Target70/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/04_Target70/",
+                                   prov = TRUE)
 
 # Run for SSP245
 TARGET70_run02 <- fRepresentTarget(number_PU <- 31917,
@@ -137,7 +148,8 @@ TARGET70_run02 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP245",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/04_Target70/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/04_Target70/",
+                                   prov = TRUE)
 
  # Run for SSP585
 TARGET70_run03 <- fRepresentTarget(number_PU <- 31917,
@@ -146,7 +158,8 @@ TARGET70_run03 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP585",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/04_Target70/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/04_Target70/",
+                                   prov = TRUE)
 
 ####################################
 #### 60%, 0.1 - 0.6 RUNS ####
@@ -159,7 +172,8 @@ TARGET60_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP126",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/05_Target60/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/05_Target60/",
+                                   prov = TRUE)
 
 # Run for SSP245
 TARGET60_run02 <- fRepresentTarget(number_PU <- 31917,
@@ -168,7 +182,8 @@ TARGET60_run02 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP245",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/05_Target60/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/05_Target60/",
+                                   prov = TRUE)
 
 # Run for SSP585
 TARGET60_run03 <- fRepresentTarget(number_PU <- 31917,
@@ -177,7 +192,8 @@ TARGET60_run03 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP585",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/05_Target60/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/05_Target60/",
+                                   prov = TRUE)
 
 ####################################
 #### 50%, 0.1 - 0.5 RUNS ####
@@ -190,7 +206,8 @@ TARGET50_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP126",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/06_Target50/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/06_Target50/",
+                                   prov = TRUE)
 
 # Run for SSP245
 TARGET50_run02 <- fRepresentTarget(number_PU <- 31917,
@@ -199,7 +216,8 @@ TARGET50_run02 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP245",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/06_Target50/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/06_Target50/",
+                                   prov = TRUE)
 
 # Run for SSP585
 TARGET50_run03 <- fRepresentTarget(number_PU <- 31917,
@@ -208,7 +226,8 @@ TARGET50_run03 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP585",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/06_Target50/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/06_Target50/",
+                                   prov = TRUE)
 
 ####################################
 #### 40%, 0.1 - 0.4 RUNS ####
@@ -221,7 +240,8 @@ TARGET40_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP126",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/07_Target40/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/07_Target40/",
+                                   prov = TRUE)
 
 # Run for SSP245
 TARGET40_run02 <- fRepresentTarget(number_PU <- 31917,
@@ -230,7 +250,8 @@ TARGET40_run02 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP245",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/07_Target40/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/07_Target40/",
+                                   prov = TRUE)
 
 # Run for SSP585
 TARGET40_run03 <- fRepresentTarget(number_PU <- 31917,
@@ -239,7 +260,8 @@ TARGET40_run03 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP585",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/07_Target40/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/07_Target40/",
+                                   prov = TRUE)
 
 ####################################
 #### 30%, 0.1 - 0.3 RUNS ####
@@ -252,7 +274,8 @@ TARGET30_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP126",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/08_Target30/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/08_Target30/",
+                                   prov = TRUE)
 
 # Run for SSP245
 TARGET30_run02 <- fRepresentTarget(number_PU <- 31917,
@@ -261,7 +284,8 @@ TARGET30_run02 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP245",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/08_Target30/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/08_Target30/",
+                                   prov = TRUE)
 
 # Run for SSP585
 TARGET30_run03 <- fRepresentTarget(number_PU <- 31917,
@@ -270,7 +294,8 @@ TARGET30_run03 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP585",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/08_Target30/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/08_Target30/",
+                                   prov = TRUE)
 
 ####################################
 #### 20%, 0.1 - 0.2 RUNS ####
@@ -283,7 +308,8 @@ TARGET20_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP126",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/09_Target20/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/09_Target20/",
+                                   prov = TRUE)
 
 # Run for SSP245
 TARGET20_run02 <- fRepresentTarget(number_PU <- 31917,
@@ -292,7 +318,8 @@ TARGET20_run02 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP245",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/09_Target20/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/09_Target20/",
+                                   prov = TRUE)
 
 # Run for SSP585
 TARGET20_run03 <- fRepresentTarget(number_PU <- 31917,
@@ -301,7 +328,8 @@ TARGET20_run03 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP585",
-                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/09_Target20/")
+                                   outdir <- "outputs/09_Target/09b-c_FilterRuns/09_Target20/",
+                                   prov = TRUE)
 
 ####################################
 #### 10%, 0 - 0.1 RUNS ####
@@ -314,7 +342,8 @@ TARGET10_run01 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP126",
-                                   outdir <- "outputs/09b_Target/09b-c_FilterRuns/10_Target10/")
+                                   outdir <- "outputs/09b_Target/09b-c_FilterRuns/10_Target10/",
+                                   prov = TRUE)
 
 # Run for SSP245
 TARGET10_run02 <- fRepresentTarget(number_PU <- 31917,
@@ -323,7 +352,8 @@ TARGET10_run02 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP245",
-                                   outdir <- "outputs/09b_Target/09b-c_FilterRuns/10_Target10/")
+                                   outdir <- "outputs/09b_Target/09b-c_FilterRuns/10_Target10/",
+                                   prov = TRUE)
 
 # Run for SSP585
 TARGET10_run03 <- fRepresentTarget(number_PU <- 31917,
@@ -332,7 +362,8 @@ TARGET10_run03 <- fRepresentTarget(number_PU <- 31917,
                                    file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                    inpdir <- "outputs/08_Filter/08b_Filter25/",
                                    scenario <- "SSP585",
-                                   outdir <- "outputs/09b_Target/09b-c_FilterRuns/10_Target10/")
+                                   outdir <- "outputs/09b_Target/09b-c_FilterRuns/10_Target10/",
+                                   prov = TRUE)
 #############
 ## testing ##
 #############
