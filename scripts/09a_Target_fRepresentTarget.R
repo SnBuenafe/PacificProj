@@ -19,21 +19,26 @@
 # 5. inpdir = directory where the .rds files of the conservation features for each scenario are
 # 6. scenario = climate scenario (e.g. SSP126)
 # 7. outdir = directory where the .rds files will be saved.
-# 8. target_max_perc = in percentage e.g. 100
+# 8. prov = TRUE/FALSE (including provinces or not)
 
-# The function is run in 09b for different scenarios (for climate-smart) and 09c for cliamte-uninformed.
+# The function is run in 09b and 09d for different scenarios (for climate-smart) and 09c and 09e for climate-uninformed.
 
-fRepresentTarget <- function(number_PU, target_max, target_min, file_spec_info, inpdir, scenario, outdir, ...) {
+fRepresentTarget <- function(number_PU, target_max, target_min, file_spec_info, inpdir, scenario, outdir, prov, ...) {
 
   ##################################
   ### Defining the main packages ###
   ##################################
-  list.of.packages <- c("rredlist", "tidyverse", "readxl", "sf")
+  list.of.packages <- c("rredlist", "tidyverse", "readxl", "sf", "magrittr")
   # If is not installed, install the pacakge
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
   if(length(new.packages)) install.packages(new.packages)
   # Load packages
   lapply(list.of.packages, require, character.only = TRUE)
+  
+  ############################
+  ### Loading generalities ###
+  ############################
+  rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
   
   ####################
   ### Calling data ###
@@ -56,14 +61,22 @@ fRepresentTarget <- function(number_PU, target_max, target_min, file_spec_info, 
       categories <- do.call(rbind, temp_categ)
       spec_info1 <- spec_info %>% mutate(category = categories[,1])
           
-      # Calling feature x prov x 25 perc file
+      # Calling feature x 25 perc file
       feature <- readRDS(paste0(inpdir,call_temp[j]))
+      if(prov == FALSE){
+        feature %<>% as_tibble() %>% 
+          rename(species = new_features) %>% 
+          st_as_sf(crs = rob_pacific)
+      }else{ }
           
       # Match the categories from the data from IUCN to the shapefiles with all the new features (prov x feature; filtered < 25 percentile of climate features)
       spec_info2 <- spec_info1 %>% 
         dplyr::select(code, category) %>% 
         rename(species = code)
       feature1 <- left_join(feature, spec_info2, by = "species")
+      if(prov == FALSE){
+        feature1 %<>% rename(new_features = species)
+      }else{ }
           
       # Setting targets for each conservation feature
       feature2 <- feature1 %>% 
