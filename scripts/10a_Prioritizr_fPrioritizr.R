@@ -16,11 +16,12 @@
 # 7. outdir: path where the solution will be saved.
 # 8. outexcel: where to save the .csv files of the summaries 
 # 9. target_name: e.g. Target100
+# 10. prov: TRUE/FALSE (including provinces or not)
 
 # Runs are found in 10b and 10c
 
 fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile, 
-                           commercial_file, bycatch_file, climate_scenario, outdir, outexcel, target_name, ...) {
+                           commercial_file, bycatch_file, climate_scenario, outdir, outexcel, target_name, prov, ...) {
   
   #######################################
   ####### Loading packages needed #######
@@ -82,13 +83,22 @@ fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile,
   ### FEATURES ###
   ################
   # joining all the features
-  if(climate_scenario == "uninformed"){
+  if(prov == TRUE) {
+    if(climate_scenario == "uninformed"){
+      features <- full_join(commercial_features, bycatch_features, by = c("cellsID", "new_features", "province",
+                                                                          "prov_descr","area_km2"))
+    }else{
     features <- full_join(commercial_features, bycatch_features, by = c("cellsID", "new_features", "province",
-                                                                        "prov_descr","area_km2"))
-  }else{
-  features <- full_join(commercial_features, bycatch_features, by = c("cellsID", "new_features", "province",
-                                                                      "prov_descr", "area_km2", "velocity",
-                                                                      "velo_tvalue", "RCE", "RCE_tvalue", "cellsID.2"))
+                                                                        "prov_descr", "area_km2", "velocity",
+                                                                        "velo_tvalue", "RCE", "RCE_tvalue", "cellsID.2"))
+    }
+  }else if(prov == FALSE){
+    if(climate_scenario == "uninformed"){
+      features <- full_join(commercial_features, bycatch_features, by = c("cellsID", "new_features","area_km2"))
+    }else{
+      features <- full_join(commercial_features, bycatch_features, by = c("cellsID", "new_features","area_km2", "velocity",
+                                                                          "velo_tvalue", "RCE", "RCE_tvalue", "cellsID.2"))
+    }
   }
   
   # A character list of features to analyse

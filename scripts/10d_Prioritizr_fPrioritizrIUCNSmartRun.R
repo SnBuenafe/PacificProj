@@ -14,6 +14,9 @@
 # 5. bycatch_file: file containing the bycatch features (.rds)
 # 6. climate_scenario: climate scenario (e.g. SSP126)
 # 7. outdir: path where the solution will be saved.
+# 8. outexcel: where to save the .csv files of the summaries 
+# 9. target_name: e.g. Target100
+# 10. prov: TRUE/FALSE (including provinces or not)
 
 # Function is found at 10a
 
@@ -37,7 +40,6 @@ Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
 ###############################
 ## Target 100% (0.1 - 1) ##
 ###############################
-
 PRIORITIZR_IUCN_target100_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                         commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/SSP126/target_commercialSSP126.rds",
                                         bycatch_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/SSP126/target_bycatchIUCNSSP126.rds",
@@ -46,7 +48,8 @@ PRIORITIZR_IUCN_target100_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/L
                                         climate_scenario = "SSP126",
                                         outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/01_Target100/",
                                         outexcel = "excel/IUCN/",
-                                        target_name = "Target100")
+                                        target_name = "Target100",
+                                        prov = TRUE)
 
 PRIORITIZR_IUCN_target100_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                         commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/SSP245/target_commercialSSP245.rds",
@@ -56,7 +59,8 @@ PRIORITIZR_IUCN_target100_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/L
                                         climate_scenario = "SSP245",
                                         outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/01_Target100/",
                                         outexcel = "excel/IUCN/",
-                                        target_name = "Target100")
+                                        target_name = "Target100",
+                                        prov = TRUE)
 
 PRIORITIZR_IUCN_target100_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                         commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/01_Target100/SSP585/target_commercialSSP585.rds",
@@ -66,7 +70,8 @@ PRIORITIZR_IUCN_target100_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/L
                                         climate_scenario = "SSP585",
                                         outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/01_Target100/",
                                         outexcel = "excel/IUCN/",
-                                        target_name = "Target100")
+                                        target_name = "Target100",
+                                        prov = TRUE)
 
 # Plotting
 target100_iucn1 <- ggplot() + 
@@ -125,7 +130,8 @@ PRIORITIZR_IUCN_target90_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                         climate_scenario = "SSP126",
                                         outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/02_Target90/",
                                         outexcel = "excel/IUCN/",
-                                        target_name = "Target90")
+                                        target_name = "Target90",
+                                        prov = TRUE)
 
 PRIORITIZR_IUCN_target90_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                         commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/02_Target90/SSP245/target_commercialSSP245.rds",
@@ -135,7 +141,8 @@ PRIORITIZR_IUCN_target90_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                         climate_scenario = "SSP245",
                                         outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/02_Target90/",
                                         outexcel = "excel/IUCN/",
-                                        target_name = "Target90")
+                                        target_name = "Target90",
+                                        prov = TRUE)
 
 PRIORITIZR_IUCN_target90_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                         commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/02_Target90/SSP585/target_commercialSSP585.rds",
@@ -145,7 +152,8 @@ PRIORITIZR_IUCN_target90_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                         climate_scenario = "SSP585",
                                         outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/02_Target90/",
                                         outexcel = "excel/IUCN/",
-                                        target_name = "Target90")
+                                        target_name = "Target90",
+                                        prov = TRUE)
 
 # Plotting
 
@@ -205,7 +213,8 @@ PRIORITIZR_IUCN_target80_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP126",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/03_Target80/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target80")
+                                                 target_name = "Target80",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target80_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/03_Target80/SSP245/target_commercialSSP245.rds",
@@ -215,7 +224,8 @@ PRIORITIZR_IUCN_target80_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP245",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/03_Target80/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target80")
+                                                 target_name = "Target80",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target80_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/03_Target80/SSP585/target_commercialSSP585.rds",
@@ -225,7 +235,8 @@ PRIORITIZR_IUCN_target80_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP585",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/03_Target80/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target80")
+                                                 target_name = "Target80",
+                                                 prov = TRUE)
 
 # Plotting
 
@@ -285,7 +296,8 @@ PRIORITIZR_IUCN_target70_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP126",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/04_Target70/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target70")
+                                                 target_name = "Target70",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target70_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/04_Target70/SSP245/target_commercialSSP245.rds",
@@ -295,7 +307,8 @@ PRIORITIZR_IUCN_target70_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP245",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/04_Target70/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target70")
+                                                 target_name = "Target70",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target70_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/04_Target70/SSP585/target_commercialSSP585.rds",
@@ -305,7 +318,8 @@ PRIORITIZR_IUCN_target70_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP585",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/04_Target70/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target70")
+                                                 target_name = "Target70",
+                                                 prov = TRUE)
 
 # Plotting
 
@@ -365,7 +379,8 @@ PRIORITIZR_IUCN_target60_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP126",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/05_Target60/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target60")
+                                                 target_name = "Target60",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target60_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/05_Target60/SSP245/target_commercialSSP245.rds",
@@ -375,7 +390,8 @@ PRIORITIZR_IUCN_target60_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP245",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/05_Target60/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target60")
+                                                 target_name = "Target60",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target60_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/05_Target60/SSP585/target_commercialSSP585.rds",
@@ -385,7 +401,8 @@ PRIORITIZR_IUCN_target60_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP585",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/05_Target60/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target60")
+                                                 target_name = "Target60",
+                                                 prov = TRUE)
 
 # Plotting
 
@@ -445,7 +462,8 @@ PRIORITIZR_IUCN_target50_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP126",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/06_Target50/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target50")
+                                                 target_name = "Target50",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target50_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/06_Target50/SSP245/target_commercialSSP245.rds",
@@ -455,7 +473,8 @@ PRIORITIZR_IUCN_target50_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP245",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/06_Target50/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target50")
+                                                 target_name = "Target50",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target50_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/06_Target50/SSP585/target_commercialSSP585.rds",
@@ -465,7 +484,8 @@ PRIORITIZR_IUCN_target50_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP585",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/06_Target50/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target50")
+                                                 target_name = "Target50",
+                                                 prov = TRUE)
 
 # Plotting
 
@@ -525,7 +545,8 @@ PRIORITIZR_IUCN_target40_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP126",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/07_Target40/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target40")
+                                                 target_name = "Target40",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target40_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/07_Target40/SSP245/target_commercialSSP245.rds",
@@ -535,7 +556,8 @@ PRIORITIZR_IUCN_target40_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP245",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/07_Target40/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target40")
+                                                 target_name = "Target40",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target40_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/07_Target40/SSP585/target_commercialSSP585.rds",
@@ -545,7 +567,8 @@ PRIORITIZR_IUCN_target40_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP585",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/07_Target40/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target40")
+                                                 target_name = "Target40",
+                                                 prov = TRUE)
 
 # Plotting
 
@@ -605,7 +628,8 @@ PRIORITIZR_IUCN_target30_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP126",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/08_Target30/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target30")
+                                                 target_name = "Target30",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target30_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/08_Target30/SSP245/target_commercialSSP245.rds",
@@ -615,7 +639,8 @@ PRIORITIZR_IUCN_target30_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP245",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/08_Target30/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target30")
+                                                 target_name = "Target30",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target30_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/08_Target30/SSP585/target_commercialSSP585.rds",
@@ -625,7 +650,8 @@ PRIORITIZR_IUCN_target30_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP585",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/08_Target30/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target30")
+                                                 target_name = "Target30",
+                                                 prov = TRUE)
 
 # Plotting
 
@@ -685,7 +711,8 @@ PRIORITIZR_IUCN_target20_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP126",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/09_Target20/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target20")
+                                                 target_name = "Target20",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target20_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/09_Target20/SSP245/target_commercialSSP245.rds",
@@ -695,7 +722,8 @@ PRIORITIZR_IUCN_target20_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP245",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/09_Target20/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target20")
+                                                 target_name = "Target20",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target20_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/09_Target20/SSP585/target_commercialSSP585.rds",
@@ -705,7 +733,8 @@ PRIORITIZR_IUCN_target20_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP585",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/09_Target20/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target20")
+                                                 target_name = "Target20",
+                                                 prov = TRUE)
 
 # Plotting
 
@@ -765,7 +794,8 @@ PRIORITIZR_IUCN_target10_run01 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP126",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/10_Target10/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target10")
+                                                 target_name = "Target10",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target10_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/10_Target10/SSP245/target_commercialSSP245.rds",
@@ -775,7 +805,8 @@ PRIORITIZR_IUCN_target10_run02 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP245",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/10_Target10/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target10")
+                                                 target_name = "Target10",
+                                                 prov = TRUE)
 
 PRIORITIZR_IUCN_target10_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
                                                  commercial_targetfile = "outputs/09_Target/09b-c_TargetRuns/10_Target10/SSP585/target_commercialSSP585.rds",
@@ -785,7 +816,8 @@ PRIORITIZR_IUCN_target10_run03 <- fPrioritizrRun(cost_file = "outputs/06_Cost/La
                                                  climate_scenario = "SSP585",
                                                  outdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/10_Target10/",
                                                  outexcel = "excel/IUCN/",
-                                                 target_name = "Target10")
+                                                 target_name = "Target10",
+                                                 prov = TRUE)
 
 # Plotting
 
