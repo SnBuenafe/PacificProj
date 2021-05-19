@@ -18,7 +18,7 @@ source("scripts/03_Features_fFeaturesInt.R")
 #######################################
 #running with .rds
 AQM_FeatInt_run01 <- fFeaturesInt(path = "outputs/02_RawAQM/02b_fAquaStart_filtered/",
-                                  outdir = "outputs/03_AQM/03b_fFeaturesInt/",
+                                  outdir = "outputs/03_AQM/03a_fFeaturesInt/",
                                   pu_shp = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
                                   data = "AQM")
 AQM_FeatInt_run01
