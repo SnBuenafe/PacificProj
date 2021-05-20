@@ -31,16 +31,16 @@ Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
 ###############################
 ## Target 100% (0.1 - 1) ##
 ###############################
-NOREGRET_IUCN_target100_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/01_Target100/",
-                                                outdir = "outputs/11_NoRegret/11c_IUCNRuns/",
-                                                target = "Target100",
-                                                pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
-                                                outexcel = "excel/no_regret_IUCN/",
-                                                climate_scenario = "noregret")
+NOREGRET_IUCN_NoProv_target100_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/01_Target100/",
+                                                 outdir = "outputs/11_NoRegret/11e_IUCNRuns_NoProv/",
+                                                 target = "Target100",
+                                                 pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
+                                                 outexcel = "excel/no_regret_IUCN_NoProv/",
+                                                 climate_scenario = "noregret")
 
 # Plotting
 noregret_IUCNtarget100 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target100_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_NoProv_target100_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -54,16 +54,16 @@ noregret_IUCNtarget100 <- ggplot() +
 ###############################
 ## Target 90% (0.1 - 0.9) ##
 ###############################
-NOREGRET_IUCN_target90_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/02_Target90/",
-                                                 outdir = "outputs/11_NoRegret/11c_IUCNRuns/",
-                                                 target = "Target90",
+NOREGRET_IUCN_NoProv_target90_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/02_Target90/",
+                                                outdir = "outputs/11_NoRegret/11e_IUCNRuns_NoProv/",
+                                                target = "Target90",
                                                 pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
-                                                outexcel = "excel/no_regret_IUCN/",
+                                                outexcel = "excel/no_regret_IUCN_NoProv/",
                                                 climate_scenario = "noregret")
 
 # Plotting
 noregret_IUCNtarget90 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target90_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_NoProv_target90_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -77,16 +77,16 @@ noregret_IUCNtarget90 <- ggplot() +
 ###############################
 ## Target 80% (0.1 - 0.8) ##
 ###############################
-NOREGRET_IUCN_target80_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/03_Target80/",
-                                                outdir = "outputs/11_NoRegret/11c_IUCNRuns/",
+NOREGRET_IUCN_NoProv_target80_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/03_Target80/",
+                                                outdir = "outputs/11_NoRegret/11e_IUCNRuns_NoProv/",
                                                 target = "Target80",
                                                 pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
-                                                outexcel = "excel/no_regret_IUCN/",
+                                                outexcel = "excel/no_regret_IUCN_NoProv/",
                                                 climate_scenario = "noregret")
 
 # Plotting
 noregret_IUCNtarget80 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target80_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_NoProv_target80_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -100,16 +100,16 @@ noregret_IUCNtarget80 <- ggplot() +
 ###############################
 ## Target 70% (0.1 - 0.7) ##
 ###############################
-NOREGRET_IUCN_target70_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/04_Target70/",
-                                                outdir = "outputs/11_NoRegret/11c_IUCNRuns/",
+NOREGRET_IUCN_NoProv_target70_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/04_Target70/",
+                                                outdir = "outputs/11_NoRegret/11e_IUCNRuns_NoProv/",
                                                 target = "Target70",
                                                 pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
-                                                outexcel = "excel/no_regret_IUCN/",
+                                                outexcel = "excel/no_regret_IUCN_NoProv/",
                                                 climate_scenario = "noregret")
 
 # Plotting
 noregret_IUCNtarget70 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target70_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_NoProv_target70_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -123,16 +123,16 @@ noregret_IUCNtarget70 <- ggplot() +
 ###############################
 ## Target 60% (0.1 - 0.6) ##
 ###############################
-NOREGRET_IUCN_target60_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/05_Target60/",
-                                                outdir = "outputs/11_NoRegret/11c_IUCNRuns/",
+NOREGRET_IUCN_NoProv_target60_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/05_Target60/",
+                                                outdir = "outputs/11_NoRegret/11e_IUCNRuns_NoProv/",
                                                 target = "Target60",
                                                 pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
-                                                outexcel = "excel/no_regret_IUCN/",
+                                                outexcel = "excel/no_regret_IUCN_NoProv/",
                                                 climate_scenario = "noregret")
 
 # Plotting
 noregret_IUCNtarget60 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target60_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_NoProv_target60_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -146,16 +146,16 @@ noregret_IUCNtarget60 <- ggplot() +
 ###############################
 ## Target 50% (0.1 - 0.5) ##
 ###############################
-NOREGRET_IUCN_target50_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/06_Target50/",
-                                                outdir = "outputs/11_NoRegret/11c_IUCNRuns/",
+NOREGRET_IUCN_NoProv_target50_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/06_Target50/",
+                                                outdir = "outputs/11_NoRegret/11e_IUCNRuns_NoProv/",
                                                 target = "Target50",
                                                 pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
-                                                outexcel = "excel/no_regret_IUCN/",
+                                                outexcel = "excel/no_regret_IUCN_NoProv/",
                                                 climate_scenario = "noregret")
 
 # Plotting
 noregret_IUCNtarget50 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target50_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_NoProv_target50_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -169,16 +169,16 @@ noregret_IUCNtarget50 <- ggplot() +
 ###############################
 ## Target 40% (0.1 - 0.4) ##
 ###############################
-NOREGRET_IUCN_target40_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/07_Target40/",
-                                                outdir = "outputs/11_NoRegret/11c_IUCNRuns/",
+NOREGRET_IUCN_NoProv_target40_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/07_Target40/",
+                                                outdir = "outputs/11_NoRegret/11e_IUCNRuns_NoProv/",
                                                 target = "Target40",
                                                 pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
-                                                outexcel = "excel/no_regret_IUCN/",
+                                                outexcel = "excel/no_regret_IUCN_NoProv/",
                                                 climate_scenario = "noregret")
 
 # Plotting
 noregret_IUCNtarget40 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target40_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_NoProv_target40_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -192,16 +192,16 @@ noregret_IUCNtarget40 <- ggplot() +
 ###############################
 ## Target 30% (0.1 - 0.3) ##
 ###############################
-NOREGRET_IUCN_target30_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/08_Target30/",
-                                                outdir = "outputs/11_NoRegret/11c_IUCNRuns/",
+NOREGRET_IUCN_NoProv_target30_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/08_Target30/",
+                                                outdir = "outputs/11_NoRegret/11e_IUCNRuns_NoProv/",
                                                 target = "Target30",
                                                 pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
-                                                outexcel = "excel/no_regret_IUCN/",
+                                                outexcel = "excel/no_regret_IUCN_NoProv/",
                                                 climate_scenario = "noregret")
 
 # Plotting
 noregret_IUCNtarget30 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target30_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_NoProv_target30_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -215,16 +215,16 @@ noregret_IUCNtarget30 <- ggplot() +
 ###############################
 ## Target 20% (0.1 - 0.2) ##
 ###############################
-NOREGRET_IUCN_target20_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/09_Target20/",
-                                                outdir = "outputs/11_NoRegret/11c_IUCNRuns/",
+NOREGRET_IUCN_NoProv_target20_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/09_Target20/",
+                                                outdir = "outputs/11_NoRegret/11e_IUCNRuns_NoProv/",
                                                 target = "Target20",
                                                 pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
-                                                outexcel = "excel/no_regret_IUCN/",
+                                                outexcel = "excel/no_regret_IUCN_NoProv/",
                                                 climate_scenario = "noregret")
 
 # Plotting
 noregret_IUCNtarget20 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target20_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_NoProv_target20_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -238,16 +238,16 @@ noregret_IUCNtarget20 <- ggplot() +
 ###############################
 ## Target 10% (0 - 0.1) ##
 ###############################
-NOREGRET_IUCN_target10_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/10_Target10/",
-                                                outdir = "outputs/11_NoRegret/11c_IUCNRuns/",
+NOREGRET_IUCN_NoProv_target10_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/10d-e_IUCNRuns/10_Target10/",
+                                                outdir = "outputs/11_NoRegret/11e_IUCNRuns_NoProv/",
                                                 target = "Target10",
                                                 pu_file = "outputs/06_Cost/Large_Medium/costlayer.rds",
-                                                outexcel = "excel/no_regret_IUCN/",
+                                                outexcel = "excel/no_regret_IUCN_NoProv/",
                                                 climate_scenario = "noregret")
 
 # Plotting
 noregret_IUCNtarget10 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target10_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_NoProv_target10_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -262,10 +262,10 @@ noregret_IUCNtarget10 <- ggplot() +
 ## Plot Everything ##
 ###############################
 IUCN_noregret <- (noregret_IUCNtarget100 + noregret_IUCNtarget90 + noregret_IUCNtarget80 + noregret_IUCNtarget70 + noregret_IUCNtarget60 + noregret_IUCNtarget50 + 
-                   noregret_IUCNtarget40 + noregret_IUCNtarget30 + plot_spacer() + noregret_IUCNtarget20 + noregret_IUCNtarget10 + plot_spacer()) +
+                    noregret_IUCNtarget40 + noregret_IUCNtarget30 + plot_spacer() + noregret_IUCNtarget20 + noregret_IUCNtarget10 + plot_spacer()) +
   plot_layout(ncol = 4, nrow = 3, guides = "collect") +
   plot_annotation(tag_levels = 'i',
                   title = 'No-Regret Closures',
                   subtitle = 'Using IUCN Bycatch & Global-fitted Commercial Data')
 IUCN_noregret
-#ggsave("pdfs/10_Prioritizr/IUCN/NoRegret_IUCN.pdf", width = 30, height = 21)
+#ggsave("pdfs/10_Prioritizr/IUCN_NoProv/NoRegret_IUCN.pdf", width = 30, height = 21)
