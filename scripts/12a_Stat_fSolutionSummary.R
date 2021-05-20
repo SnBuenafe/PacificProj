@@ -11,10 +11,11 @@
 # 1. inpdir = where the .csv files of each solution are found.
 # 2. outdir = where to save the final .csv files
 # 3. plans = only if noregret
+# 4. data = IUCN/AQM
 
 # Function is run at 12b.
 
-fSolutionSummary <- function(inpdir, outdir, plans, ...){
+fSolutionSummary <- function(inpdir, outdir, plans, data, ...){
   ##################################
   ### Defining the main packages ###
   ##################################
@@ -56,12 +57,11 @@ fSolutionSummary <- function(inpdir, outdir, plans, ...){
   table_final <- do.call(cbind, table)
   table_final
   
-  write_csv(table_final, paste0(outdir,"AQM_solution_summary.csv"))
+  write_csv(table_final, paste0(outdir,data,"_solution_summary.csv"))
   
   ################################################################################################
   ## Creating one .csv file for the summaries of each feature for each target and each scenario ##
   ################################################################################################
-  if(plans == "climate-smart") {
   pat1 <- paste0("+features_rep")
   temp_list1 <- list.files(path = inpdir, pattern = pat1)
   
@@ -79,8 +79,14 @@ fSolutionSummary <- function(inpdir, outdir, plans, ...){
     y <- unlist(strsplit(x,"_"))[1:4]
     z <- str_c(y, collapse = "_")
     
+    if(plans == "climate-smart"){
     temp_summary1 <- temp_summary %>% 
       select(feature, relative_held)
+    }else{
+      temp_summary1 <- temp_summary %>% 
+        select(features, relative) %>% 
+        rename(feature = features, relative_held = relative)
+    }
     
     colnames(temp_summary1)[2] <- z
     
@@ -92,6 +98,5 @@ fSolutionSummary <- function(inpdir, outdir, plans, ...){
   table_final1 <- do.call(cbind, table1)
   table_final1
   
-  write_csv(table_final1, paste0(outdir,"AQM_features_rep_summary.csv"))
-  }else{}
+  write_csv(table_final1, paste0(outdir,data,"_features_rep_summary.csv"))
 }

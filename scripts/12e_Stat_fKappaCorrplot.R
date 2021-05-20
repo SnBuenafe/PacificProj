@@ -10,7 +10,7 @@
 # 1. inpdir = where the .rds (sf) files are located & where the .csv file will be saved.
 # 2. name_cols = names of the columns. see run for example.
 
-# Function is run at 12e.
+# Function is run at 12f.
 
 fKappaCorrplot <- function(inpdir, name_cols, ...) {
 
