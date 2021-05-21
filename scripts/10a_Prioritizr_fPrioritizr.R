@@ -154,16 +154,16 @@ fPrioritizrRun <- function(cost_file, commercial_targetfile, bycatch_targetfile,
     summary1 <- summary %>% 
       summarize(sum_area = sum(area_km2), percent_area = (sum(area_km2)/total)*100, num_pu = length(st_geometry(summary)),
                 total_cost = sum(cost)) %>% 
-      as_tibble() #%>% 
-      #dplyr::select(-geometry)
+      as_tibble() %>% 
+      dplyr::select(-geometry)
   }
   else{
   summary1 <- summary %>% 
     summarize(sum_area = sum(area_km2), percent_area = (sum(area_km2)/total)*100, num_pu = length(st_geometry(summary)),
               total_cost = sum(cost), median_velocity = median(velocity), median_tvelocity = median(velo_tvalue),
               median_RCE = median(RCE), median_RCEtvalue = median(RCE_tvalue)) %>% 
-    as_tibble() #%>% 
-    #dplyr::select(-geometry)
+    as_tibble() %>% 
+    dplyr::select(-geometry)
   }
   summary1
   write_csv(summary1, paste0(outexcel,target_name,"_summary",climate_scenario,".csv"))

@@ -45,7 +45,8 @@ fSolutionSummary <- function(inpdir, outdir, plans, data, ...){
   table <- foreach(i = 1:length(temp_list), .packages = c("tidyverse")) %dopar% {
       temp_summary <- read_csv(paste0(inpdir,temp_list[i]))
       x <- unlist(strsplit(temp_list[i],"[.]"))[1]
-      temp_summary1 <- temp_summary %>% 
+      temp_summary1 <- temp_summary %>%
+        as_tibble() %>%
         pivot_longer(everything(),
                      names_to = "variables", values_to = x)
       

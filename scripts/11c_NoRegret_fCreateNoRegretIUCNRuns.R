@@ -40,7 +40,7 @@ NOREGRET_IUCN_target100_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr
 
 # Plotting
 noregret_IUCNtarget100 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target100_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_target100_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -63,7 +63,7 @@ NOREGRET_IUCN_target90_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/
 
 # Plotting
 noregret_IUCNtarget90 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target90_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_target90_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -86,7 +86,7 @@ NOREGRET_IUCN_target80_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/
 
 # Plotting
 noregret_IUCNtarget80 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target80_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_target80_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -109,7 +109,7 @@ NOREGRET_IUCN_target70_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/
 
 # Plotting
 noregret_IUCNtarget70 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target70_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_target70_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -132,7 +132,7 @@ NOREGRET_IUCN_target60_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/
 
 # Plotting
 noregret_IUCNtarget60 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target60_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_target60_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -155,7 +155,7 @@ NOREGRET_IUCN_target50_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/
 
 # Plotting
 noregret_IUCNtarget50 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target50_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_target50_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -178,7 +178,7 @@ NOREGRET_IUCN_target40_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/
 
 # Plotting
 noregret_IUCNtarget40 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target40_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_target40_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -201,7 +201,7 @@ NOREGRET_IUCN_target30_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/
 
 # Plotting
 noregret_IUCNtarget30 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target30_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_target30_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -224,7 +224,7 @@ NOREGRET_IUCN_target20_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/
 
 # Plotting
 noregret_IUCNtarget20 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target20_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_target20_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +
@@ -247,7 +247,7 @@ NOREGRET_IUCN_target10_run01 <- fCreateNoRegret(inpdir = "outputs/10_Prioritizr/
 
 # Plotting
 noregret_IUCNtarget10 <- ggplot() + 
-  geom_sf(data = NOREGRET_IUCN_target10_run01, aes(fill = solution), color = "grey64", size = 0.02) +
+  geom_sf(data = NOREGRET_IUCN_target10_run01, aes(fill = solution_1), color = "grey64", size = 0.02) +
   scale_fill_manual(name = "Solution",
                     values = pal_rich,
                     labels = solution) +

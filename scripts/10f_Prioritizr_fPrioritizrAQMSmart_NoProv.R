@@ -359,7 +359,7 @@ target70_plots +
   plot_annotation(tag_levels = 'i',
                   title = 'Solutions for different scenarios using global-fitted commercial and AQM bycatch data:',
                   subtitle = 'Maximum Target 70% (0.1 - 0.7)')
-ggsave("pdfs/10_Prioritizr/AQM_NoProv/Solutions_Target70.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/AQM_NoProv/Solutions_Target70.pdf", width = 21, height = 29.7)
 
 ###############################
 ## Target 60% (0.1 - 0.6) ##

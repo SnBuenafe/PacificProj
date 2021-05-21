@@ -26,7 +26,7 @@ fFilterQuartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
   ####### Defining packages needed #######
   ########################################
   # List of pacakges that we will use
-  list.of.packages <- c("sf", "tidyverse", "doParallel")
+  list.of.packages <- c("sf", "tidyverse", "doParallel", "magrittr")
   # If is not installed, install the pacakge
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
   if(length(new.packages)) install.packages(new.packages)
@@ -50,16 +50,6 @@ fFilterQuartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
   
   # Calling features
     feature <- readRDS(feature_prov)
-    
-    if(prov == TRUE){
-      feature %<>% group_by(feature) %>% 
-        mutate(total_area = sum(area_km2)) %>% 
-        ungroup()
-    }else if(prov == FALSE){
-      feature %<>% group_by(feature_names) %>% 
-        mutate(total_area = sum(area_km2)) %>% 
-        ungroup()
-    }
       
   # Intersect conservation features with climate-smart features
     feat_int <- st_intersection(feature, climate_int) %>% 
@@ -94,7 +84,10 @@ fFilterQuartile <- function(velocity_file, RCE_file, feature_prov, outdir, scena
     
     filter_PU_final <- do.call(rbind, filter_PU)
     filter_PU_final <- filter_PU_final %>% 
-      dplyr::select(-cellsID.1)
+      dplyr::select(-cellsID.1) %>% 
+      group_by(new_features) %>% 
+      mutate(total_area = sum(area_km2)) %>% 
+      ungroup()
   
 # if(feature_n == "bycatch") {
 #    filter_PU_final <- filter_PU_final %>% 
