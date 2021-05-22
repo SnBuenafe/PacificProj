@@ -7,7 +7,7 @@ output: html_document
 
 Since we ran *prioritizr* from 10 - 100% maximum target representation (in increments of 10%), we're showing a summary of how cost and percent protection varied with increasing target representation.
 
-```{r eval = TRUE, echo = TRUE, message = FALSE, fig.height = 3, fig.align = 'center'}
+```{r eval = TRUE, echo = TRUE, message = FALSE, fig.height = 8, fig.width = 10, fig.align = 'center'}
 source("scripts/12d_Stat_fCreateSummaryRuns.R")
 # showing the log(cost), log(% area protected), number of protected planning units, and number of adequately represented features.
 # this was done to determine which maximum representation targets to report/use in the runs
