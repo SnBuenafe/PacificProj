@@ -1,0 +1,441 @@
+---
+title: "Prioritizr Runs"
+output: html_document
+---
+
+### Prioritizr runs
+
+We used the `fPrioritizrRun()` function to streamline the runs. `fPrioritizrRun()` arranges all the data and makes sure that they're in the right format, then runs `problem()` and `solve()`. This function also saves the summaries each plan (cost, % area protected and number of representative features that achieved 30% or more protection). 
+
+The relevant scripts for this step is found in `~/scripts/` with the prefix `10_Prioritizr`.
+```{r eval = FALSE, echo = TRUE}
+# the function is in:
+source("scrpits/10a_Prioritizr_fPrioritizr.R")
+# to run the function with climate-smart data
+source("scripts/10h_Prioritizr_fPrioritizrIUCNSmart_NoProv.R")
+# to run the function with climate-uninformed data
+source("scripts/10i_Prioritizr_fPrioritizrIUCNUninformed_NoProv.R")
+# to create no-regret closures with the climate-smart plans
+```
+
+To create no-regret plans, we used thre function `fCreateNoRegret()` which intersected the selected PUs in all three climate scenarios. The relevant scripts for this step is found in `~/scripts` with the prefix `11_NoRegret`.
+```{r eval = FALSE, echo = TRUE}
+# the function is in:
+source("scripts/11_NoRegret_fCreateNoRegret.R")
+# the runs are found in:
+source("scripts/11e_NoRegret_fCreateNoRegretIUCNRuns_NoProv.R")
+```
+
+As mentioned in the previous section, we will only be showing results of **Runs 2** (Max = 0.9, Min = 0.1), **5** (Max = 0.6, Min = 0.1) and **8** (Max = 0.3, Min = 0.1).
+
+### Run 2: Maximum target = 90%
+
+#### Climate-smart runs
+
+**SSP1-2.6 run**
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+SSP126_target90 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/02_Target90/solution_SSP126.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+# defining generalities for plotting
+library(tidyverse)
+library(RColorBrewer)
+library(patchwork)
+pal_rich <- c("FALSE" = "lightsteelblue2", "TRUE" = "sienna3")
+solution <- c("Not selected PUs", "Selected PUs")
+world_sf <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
+# plotting
+ggplot() + 
+  geom_sf(data = SSP126_target90, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("SSP 1-2.6") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 90) %>% 
+  filter(scenario == "SSP1.26")
+summary
+```
+
+**SSP2-4.5 run**
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+SSP245_target90 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/02_Target90/solution_SSP245.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = SSP245_target90, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("SSP 2-4.5") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 90) %>% 
+  filter(scenario == "SSP2.45")
+summary
+```
+
+**SSP5-8.5 run**
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+SSP585_target90 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/02_Target90/solution_SSP585.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = SSP585_target90, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("SSP 5-8.5") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 90) %>% 
+  filter(scenario == "SSP5.85")
+summary
+```
+
+#### No-regret plan
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+noregret_target90 <- readRDS("outputs/11_NoRegret/11e_IUCNRuns_NoProv/noregretclosures_Target90.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = noregret_target90, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("No-regret Plan") +
+  theme_bw()
+```
+
+#### Climate-uninformed run
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+uninformed_target90 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/02_Target90/solution_uninformed.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = uninformed_target90, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("Climate-Uninformed Plan") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 90) %>% 
+  filter(scenario == "uninformed")
+summary
+```
+
+### Run 5: Maximum target = 60%
+
+#### Climate-smart runs
+
+**SSP1-2.6 run**
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+SSP126_target60 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/05_Target60/solution_SSP126.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = SSP126_target60, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("SSP 1-2.6") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 60) %>% 
+  filter(scenario == "SSP1.26")
+summary
+```
+
+**SSP2-4.5 run**
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+SSP245_target60 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/05_Target60/solution_SSP245.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = SSP245_target60, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("SSP 2-4.5") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 60) %>% 
+  filter(scenario == "SSP2.45")
+summary
+```
+
+**SSP5-8.5 run**
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+SSP585_target60 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/05_Target60/solution_SSP585.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = SSP585_target60, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("SSP 5-8.5") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 60) %>% 
+  filter(scenario == "SSP5.85")
+summary
+```
+
+#### No-regret plan
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+noregret_target60 <- readRDS("outputs/11_NoRegret/11e_IUCNRuns_NoProv/noregretclosures_Target60.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = noregret_target60, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("No-regret Plan") +
+  theme_bw()
+```
+
+#### Climate-uninformed run
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+uninformed_target60 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/05_Target60/solution_uninformed.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = uninformed_target60, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("Climate-Uninformed Plan") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 60) %>% 
+  filter(scenario == "uninformed")
+summary
+```
+
+### Run 8: Maximum target = 30%
+
+#### Climate-smart runs
+
+**SSP1-2.6 run**
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+SSP126_target30 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/08_Target30/solution_SSP126.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = SSP126_target30, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("SSP 1-2.6") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 30) %>% 
+  filter(scenario == "SSP1.26")
+summary
+```
+
+**SSP2-4.5 run**
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+SSP245_target30 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/08_Target30/solution_SSP245.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = SSP245_target30, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("SSP 2-4.5") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 30) %>% 
+  filter(scenario == "SSP2.45")
+summary
+```
+
+**SSP5-8.5 run**
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+SSP585_target30 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/08_Target30/solution_SSP585.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = SSP585_target30, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("SSP 5-8.5") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 30) %>% 
+  filter(scenario == "SSP5.85")
+summary
+```
+
+#### No-regret plan
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+noregret_target60 <- readRDS("outputs/11_NoRegret/11e_IUCNRuns_NoProv/noregretclosures_Target60.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = noregret_target60, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("No-regret Plan") +
+  theme_bw()
+```
+
+#### Climate-uninformed run
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+uninformed_target30 <- readRDS("outputs/10_Prioritizr/10h-i_IUCNRuns_NoProv/08_Target30/solution_uninformed.rds")
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.align = 'center'}
+ggplot() + 
+  geom_sf(data = uninformed_target30, aes(fill = solution_1), color = "grey64", size = 0.02) +
+  scale_fill_manual(name = "Solution",
+                    values = pal_rich,
+                    labels = solution) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  ggtitle("Climate-Uninformed Plan") +
+  theme_bw()
+```
+
+  * `cost` is in USD
+  * `perc_area_protected` is the percentage of the Pacific ABNJ protected
+  * `protected_PU` is the number of features that have >= 30% (by area) protection
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 30) %>% 
+  filter(scenario == "uninformed")
+summary
+```

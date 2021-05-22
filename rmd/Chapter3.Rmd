@@ -3,7 +3,7 @@ title: "Climate-smart Features"
 output: html_document
 ---
 
-### Climate-smart Features
+### Climate-smart features
 
 To create climate-smart closures, we prioritized protection of areas with:
 
@@ -39,7 +39,7 @@ The temperatures used to calculate the aforementioned metrics were derived from 
 
 #### RCE
 
-We intersected the RCE values with the PUs using `fClimateInt()`. The relevant scripts for creating the climate-smart features layer are found in `~/scripts/` with the prefix `07`.
+We intersected the RCE values with the PUs using `fClimateInt()`. The relevant scripts for creating the climate-smart features layer are found in `~/scripts/` with the prefix `07_Climate`.
 
 ``` {r eval = FALSE, echo = TRUE}
 # function is found at:

@@ -48,8 +48,6 @@ olive <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Lepidochelys_olivacea_IUCN.
 loggerhead_plot <- ggplot() + 
                       geom_sf(data = loggerhead, colour = pal_dist[1]) + 
                       geom_sf(data = world_sf, fill = "grey20", colour = NA) +
-                      geom_sf(data = world_eez, size = 1, aes(color = Boundary), fill = NA, show.legend = FALSE) +
-                      scale_color_manual(values = "grey30") +
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                expand = TRUE) +
@@ -59,8 +57,6 @@ loggerhead_plot <- ggplot() +
 green_plot <- ggplot() + 
                   geom_sf(data = green, colour = pal_dist[2]) + 
                   geom_sf(data = world_sf, fill = "grey20", colour = NA) +
-                  geom_sf(data = world_eez, size = 1, aes(color = Boundary), fill = NA, show.legend = FALSE) +
-                  scale_color_manual(values = "grey30") +
                   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                            expand = TRUE) +
@@ -70,19 +66,15 @@ green_plot <- ggplot() +
 leatherback_plot <- ggplot() + 
                         geom_sf(data = leatherback, colour = pal_dist[3]) + 
                         geom_sf(data = world_sf, fill = "grey20", colour = NA) +
-                        geom_sf(data = world_eez, size = 1, aes(color = Boundary), fill = NA, show.legend = FALSE) +
-                        scale_color_manual(values = "grey30") +
-                    coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
-                             ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
-                             expand = TRUE) +
-                    labs(title = "Leatherback sea turtles") +
-                    theme_bw()
+                        coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                                 ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                                 expand = TRUE) +
+                        labs(title = "Leatherback sea turtles") +
+                        theme_bw()
 
 hawksbill_plot <- ggplot() + 
                       geom_sf(data = hawksbill, colour = pal_dist[4]) + 
                       geom_sf(data = world_sf, fill = "grey20", colour = NA) +
-                      geom_sf(data = world_eez, size = 1, aes(color = Boundary), fill = NA, show.legend = FALSE) +
-                      scale_color_manual(values = "grey30") +
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                expand = TRUE) +
@@ -92,8 +84,6 @@ hawksbill_plot <- ggplot() +
 kemp_plot <- ggplot() + 
                 geom_sf(data = kemp, colour = pal_dist[5]) + 
                 geom_sf(data = world_sf, fill = "grey20", colour = NA) +
-                geom_sf(data = world_eez, size = 1, aes(color = Boundary), fill = NA, show.legend = FALSE) +
-                scale_color_manual(values = "grey30") +
                 coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                          ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                          expand = TRUE) +
@@ -103,8 +93,6 @@ kemp_plot <- ggplot() +
 olive_plot <- ggplot() + 
                 geom_sf(data = olive, colour = pal_dist[6]) + 
                 geom_sf(data = world_sf, fill = "grey20", colour = NA) +
-                geom_sf(data = world_eez, size = 1, aes(color = Boundary), fill = NA, show.legend = FALSE) +
-                scale_color_manual(values = "grey30") +
                 coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                          ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                          expand = TRUE) +

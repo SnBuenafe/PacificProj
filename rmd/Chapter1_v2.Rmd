@@ -1,0 +1,59 @@
+---
+title: "Study Area"
+output: html_document
+---
+
+### Study Area
+
+The study area has the following characteristics:
+
+* Pacific ABNJ
+* Limited boundaries to areal jurisdiction of RFMOs responsible for managing large pelagic fisheries (IATTC and WCPFC)
+* Robinson projection
+
+We ran the following code using polygons from `rnaturalearth` package and the EEZ `.shp` files from Marine Regions (Flanders Marine Institute, 2019) to create a Pacific-centered map of the global ABNJs.
+
+The relevant scripts for creating the study area are labeled with a prefix of `01_StudyArea` in `~/scripts/`.
+```{r, eval = FALSE, echo = TRUE}
+# to create the Pacific-centered maps:
+source("scripts/01a_StudyArea_CreatingPUs.R")
+# this script uses the following functions (embedded actual script):
+
+# function to create polygon of the ABNJ by masking the EEZs and the landmasses
+source("scripts/study_area/fCreateMaskedPolygon.R") 
+# function to reproject these polygon to Robinson projection
+source("scripts/study_area/fConvert2PacificRobinson.R") 
+# function to create the hexagonal planning units
+source("scripts/study_area/fCreate_PlanningUnits.R") 
+```
+``` {r, eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE}
+library(tidyverse)
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+```
+This figure shows the Pacific-centered global map (using Robinson projection).
+```{r, eval = TRUE, echo = TRUE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.height=3, fig.align = 'center'}
+world_robinson <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
+global_plot <- ggplot() +
+  geom_sf(data = world_robinson, colour = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
+  theme_bw()
+global_plot
+```
+
+We then created equal-area hexagonal planning units, or PUs, (0.5$^\circ$ x 0.5$^\circ$ at the equator) of the study area. This resulted in 31,917 PUs.
+```{r, eval = TRUE, echo = TRUE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.align = 'center'}
+# define objects for plotting; objects are the result of running 01_StudyArea
+pacific_robinson <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterABNJ.rds")
+PUsPac <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60) # coordinates in degrees
+
+study_area <- ggplot() +
+    geom_sf(data = pacific_robinson, colour = NA, fill = NA, size = 0.2, show.legend = "line") +
+    geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
+    geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = TRUE) + 
+    scale_fill_manual(name = "Study Area", values = c("ABNJ" = "coral3")) +
+    coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
+            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+            expand = TRUE) +
+    theme_bw()
+study_area
+```

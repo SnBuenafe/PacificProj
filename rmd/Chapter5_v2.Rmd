@@ -1,0 +1,123 @@
+---
+title: "Representation Targets"
+output: html_document
+---
+
+## Representation targets
+
+### Filtering and retaining PUs
+
+We join the climate-smart layer with the conservation features layer. Then, we only retain planning units that have RCE and/or climate-velocity values belonging to their lower 25th percentile range. This was how we priortized protection of areas that are predicted to have *lower exposure to climate warming* and *higher retention of biodiversity*.
+
+We used the function `fFilterQuartile()` and the scripts that are relevant for this step are found in `~/scripts/` with the prefix `08_Filter`.
+``` {r eval = FALSE, echo = TRUE}
+# function is found at:
+source("scripts/08a_Filter_fFilterQuartile.R")
+# function is ran at:
+source("scripts/08d_Filter_fFilterQuartile25Run_NoProv.R")
+```
+
+This was done for both the bycatch and large pelagic layers, across different scenarios (SSP1-2.6, SSP2-4.5, SSP5-8.5). Below is an example of how the data looks like, with the following columns:
+
+  * `cellsID`: unique ID for each PU
+  * `species`: species code
+  * `total_area`: the total area covered by each subtyped feature (in km$^{-1}$)
+  * `velocity`: climate velocity
+  * `velo_tvalue`: transformed values of climate velocity (velocity * 10)
+  * `RCE`: RCE index values
+  * `RCE_tvalue`: transformed values of RCE (cube root of RCE)
+
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+library(sf)
+library(tidyverse)
+```
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+# for bycatch under the climate scenario SSP1-2.6.
+bycatchSSP126 <- readRDS("outputs/08_Filter/08d_Filter25_NoProv/bycatchIUCNSSP126_25percentile.rds") %>% 
+  as_tibble() %>% 
+  dplyr::select(-area_km2, -cellsID.2, -geometry)
+head(bycatchSSP126)
+# for large pelagics under the cliamte scenario SSP5-8.5.
+commercialSSP585 <- readRDS("outputs/08_Filter/08d_Filter25_NoProv/commercialSSP585_25percentile.rds") %>% 
+  as_tibble() %>% 
+  dplyr::select(-area_km2, -cellsID.2, -geometry)
+head(commercialSSP585)
+```
+
+Aside from these **climate-smart** closures, we also explored **climate-uninformed**, wherein the climate-smart features were not included in the analyses. Subsequently, the step of filtering and retention of planning units was also not included.
+```{r eval = FALSE, echo = TRUE}
+source("scripts/08e_Filter_fFilterQuartile100Run_NoProv.R")
+```
+
+This is how the data looks like:
+```{r eval = TRUE, echo = FALSE, message = FALSE}
+library(sf)
+library(tidyverse)
+```
+```{r eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
+# for bycatch:
+bycatch_uninformed <- readRDS("outputs/08_Filter/08e_Filter100_NoProv/bycatchIUCNuninformed_100percentile.rds") %>% 
+  as_tibble() %>% 
+  dplyr::select(-area_km2, -geometry)
+head(bycatch_uninformed)
+# for large pelagics:
+commercial_uninformed <- readRDS("outputs/08_Filter/08e_Filter100_NoProv/commercialuninformed_100percentile.rds") %>%
+  as_tibble() %>% 
+  dplyr::select(-area_km2, -geometry)
+head(commercial_uninformed)
+```
+
+### Assigning targets
+
+To determine the *relative targets* per subtyped feature, we checked each one's *IUCN category* (IUCN, 2015) using `rredlist()`. Threatened features (i.e. classified as vulnerable, endangered, threatened) were assigned a *fixed maximum target*. Features ($i$) that were not classified as threatened (e.g. classified as near-threatened, etc.) were assigned a *relative target* based on their distribution.
+
+  Relative target$_i$ $= Target_{max} \cdot \frac{PU_i}{PU_{total}} \cdot (Target_{max} - Target_{min})$
+  
+  * `PU_i`: planning units of feature $i$
+  * `PU_{total}`: total planning units
+  * `Target_{max}`: Maximum target / the fixed maximum target assigned to threatened features (e.g. 1)
+  * `Target_{min}`: Minimum target (e.g. 0.1)
+  
+Lower targets are assigned to features with broader distribution, and higher targets to features with more restricted distribution.
+
+We reran this step for an array of targets, for both climate-smart and climate-uninformed closures:
+
+``` {r echo = FALSE, results = 'asis', message = FALSE}
+library(knitr)
+library(tidyverse)
+library(kableExtra)
+run <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+max <- c(1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1)
+min <- c(0.1, 0.1, 0.1 , 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0)
+df <- cbind(run, max, min)
+colnames(df) <- c("Runs", "Maximum","Minimum")
+kable(df) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
+```
+
+We used the function `fRepresentTarget()`, and the scripts are found in `~/scripts/` with the prefix `09`.
+```{r eval = FALSE, echo = TRUE}
+# the function is found in:
+source("scripts/09a_Target_fRepresentTarget.R")
+# the runs for climate-smart closures are found in:
+source("scripts/09d_Target_fRepresentTargetSmartRun_NoProv.R")
+# the runs for climate-uninformed closures are found in:
+source("scripts/09e_Target_fRepresentTargetUninformedRun_NoProv.R")
+```
+
+For this `.rmd`, we'll be showing results using **Runs 2** (Max = 0.9, Min = 0.1), **5** (Max = 0.6, Min = 0.1) and **8** (Max = 0.3, Min = 0.1). This workflow shows that it can be replicated using other parameters.
+
+Below is an example of how the data looks like:
+```{r eval = TRUE, echo = TRUE, message = FALSE}
+target90_commercial <- readRDS("outputs/09_Target/09d-e_TargetRuns/02_Target90/SSP126/target_commercialSSP126.rds") %>% 
+  as_tibble()
+head(target90_commercial)
+target90_bycatch <- readRDS("outputs/09_Target/09d-e_TargetRuns/02_Target90/SSP126/target_bycatchSSP126.rds") %>% 
+  as_tibble()
+head(target90_bycatch)
+```
+
+  * `new_features`: features
+  * `total_area`: the total area covered by each subtyped feature (in km$^{-1}$)
+  * `category`: IUCN redlist category
+  * `target`: assigned target in percentage

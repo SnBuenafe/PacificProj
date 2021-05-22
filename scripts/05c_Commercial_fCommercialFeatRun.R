@@ -25,8 +25,7 @@ source("scripts/05b_Commercial_fCommercialFeat.R")
 library(patchwork)
 library(RColorBrewer)
 rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
-world_sf <- st_read("inputs/shapefiles/PacificCenterLand/PacificCenterLand.shp") %>% 
-  st_transform(crs = rob_pacific)
+world_sf <- readRDS('outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds')
 
 source("scripts/study_area/fCreateRobinsonBoundary.R")
 Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)

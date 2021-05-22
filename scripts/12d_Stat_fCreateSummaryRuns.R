@@ -78,8 +78,8 @@ summary_df <- summary_noprov_IUCN
 shapiro.test(summary_df$total_cost) # not normal
 # log-transform
 shapiro.test(log10(summary_df$total_cost)) # normal! p-value > 0.05.
-hist(log10(summary_df$total_cost)) # looks normal in histogram plot!
-qqnorm(log10(summary_df$total_cost)) # looks normal in Q-Q plot!
+#hist(log10(summary_df$total_cost)) # looks normal in histogram plot!
+#qqnorm(log10(summary_df$total_cost)) # looks normal in Q-Q plot!
 # test for differences across targets, scenarios
 cost_model <- aov(log10(total_cost) ~ as.factor(target) + as.factor(scenario), data = summary_df)
 summary(cost_model)
@@ -88,8 +88,8 @@ TukeyHSD(cost_model) # all are significant except SSP585-SSP245
 
 # testing normality and homoscedasticity of residuals of model
 cost_residuals <- rstandard(cost_model)
-qqnorm(cost_residuals)
-qqline(cost_residuals)
+#qqnorm(cost_residuals)
+#qqline(cost_residuals)
 # not too bad
 
 # plotting cost
@@ -101,15 +101,15 @@ cost_plot <- ggplot(data = summary_df, aes(x = reorder(target, total_cost), grou
                     ylab("log10(cost)") +
                     theme(legend.position = "bottom") +
                     theme_classic()
-cost_plot
+#cost_plot
 
 # RUNS FOR % area protected
 # test for normality 
 shapiro.test(summary_df$percent_area) # not normal
 # try log transforming
-hist(log10(summary_df$percent_area))
+#hist(log10(summary_df$percent_area))
 shapiro.test(log10(summary_df$percent_area))
-qqnorm(log10(summary_df$percent_area)) # looks normal in Q-Q plot !
+#qqnorm(log10(summary_df$percent_area)) # looks normal in Q-Q plot !
 # test differences across different targets and scenarios:
 percentarea_model <- aov(log10(percent_area) ~ as.factor(target) + as.factor(scenario), data = summary_df)
 summary(percentarea_model)
@@ -118,8 +118,8 @@ TukeyHSD(percentarea_model) # all are significant !
 
 # testing normality and homoscedasticity of residuals of model
 percentarea_residuals <- rstandard(percentarea_model)
-qqnorm(percentarea_residuals)
-qqline(percentarea_residuals)
+#qqnorm(percentarea_residuals)
+#qqline(percentarea_residuals)
 # not too bad
 
 # plotting percent area
@@ -131,11 +131,11 @@ percentarea_plot <- ggplot(data = summary_df, aes(x = reorder(target, percent_ar
   ylab("log10(percent protected area)") +
   theme(legend.position = "bottom") +
   theme_classic()
-percentarea_plot
+#percentarea_plot
 
 # RUNS FOR PROTECTED PUs: Poisson distribution?
 shapiro.test(summary_df$num_pu) # normal :O
-hist(summary_df$num_pu)
+#hist(summary_df$num_pu)
 
 # create GLZs then !
 protected_PUs_model <- glm(num_pu ~ as.factor(target) + as.factor(scenario), 
@@ -155,11 +155,11 @@ protected_PUs_plot <- ggplot(data = summary_df, aes(x = reorder(target, percent_
   ylab("protected planning units") +
   theme(legend.position = "bottom") +
   theme_classic()
-protected_PUs_plot
+#protected_PUs_plot
 
 # RUNS FOR NUMBER OF REPRESENTED FEATURES
 shapiro.test(summary_df$represented_features) # not normal
-hist(summary_df$represented_features)
+#hist(summary_df$represented_features)
 
 # create GLZs then !
 represented_features_model <- glm(represented_features ~ as.factor(target) + as.factor(scenario), 
@@ -179,13 +179,13 @@ represented_features_plot <- ggplot(data = summary_df, aes(x = reorder(target, p
   ylab("adequately represented features") +
   theme(legend.position = "bottom") +
   theme_classic()
-represented_features_plot
+#represented_features_plot
 
 smart_plans <- (cost_plot | represented_features_plot) / (percentarea_plot | protected_PUs_plot) +
   plot_annotation(tag_levels = 'i', title = 'Results of climate-smart and -uninformed runs across targets') +
   plot_layout(guides = 'collect')
-smart_plans
-ggsave('pdfs/12_Stat/summary_IUCN_climate-smart+climate-uninformed.pdf', width = 29.7, height = 21)
+#smart_plans
+#ggsave('pdfs/12_Stat/summary_IUCN_climate-smart+climate-uninformed.pdf', width = 29.7, height = 21)
 #################################################
 ## Runs no-regret ##
 #################################################
@@ -202,7 +202,7 @@ cost_plot <- ggplot(data = summary_df, aes(x = reorder(target, total_cost), grou
   ylab("log10(cost)") +
   theme(legend.position = "bottom") +
   theme_classic()
-cost_plot
+#cost_plot
 
 # RUNS FOR % area protected
 # plotting percent area
@@ -214,7 +214,7 @@ percentarea_plot <- ggplot(data = summary_df, aes(x = reorder(target, percent_ar
   ylab("log10(percent protected area)") +
   theme(legend.position = "bottom") +
   theme_classic()
-percentarea_plot
+#percentarea_plot
 
 # RUNS FOR PROTECTED PUs
 # plotting protected PUs
@@ -226,7 +226,7 @@ protected_PUs_plot <- ggplot(data = summary_df, aes(x = reorder(target, percent_
   ylab("protected planning units") +
   theme(legend.position = "bottom") +
   theme_classic()
-protected_PUs_plot
+#protected_PUs_plot
 
 # RUNS FOR ADEQUATELY REPRESENTED FEATURES
 represented_features_plot <- ggplot(data = summary_df, aes(x = reorder(target, percent_area), group = scenario)) +
@@ -237,10 +237,10 @@ represented_features_plot <- ggplot(data = summary_df, aes(x = reorder(target, p
   ylab("adequately represented features") +
   theme(legend.position = "bottom") +
   theme_classic()
-represented_features_plot
+#represented_features_plot
 
 noregret_plans <- (cost_plot | represented_features_plot) / (percentarea_plot | protected_PUs_plot) +
   plot_annotation(tag_levels = 'i', title = 'Results of no-regret plans across targets') +
   plot_layout(guides = 'collect')
-noregret_plans
-ggsave('pdfs/12_Stat/summary_IUCN_noregret.pdf', width = 29.7, height = 21)
+#noregret_plans
+#ggsave('pdfs/12_Stat/summary_IUCN_noregret.pdf', width = 29.7, height = 21)

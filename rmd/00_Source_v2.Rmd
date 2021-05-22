@@ -1,0 +1,94 @@
+---
+title: "Creating conservation-sensitive, climate-smart fisheries closures for the ABNJ of the Pacific Ocean"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+We wish to create **conservation-sensitive**, **climate-smart** fisheries closures for the ABNJ of the Pacific Ocean using *prioritizr*.
+
+*Prioritizr* (Hanson et al., 2018) is a spatial prioritization software (R package) that uses integer linear programming (ILP) allowing it to create exact solutions to large spatial planning problems faster than its heuristic counterparts (e.g. Marxan).
+
+This file runs multiple scripts found in the main Github repository: [tinbuenafe/PacificProj](https://github.com/tinbuenafe/PacificProj), where the codes are explained in greater detail.
+
+## Assembling the data layers
+
+Before running *prioritizr*, we first had to assemble the following data layers:
+
+1. Study Area
+2. Fisheries conservation features
+3. Climate smart features
+4. Cost layer
+
+```{r child = file.path("Chapter1_v2.Rmd")}
+```
+
+\newpage
+
+```{r child = file.path("Chapter2_v2.Rmd")}
+```
+
+\newpage
+
+```{r child = file.path("Chapter3.Rmd")}
+```
+
+\newpage
+
+```{r child = file.path("Chapter4.Rmd")}
+```
+
+\newpage
+
+```{r child = file.path("Chapter5_v2.Rmd")}
+```
+
+\newpage
+
+## Running prioritizr
+
+*prioritizr* (v. 7.0.1.2) uses the following functions to define the `problem`.
+
+```{r eval = FALSE, echo = TRUE}
+# installing latest version of prioritizr from GitHub
+devtools::install_github("prioritizr/prioritizr")
+# installing gurobi as the optimizer
+install.packages("/Library/gurobi911/mac64/R/gurobi_9.1-1_R_4.0.2.tgz", repos = NULL)
+library(priortizr)
+library(gurobi)
+
+p1 <- prioritizr::problem(x, feature_list, "cost") %>% 
+    add_min_set_objective() %>%
+    add_relative_targets(target_list) %>%
+    add_binary_decisions() %>%
+    add_gurobi_solver(gap = 0.1, verbose = FALSE) 
+
+s1 <- solve(p1)
+```
+
+  * `problem()`: we define the data
+  * `x`: data frame having all the data layers (all planning units with their specific ID (`cellsID`), features data, cost)
+  * `feature_list`: list of the features in `x`
+  * `cost`: name of the column in `x` where the cost is found
+  * `add_min_set_objective()`: function that allows us to employ the **minimum set objective function**. This allows *prioritizr* to create spatial plans that will minimize the cost.
+  * `add_relative_targets()`: `target_list` list of assigned  targets for each feature
+  * `add_binary_decisions()`: *prioritizr* will only either select or not select a PU
+  * `add_gurobi_solver()`: Gurobi was used as the optimizer to solve the problem (at a default 10%)
+  * `solve()`: *prioritizr* solves the problem `p1`
+  
+\newpage  
+
+```{r child = file.path("Chapter6_v2.Rmd")}
+```
+
+\newpage
+
+```{r child = file.path("Chapter7_v2.Rmd")}
+```

@@ -17,6 +17,7 @@ fCreateSummary <- function(inpdir, outdir, name, ...) {
   ### Defining libraries #####
   ############################
   library(tidyverse)
+  library(magrittr)
   
   ############################
   ### Manipulating data #####

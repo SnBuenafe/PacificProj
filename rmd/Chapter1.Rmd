@@ -3,7 +3,7 @@ title: "Study Area"
 output: html_document
 ---
 
-### Study Area
+### Study area
 
 The study area has the following characteristics:
 

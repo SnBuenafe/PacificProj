@@ -1,0 +1,96 @@
+---
+title: "Summary"
+output: html_document
+---
+
+## Summary
+
+Since we ran *prioritizr* from 10 - 100% maximum target representation (in increments of 10%), we're showing a summary of how cost and percent protection varied with increasing target representation.
+
+```{r eval = TRUE, echo = TRUE, message = FALSE, fig.height = 3, fig.align = 'center'}
+source("scripts/12d_Stat_fCreateSummaryRuns.R")
+# showing the log(cost), log(% area protected), number of protected planning units, and number of adequately represented features.
+# this was done to determine which maximum representation targets to report/use in the runs
+smart_plans
+```
+
+We also determined **Cohen's Kappa Coefficient** between plans created for each run. Below are the summaries for each run as well as a matrix plot of the correlations between plans. We also show the **summaries of the representation of each feature** for each spatial plan.
+
+The relevant scripts for this part are found in `~/scripts/` with prefix `12_Stat`.
+```{r eval = FALSE, echo = TRUE}
+# the function for creating the correlation plots is found in:
+source("scripts/12e_Stat_fKappaCorrplot.R")
+# the runs are found in:
+source("scripts/12f_Stat_fKappaCorrplotRun.R")
+
+# the function for creating circular bar plots to show summaries of the representation of each feature:
+source("scripts/12g_Stat_fCreateCircBarPlot.R")
+# the runs are found in:
+source("scripts/12h_Stat_fCreateCircBarPlotRuns.R")
+```
+
+**Summary for Run 2: Maximum Target = 90%**
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.height = 5, fig.align = 'center', warning = FALSE}
+library(tidyverse)
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 90)
+summary
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 8, warning = FALSE}
+library(patchwork)
+source("scripts/12e_Stat_fKappaCorrplot.R")
+source('scripts/12g_Stat_fCreateCircBarPlot.R')
+corrplot <- fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run3/",
+  name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+circplot_target90 <- fCreateCircBarPlot(bycatch = 'bycatchIUCN',
+                                        commercial = 'commercial',
+                                        target_inpdir = 'outputs/09_Target/09d-e_TargetRuns/02_Target90/',
+                                        features.summary_csv = 'outputs/12_Stat/12b_fSolutionSummary/NoProv/IUCN_features_rep_summary.csv',
+                                        target = 'Target90')
+corrplot
+circplot_target90
+```
+
+**Summary for Run 5: Maximum Target = 60%**
+```{r eval = TRUE, echo = FALSE, message = FALSE, fig.height = 5, fig.align = 'center'}
+library(tidyverse)
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 60)
+summary
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 8, warning = FALSE}
+library(patchwork)
+source("scripts/12e_Stat_fKappaCorrplot.R")
+source("scripts/12g_Stat_fCreateCircBarPlot.R")
+corrplot <- fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run4/",
+  name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+circplot_target60 <- fCreateCircBarPlot(bycatch = 'bycatchIUCN',
+                                        commercial = 'commercial',
+                                        target_inpdir = 'outputs/09_Target/09d-e_TargetRuns/05_Target60/',
+                                        features.summary_csv = 'outputs/12_Stat/12b_fSolutionSummary/NoProv/IUCN_features_rep_summary.csv',
+                                        target = 'Target60')
+corrplot
+circplot_target60
+```
+
+**Summary for Run 8: Maximum Target = 30%**
+```{r eval=TRUE, echo=FALSE, fig.align='center', fig.height=4, message=FALSE, warning=FALSE}
+library(tidyverse)
+summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary.csv") %>% 
+  filter(target == 30)
+summary
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 8, warning = FALSE}
+library(patchwork)
+source("scripts/12e_Stat_fKappaCorrplot.R")
+source("scripts/12g_Stat_fCreateCircBarPlot.R")
+corrplot <- fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run5/",
+  name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+circplot_target30 <- fCreateCircBarPlot(bycatch = 'bycatchIUCN',
+                                        commercial = 'commercial',
+                                        target_inpdir = 'outputs/09_Target/09d-e_TargetRuns/08_Target30/',
+                                        features.summary_csv = 'outputs/12_Stat/12b_fSolutionSummary/NoProv/IUCN_features_rep_summary.csv',
+                                        target = 'Target30')
+corrplot
+circplot_target30
+```
