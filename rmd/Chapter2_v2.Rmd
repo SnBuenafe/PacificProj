@@ -12,7 +12,7 @@ The following were used in this study:
 
 #### Bycatch distribution
 
-First, we compiled a list of bycatch reported in the Pacific ABNJ. Then, we extracted their **IUCN** distribution. These polygons are from the IUCN Red List, showing the known ranges of the species (IUCN Red List, 2021).
+First, we compiled a list of bycatch reported in the Pacific ABNJ. Then, we used the **IUCN** distribution maps for these species. These polygons are from the IUCN Red List, showing the known ranges of the species (IUCN Red List, 2021).
 
 We limited the bycatch included in this study to **sea turtles**, but this workflow can be easily replicated and expanded to include more species.
 
@@ -126,7 +126,7 @@ Just like the bycatch layer, we compiled a list of commercially targeted large p
 * Skipjack Tuna (*Katsuwonus pelamis*)
 * Swordfish (*Xiphias gladius*)
 
-The models for these species are from a report by Mercer (2019) where he created Generalized Additive Models (GAMs) to predict spawning grounds. He used average seasonal abundance from a historical dataset of longline fisheries surveys (dated back to the 1950s), and oceanographic and environmental conditions from global databases.
+The models for these species are from a report by Mercer (2019) where he created Generalized Additive Models (GAMs) to predict spawning grounds using (Nishikawa et al., 1985). He used mean seasonal abundance from a historical dataset of plankton tows of fish larvae (dated back to the 1950s), and oceanographic and environmental conditions from global databases.
 
 We reran his models (see scripts labeled with a prefix `05a_Commercial` in `~/scripts/` for complete reruns) and used the medians of the predictions for each species as probability thresholds to create the distribution maps and the function `fCommercialFeat()`.
 

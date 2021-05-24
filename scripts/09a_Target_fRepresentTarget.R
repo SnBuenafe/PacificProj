@@ -94,7 +94,7 @@ fRepresentTarget <- function(number_PU, target_max, target_min, file_spec_info, 
         if(feature2$category[x] %in% c("EX","EW","CR","EN","VU")) {
           trans_target[[x]] <- target_max*100
         }else {
-          trans_target[[x]] <- target_max*(feature2$total_area[x]/total_PU_area)*(target_max-target_min)*100
+          trans_target[[x]] <- (target_max-((feature2$total_area[x]/total_PU_area)*(target_max-target_min)))*100
         }
       }
           

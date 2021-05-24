@@ -73,8 +73,8 @@ To determine the *relative targets* per subtyped feature, we checked each one's 
 
   Relative target$_i$ $= Target_{max} \cdot \frac{PU_i}{PU_{total}} \cdot (Target_{max} - Target_{min})$
   
-  * `PU_i`: planning units of feature $i$
-  * `PU_{total}`: total planning units
+  * `PU_i`: number of planning units of feature $i$
+  * `PU_{total}`: total number of planning units in planning region
   * `Target_{max}`: Maximum target / the fixed maximum target assigned to threatened features (e.g. 1)
   * `Target_{min}`: Minimum target (e.g. 0.1)
   
