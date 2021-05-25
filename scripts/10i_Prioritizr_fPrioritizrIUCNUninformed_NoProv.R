@@ -314,4 +314,4 @@ uninformed_target10_iucn1 <- ggplot() +
        subtitle = "Maximum Target 10% (0 - 0.1)") +
   theme_bw()
 uninformed_target10_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN_NoProv/Uninformed_Solutions_Target10.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN_NoProv/Uninformed_Solutions_Target10.pdf", width = 21, height = 29.7)

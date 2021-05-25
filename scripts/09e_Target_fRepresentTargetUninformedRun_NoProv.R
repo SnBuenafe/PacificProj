@@ -30,8 +30,8 @@ source("scripts/09a_Target_fRepresentTarget.R")
 #### 100%, 0.1 - 1 RUN ####
 ####################################
 TARGET100uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
-                                              target_max <- 1,
-                                              target_min <- 0.1,
+                                              target_max <- 0.25, # 0.25 x 1
+                                              target_min <- 0.025, # 0.25 x 0.1
                                               file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                               inpdir <- "outputs/08_Filter/08e_Filter100_NoProv/",
                                               scenario <- "uninformed",
@@ -41,8 +41,8 @@ TARGET100uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
 #### 90%, 0.1 - 0.9 RUN ####
 ####################################
 TARGET90uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
-                                              target_max <- 0.9,
-                                              target_min <- 0.1,
+                                              target_max <- 0.225, # 0.25 x 0.9
+                                              target_min <- 0.025, # 0.25 x 0.1
                                               file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                               inpdir <- "outputs/08_Filter/08e_Filter100_NoProv/",
                                               scenario <- "uninformed",
@@ -52,8 +52,8 @@ TARGET90uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
 #### 80%, 0.1 - 0.8 RUN ####
 ####################################
 TARGET80uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
-                                              target_max <- 0.8,
-                                              target_min <- 0.1,
+                                              target_max <- 0.2, # 0.25 x 0.8
+                                              target_min <- 0.025, # 0.25 x 0.1
                                               file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                               inpdir <- "outputs/08_Filter/08e_Filter100_NoProv/",
                                               scenario <- "uninformed",
@@ -63,8 +63,8 @@ TARGET80uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
 #### 70%, 0.1 - 0.7 RUN ####
 ####################################
 TARGET70uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
-                                             target_max <- 0.7,
-                                             target_min <- 0.1,
+                                             target_max <- 0.175, # 0.25 x 0.7
+                                             target_min <- 0.025, # 0.25 x 0.1
                                              file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                              inpdir <- "outputs/08_Filter/08e_Filter100_NoProv/",
                                              scenario <- "uninformed",
@@ -74,8 +74,8 @@ TARGET70uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
 #### 60%, 0.1 - 0.6 RUN ####
 ####################################
 TARGET60uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
-                                             target_max <- 0.6,
-                                             target_min <- 0.1,
+                                             target_max <- 0.15, # 0.25 x 0.6
+                                             target_min <- 0.025, # 0.25 x 0.1
                                              file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                              inpdir <- "outputs/08_Filter/08e_Filter100_NoProv/",
                                              scenario <- "uninformed",
@@ -85,8 +85,8 @@ TARGET60uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
 #### 50%, 0.1 - 0.5 RUN ####
 ####################################
 TARGET50uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
-                                             target_max <- 0.5,
-                                             target_min <- 0.1,
+                                             target_max <- 0.125, # 0.25 x 0.5
+                                             target_min <- 0.025, # 0.25 x 0.1
                                              file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                              inpdir <- "outputs/08_Filter/08e_Filter100_NoProv/",
                                              scenario <- "uninformed",
@@ -96,8 +96,8 @@ TARGET50uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
 #### 40%, 0.1 - 0.4 RUN ####
 ####################################
 TARGET40uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
-                                             target_max <- 0.4,
-                                             target_min <- 0.1,
+                                             target_max <- 0.1, # 0.25 x 0.5
+                                             target_min <- 0.025, # 0.25 x 0.1
                                              file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                              inpdir <- "outputs/08_Filter/08e_Filter100_NoProv/",
                                              scenario <- "uninformed",
@@ -107,8 +107,8 @@ TARGET40uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
 #### 30%, 0.1 - 0.3 RUN ####
 ####################################
 TARGET30uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
-                                             target_max <- 0.3,
-                                             target_min <- 0.1,
+                                             target_max <- 0.075, # 0.25 x 0.3
+                                             target_min <- 0.025, # 0.25 x 0.1
                                              file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                              inpdir <- "outputs/08_Filter/08e_Filter100_NoProv/",
                                              scenario <- "uninformed",
@@ -118,8 +118,8 @@ TARGET30uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
 #### 20%, 0.1 - 0.2 RUN ####
 ####################################
 TARGET20uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
-                                             target_max <- 0.2,
-                                             target_min <- 0.1,
+                                             target_max <- 0.05, # 0.25 x 0.2
+                                             target_min <- 0.025, # 0.25 x 0.1
                                              file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                              inpdir <- "outputs/08_Filter/08e_Filter100_NoProv/",
                                              scenario <- "uninformed",
@@ -129,8 +129,8 @@ TARGET20uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
 #### 10%, 0 - 0.1 RUN ####
 ####################################
 TARGET10uninformed_run01 <- fRepresentTarget(number_PU <- 31917,
-                                             target_max <- 0.1,
-                                             target_min <- 0,
+                                             target_max <- 0.025, # 0.25 x 0.1
+                                             target_min <- 0, # 0.25 x 0
                                              file_spec_info <- "outputs/09_Target/spec_info.xlsx",
                                              inpdir <- "outputs/08_Filter/08e_Filter100_NoProv/",
                                              scenario <- "uninformed",

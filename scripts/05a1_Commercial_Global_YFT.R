@@ -3,11 +3,13 @@
 # It saves the predictions (with the environmental variables and the coordinates) as a .csv file. (dir: input/mercer/)
 # Saves the visreg plots and maps. (dir: outputs/05_Commercial/05a_GAMPlots/)
 # There are 8 parts to 05a; the first 4 of which are global-fitted data:
-# 1. 05a1: yellowfin
+# 1. 05a1: yellowfin (where the dataset is pre-processed & packages are defined)
 # 2. 05a2: albacore
 # 3. 05a3: swordfish
 # 4. 05a4: skipjack
 # The code must be run one after the other.
+
+source("scripts/commercial/Tuna_Helpers.R") # Load helper functions
 
 ####################################################################################
 ####### Defining packages needed
@@ -23,169 +25,129 @@ if(length(new.packages)) install.packages(new.packages)
 # Load packages
 lapply(list.of.packages, require, character.only = TRUE)
 
-# calling data
-
-tuna_data <- read.csv("inputs/mercer/TunaData_final.txt", sep="")
-tuna_data <- na.omit(tuna_data)
+dat <- read.csv("inputs/mercer/TunaData_final.txt", sep="") %>% 
+  na.omit()
 
 # Very high chlorophyll max
-
-#Very high chlorophyll max
-hist(tuna_data$Chl)
-# tuna_data <- tuna_data %>% mutate(Chl = replace(Chl, Chl > 5, 5)) # Set max Chl to 5
-# the data was already pre-processed to set max Chl to 5
-
-# Reorder Seasons so they are in order
-tuna_data <- tuna_data %>% mutate(Season2 = replace(Season2, Season2 == "summer", 2)) %>% 
-  mutate(Season2 = replace(Season2, Season2 == "winter", 4)) %>% 
-  mutate(Season2 = replace(Season2, Season2 == "autumn", 3)) %>% 
-  mutate(Season2 = replace(Season2, Season2 == "spring", 1))
-
-#subset based on species
-yft <- subset(tuna_data, species == "yellowfin tuna")
-alba <- subset(tuna_data, species == "albacore")
-sword <- subset(tuna_data, species == "swordfish")
-skip <- subset(tuna_data, species == "skipjack tuna")
-bigeye <- subset(tuna_data, species == "bigeye tuna") # there's also bigeye?!
+hist(dat$Chl)
 
 ###################################################################
 # Pre-processing before GAMs to reduce wide SEs (max of the data)
+# THIS IS NOT REALLY WHY YOU DO IT. IT IS BECAUSE THERE IS VERY FEW DATA ABOVE THESE VALUES AND THIS IS WHAT
+# LEADS TO THE WIDE SEs
+# And reorder Seasons so they are in order
 ##################################################################
 
-yft$SST[yft$SST<10] <- 10 # Few data <10oC, so make them 10oC
-yft$Chl[yft$Chl>2] <- 2 # Few data >2, so make them 2
+MinSST <- floor(min(dat$SST[dat$pa == 1])) # Minimum SST for the GAMs. Binomial regressions
+# work poorly when all zero values
 
-alba$SST[alba$SST<10] <- 10 # Few data <10oC, so make them 10oC
-alba$Chl[alba$Chl>2] <- 2 # Few data >2, so make them 2
+MaxNitrate <- ceiling(max(dat$Nitrate[dat$pa == 1])) # Maximum Nitrate for the GAMs. Binomial regressions
+# work poorly when all zero values
+# MaxNitrate is 7, but set to 6 because Swordfish CIs huge when set to 7
+MaxNitrate <- 6
 
-sword$SST[sword$SST<10] <- 10 # Few data <10oC, so make them 10oC
-sword$Chl[sword$Chl>2] <- 2 # Few data >2, so make them 2
-sword$Nitrate[sword$Nitrate>10] <- 10 # Few data >2, so make them 2
-
-skip$SST[skip$SST<10] <- 10 # Few data <10oC, so make them 10oC
-skip$Chl[skip$Chl>2] <- 2 # Few data >2, so make them 2
-
-bigeye$SST[bigeye$SST<10] <- 10 # Few data <10oC, so make them 10oC
-bigeye$Chl[bigeye$Chl>2] <- 2 # Few data >2, so make them 2
-
-# create subsets of the Pacific data
-yft_pacific <- subset(yft, ocean == "pacific") %>% 
-  select(-ocean, -species)
-alba_pacific <- subset(alba, ocean == "pacific") %>% 
-  select(-ocean, -species)
-sword_pacific <- subset(sword, ocean == "pacific") %>% 
-  select(-ocean, -species)
-skip_pacific <- subset(skip, ocean == "pacific") %>% 
-  select(-ocean, -species)
+dat <- dat %>% 
+  mutate(Season2 = replace(Season2, Season2 == "summer", 2), 
+         Season2 = replace(Season2, Season2 == "winter", 4), 
+         Season2 = replace(Season2, Season2 == "autumn", 3), 
+         Season2 = replace(Season2, Season2 == "spring", 1), 
+         SST = replace(SST, SST < 10, 10), 
+         Chl = replace(Chl, Chl > 2, 2), 
+         MLD = replace(MLD, MLD > 100, 100), 
+         Nitrate = replace(Nitrate, Nitrate > MaxNitrate, MaxNitrate)) %>% 
+  rename(Species = species, 
+         Season = season, 
+         Ocean = ocean,
+         PA = pa) %>% 
+  filter(SST > MinSST) # Only warmer temperatures
 
 ###################################
-# Doing GAMs for each subset
+# GAMs
 ###################################
 
 ###################################
 # Yellowfin Tuna
 ###################################
 
-#James edit: Change MLD to a linear effect
-m1 <- gam(pa ~ s(SST) + Season2 + MLD + s(Latitude, Longitude) + s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + s(Chl), data = yft, family = "binomial")
-summary(m1)
+# Chl-a is often very wiggly in the models (partly because very few high values of Chl-a), so constrain it using log10
+model1 <- gam(PA ~ s(SST) + Season2 + s(MLD) + s(Latitude, Longitude) + 
+            s(Bathymetry) + s(Dist2Coast) + s(Nitrate) + log10(Chl), 
+          data = dat %>% filter(Species == "yellowfin tuna"), family = "binomial")
+summary(model1)
+par(mfrow = c(2,2))
+gam.check(model1) # Not that informative for binomial error structures
+graphics.off() # Reset graphics device
 
-# Plotting response of all variables
-fullplot_yft1 <- visreg(m1, "SST", partial = FALSE, ylab = " ", xlab = "SST", gg = TRUE) + theme_bw()
-fullplot_yft2 <- visreg(m1, "Season2", partial = FALSE, ylab = " ", xlab = "Seasons", gg = TRUE) + theme_bw()
-fullplot_yft3 <- visreg(m1, "MLD", partial = FALSE, ylab = " ", xlab = "MLD", gg = TRUE) + theme_bw()
-fullplot_yft4 <- visreg(m1, "Latitude", partial = FALSE, ylab = " ", xlab = "Latitude", gg = TRUE) + theme_bw()
-fullplot_yft5 <- visreg(m1, "Longitude", partial = FALSE, ylab = " ", xlab = "Longitude", gg = TRUE) + theme_bw()
-fullplot_yft6 <- visreg(m1, "Bathymetry", partial = FALSE, ylab = " ", xlab = "Bathymetry", gg = TRUE) + theme_bw()
-fullplot_yft7 <- visreg(m1, "Dist2Coast", partial = FALSE, ylab = " ", xlab = "Dist2Coast", gg = TRUE) + theme_bw() 
-# Dist2Coast seems to make more sense that Bathymetry
-fullplot_yft8 <- visreg(m1, "Nitrate", partial = FALSE, ylab = " ", xlab = "Nitrate", gg = TRUE) + theme_bw()
-fullplot_yft9 <- visreg(m1, "Chl", partial = FALSE, ylab = " ", xlab = "Chl", gg = TRUE) + theme_bw()
-# Some of the relationships look too wiggly, and might not make sense
+# Try removing Bathymetry (it's got the lowest p-level)
+model2 <- update(model1, ~ . -s(Bathymetry))
+BIC(model1, model2) # m2 has lower BIC (i.e. Bathymetry n.s.)
+summary(model2)
 
-YFT_FullModel <- (fullplot_yft1 | fullplot_yft2 | fullplot_yft3) / (fullplot_yft4 | fullplot_yft5 | fullplot_yft6) / (fullplot_yft7 | fullplot_yft8 | fullplot_yft9) +
-  plot_annotation(title = "Response of Variables for Full Model", subtitle = "Yellowfin Tuna", tag_levels = "i")
-YFT_FullModel
-ggsave("outputs/05_Commercial/05a_GAMPlots/05a1_YFT/YFT_FullModel.pdf", width = 20, height = 20, dpi = 320)
+# Try removing Chl - it's now got the lowest p-level
+model3 <- update(model2, ~ . -log10(Chl))
+BIC(model2, model3) # m2 has lower BIC (i.e. Retain log10(Chl))
+summary(model3)
 
-# First, let's see what we can drop using BIC
-summary(m1) # Bathymetry is not significant.
-# Deviance explained = 14.4%, R-squared (adjusted) = 0.101
-
-# Removing Bathymetry
-m2 <- update(m1, ~ . -s(Bathymetry))
-BIC(m1, m2) # m2 has lower BIC (i.e. Bathymetry n.s.)
-
-# Removing Nitrate
-m3 <- update(m2, ~ . -s(Nitrate))
-BIC(m2, m3) # m3 has lower BIC (i.e. Nitrate n.s.)
-
-# Removing Chl
-m4 <- update(m3, ~ . -s(Chl))
-BIC(m3, m4) # m3 has lower BIC (i.e. Chl should be retained)
-
-# Let's use Chl with fewer dfs though, so not so wiggly
-m5 <- gam(pa ~ s(SST) + Season2 + MLD + s(Latitude, Longitude) + s(Dist2Coast) + s(Chl, k = 4), data = yft, family = "binomial")
-# NOTE: m5 will have higher BIC (less wiggly), but probably more realistic
-summary(m5) # 13.5% deviance explained. R-sq(adj) = 0.0938
-
-# Best Model
-YFT_BestModel <- m5
+# Try removing Nitrate - it's now got the lowest p-level
+model4 <- update(model2, ~ . -s(Nitrate))
+BIC(model2, model4) # model4 has lower BIC (i.e. Nitrate n.s.) # model4 seems to be the best model
+summary(model4)
 
 # Saving predictions
-yft$Preds <- predict.gam(YFT_BestModel, type = "response")
-median(yft$Preds)
+yft_preds <- as.numeric(predict.gam(model4, type = "response"))
+median(yft_preds)
 # Writing the data and predictions into a .csv
+yft <- dat %>% filter(Species == 'yellowfin tuna')
+yft$Preds <- yft_preds
 write_csv(yft, file = "inputs/mercer/yft.csv")
-
-bestplot_yft1 <- visreg(YFT_BestModel, "SST", partial = FALSE, ylab = "s(SST, 2.88)", xlab = "SST (°C)", gg = TRUE) + theme_bw() 
-bestplot_yft2 <- visreg(YFT_BestModel, "Season2", partial = FALSE, ylab = "f(Season)", xlab = "Season", gg = TRUE) + theme_bw() 
-bestplot_yft3 <- visreg(YFT_BestModel, "MLD", partial = FALSE, ylab = "f(MLD, -0.02)", xlab = "MLD (m)", gg = TRUE) + theme_bw() 
-bestplot_yft4 <- visreg(YFT_BestModel, "Dist2Coast", partial = FALSE, ylab = "s(DistCoast, 3.58)", xlab = "Distance to Coast (km)", gg = TRUE) + theme_bw() 
-bestplot_yft5 <- visreg(YFT_BestModel, "Chl", partial = FALSE, ylab = "s(Chl, 2.14)", xlab = "Chlorophyll A (mg/m^3)", gg = TRUE) + theme_bw()  
-
-bestplot_yft <- (bestplot_yft1 | bestplot_yft2 | bestplot_yft3) / (bestplot_yft4 | bestplot_yft5) + 
-  plot_annotation(title = "Response of Variables for Best Model", subtitle = "Yellowfin Tuna", tag_levels = "i")
-bestplot_yft
-ggsave("outputs/05_Commercial/05a_GAMPlots/05a1_YFT/YFT_BestModel.pdf", width = 20, height = 20, dpi = 320)
-
-vis.gam(YFT_BestModel, c("Latitude", "Longitude"), type = "response", ticktype = "detailed", xlab = "\nLatitude (°)", 
-        ylab = "Longitude (°)", zlab = "Presence", color = "cm", theta = 30, phi = 30, r = 100)
-dev.copy2pdf(file = "outputs/05_Commercial/05a_GAMPlots/05a1_YFT/YFT_BestModelLatLong.pdf", paper = "A4r")
 
 #######################################
 # Plotting best model as a map
 #######################################
 
-# Defining generalities (used for all subsequent 04a)
-WorldData <- map_data('world')
-WorldData %>% filter(region != "Antarctica") -> WorldData
-WorldData <- fortify(WorldData)
-ggplot() +
-  geom_map(data = WorldData, map = WorldData,
-           aes(x = long, y = lat, group = group, map_id = region),
-           fill = "grey", colour = "grey", size = 0.5) +
-  geom_point(data = yft, aes(x = Longitude, y = Latitude), size = 0.2) + 
-  facet_wrap(~pa)
+# Plotting model effects
+MaxPA <- 0.25
+plot1 <- PlotVisreg(model4, "SST", Ylab = " Probability occurrence", Xlab = "SST", MaxPA)
+plot1
 
-Surface <- mba.surf(yft[, c("Longitude", "Latitude", "Preds")], 1000, 1000)
+plot2 <- PlotVisreg(model4, "Season2", Ylab = " ", Xlab = "Season", MaxPA)
+plot2
 
-# This is just to organise dataframe for plotting
-dimnames(Surface$xyz.est$z) <- list(Surface$xyz.est$x, Surface$xyz.est$y)
-df3 <- melt(Surface$xyz.est$z, varnames = c('Longitude', 'Latitude'), value.name = 'Preds')
+plot3 <- PlotVisreg(model4, "MLD", Ylab = " ", Xlab = "MLD", MaxPA)
+plot3
+
+plot4 <- PlotVisreg(model4, "Dist2Coast", Ylab = " Probability occurrence", Xlab = "Distance to coast", MaxPA)
+plot4
+
+plot5 <- PlotVisreg(model4, "Chl", Ylab = " ", Xlab = "Chl", MaxPA)
+plot5
+
+# plot6 <- visreg2d(model4, yvar = "Latitude", xvar = "Longitude", scale = "response", 
+#          plot.type = "persp", theta = 45, phi = 10, r = 100, 
+#          ticktype = "detailed", xlab = "\nLongitude (º)", 
+#          ylab = "\nLatitude (º)", zlab = "\nPresence", 
+#          color = "deepskyblue2")
+# plot6
+# NOTE: Can't convert visreg2d to a gg object (which is needed to use patchwork easily) when using plot.type = "persp", so use contour plot
+plot6 <- visreg2d(model4, yvar = "Latitude", xvar = "Longitude", scale = "response", plot.type = "gg")
+plot6
+
+# Combine plots for yft
+(plot1 | plot2 | plot3) / (plot4 | plot5 | plot6) &
+  theme_bw(base_size = 18)
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a1_YFT/YFT_BestModel.pdf", width = 15, height = 10, dpi = 600)
 
 # Plot the map
 x11(width = 14, height = 7)
-p <- ggplot(data = df3, aes(Longitude, Latitude)) +
-  geom_raster(aes(fill = Preds)) +
-  scale_fill_gradientn(colours = matlab.like(7), na.value = "white") +
-  theme_minimal() +
-  theme(legend.position="right")
 
-p <- p + geom_map(data = WorldData, map = WorldData,
-                  aes(x = long, y = lat, group = group, map_id = region),
-                  fill = "grey", colour = "grey", size = 0.5)
-p 
+df <- fOrganizedf('yellowfin tuna', yft_preds)
+p <- PlotMap(df, "Preds")
+p
 ggsave("outputs/05_Commercial/05a_GAMPlots/05a1_YFT/YFT_map.png", p, dpi = 1200)
 
+p <- PlotMap(df, "Preds2")
+p
+ggsave("outputs/05_Commercial/05a_GAMPlots/05a1_YFT/YFT_map_presence.png", p, dpi = 600)
 
+# Cleanup
+rm(p, plot1, plot2, plot3, plot4, plot5, plot6, model1, model2, model3, model4, m5, Surface, df, yft_preds, yft)

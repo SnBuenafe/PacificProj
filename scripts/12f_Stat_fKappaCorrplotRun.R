@@ -38,11 +38,17 @@ kappa_run05 <- fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run5/",
 #### IUCN: No Prov Runs w/o No-regret ####
 ##########################################
 # Run with 0.1 - 0.9 w/o No-regret
+pdf('pdfs/12_Stat/Kappa_IUCN_NoProv_Target90.pdf', width = 15, height = 15)
 iucn_kappa_run06 <- fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run6/",
                                    name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+dev.off()
 # Run with 0.1 - 0.6 w/o No-regret
+pdf('pdfs/12_Stat/Kappa_IUCN_NoProv_Target60.pdf', width = 15, height = 15)
 iucn_kappa_run07 <- fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run7/",
                                    name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+dev.off()
 # Run with 0.1 - 0.3 w/o No-regret
+pdf('pdfs/12_Stat/Kappa_IUCN_NoProv_Target30.pdf', width = 15, height = 15)
 iucn_kappa_run08 <- fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run8/",
                                   name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+dev.off()

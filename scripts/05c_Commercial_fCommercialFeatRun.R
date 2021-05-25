@@ -37,28 +37,28 @@ Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
 # Yellowfin Tuna
 PRED_global_YFT <- fCommercialFeat(input = "YFT",
                                    inpdir = "inputs/mercer/yft.csv",
-                                   prob_threshold = 0.07712687, #median of predictions of YFT
+                                   prob_threshold = 0.08098143, #median of predictions of YFT
                                    PU = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
                                    outdir = "outputs/05_commercial/05b_fCommercialFeat/")
 
 # Albacore
 PRED_global_ALB <- fCommercialFeat(input = "ALB",
                                    inpdir = "inputs/mercer/alba.csv",
-                                   prob_threshold = 0.01519237, #median of predictions of ALB
+                                   prob_threshold = 0.00856913, #median of predictions of ALB
                                    PU = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
                                    outdir = "outputs/05_commercial/05b_fCommercialFeat/")
 
 # Skipjack Tuna
 PRED_global_SKP <- fCommercialFeat(input = "SKP",
                                    inpdir = "inputs/mercer/skip.csv",
-                                   prob_threshold = 0.08615083, #median of predictions of SKP
+                                   prob_threshold = 0.08989528, #median of predictions of SKP
                                    PU = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
                                    outdir = "outputs/05_commercial/05b_fCommercialFeat/")
 
 # Swordfish
 PRED_global_SWO <- fCommercialFeat(input = "SWO",
                                    inpdir = "inputs/mercer/sword.csv",
-                                   prob_threshold = 0.01542815, #median of predictions of SWO
+                                   prob_threshold = 0.01611418, #median of predictions of SWO
                                    PU = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
                                    outdir = "outputs/05_commercial/05b_fCommercialFeat/")
 
@@ -73,8 +73,8 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p1 <- ggplot()+
-  geom_sf(data = PRED_global_YFT, aes(color = Prob, fill = Prob)) +
-  sc +
+  geom_sf(data = PRED_global_YFT, fill = 'paleturquoise3', size = 0.04) +
+#  sc +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -89,8 +89,8 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p2 <- ggplot()+
-  geom_sf(data = PRED_global_ALB, aes(color = Prob, fill = Prob)) +
-  sc +
+  geom_sf(data = PRED_global_ALB, fill = 'cornflowerblue', size = 0.04) +
+#  sc +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -105,8 +105,8 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p3 <- ggplot()+
-  geom_sf(data = PRED_global_SKP, aes(color = Prob, fill = Prob)) +
-  sc +
+  geom_sf(data = PRED_global_SKP, fill = 'cadetblue4', size = 0.04) +
+#  sc +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -121,8 +121,8 @@ sc <- scale_colour_gradientn(name = "Probability of Spawning Area",
                              aesthetics = c("color","fill"))
 
 p4 <- ggplot()+
-  geom_sf(data = PRED_global_SWO, aes(color = Prob, fill = Prob)) +
-  sc +
+  geom_sf(data = PRED_global_SWO, fill = 'skyblue', size = 0.04) +
+#  sc +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),

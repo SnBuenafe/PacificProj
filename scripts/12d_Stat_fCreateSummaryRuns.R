@@ -107,11 +107,10 @@ cost_plot <- ggplot(data = summary_df, aes(x = reorder(target, total_cost), grou
 # test for normality 
 shapiro.test(summary_df$percent_area) # not normal
 # try log transforming
-#hist(log10(summary_df$percent_area))
-shapiro.test(log10(summary_df$percent_area))
-#qqnorm(log10(summary_df$percent_area)) # looks normal in Q-Q plot !
+hist(summary_df$percent_area)
+qqnorm(summary_df$percent_area) # looks normal in Q-Q plot !
 # test differences across different targets and scenarios:
-percentarea_model <- aov(log10(percent_area) ~ as.factor(target) + as.factor(scenario), data = summary_df)
+percentarea_model <- aov(percent_area ~ as.factor(target) + as.factor(scenario), data = summary_df)
 summary(percentarea_model)
 # post-hoc
 TukeyHSD(percentarea_model) # all are significant !
@@ -124,11 +123,11 @@ percentarea_residuals <- rstandard(percentarea_model)
 
 # plotting percent area
 percentarea_plot <- ggplot(data = summary_df, aes(x = reorder(target, percent_area), group = scenario)) +
-  geom_line(aes(color = scenario, y = log10(total_cost)), size = 0.5)+
-  geom_point(aes(shape = scenario, color = scenario,y = log10(total_cost)), size = 3) +
+  geom_line(aes(color = scenario, y = percent_area), size = 0.5)+
+  geom_point(aes(shape = scenario, color = scenario,y = percent_area), size = 3) +
   scale_color_brewer(palette = "Set2") +
   xlab("Target (%)") + 
-  ylab("log10(percent protected area)") +
+  ylab("Protected Area (%)") +
   theme(legend.position = "bottom") +
   theme_classic()
 #percentarea_plot
@@ -158,34 +157,35 @@ protected_PUs_plot <- ggplot(data = summary_df, aes(x = reorder(target, percent_
 #protected_PUs_plot
 
 # RUNS FOR NUMBER OF REPRESENTED FEATURES
-shapiro.test(summary_df$represented_features) # not normal
+#shapiro.test(summary_df$represented_features) # not normal
 #hist(summary_df$represented_features)
 
 # create GLZs then !
-represented_features_model <- glm(represented_features ~ as.factor(target) + as.factor(scenario), 
-                            family = poisson(link = "log"), data = summary_df)
-summary(represented_features_model)
-residual_deviance <- represented_features_model$deviance
-null_deviance <- represented_features_model$null.deviance
-pseudo_r2 <- 1 - (residual_deviance/null_deviance)
-pseudo_r2
+#represented_features_model <- glm(represented_features ~ as.factor(target) + as.factor(scenario), 
+#                            family = poisson(link = "log"), data = summary_df)
+# not significant model
+#summary(represented_features_model)
+#residual_deviance <- represented_features_model$deviance
+#null_deviance <- represented_features_model$null.deviance
+#pseudo_r2 <- 1 - (residual_deviance/null_deviance)
+#pseudo_r2
 
 # plotting protected PUs
-represented_features_plot <- ggplot(data = summary_df, aes(x = reorder(target, percent_area), group = scenario)) +
-  geom_line(aes(color = scenario, y = represented_features), size = 0.5)+
-  geom_point(aes(shape = scenario, color = scenario,y = represented_features), size = 3) +
-  scale_color_brewer(palette = "Set2") +
-  xlab("Target (%)") + 
-  ylab("adequately represented features") +
-  theme(legend.position = "bottom") +
-  theme_classic()
+#represented_features_plot <- ggplot(data = summary_df, aes(x = reorder(target, percent_area), group = scenario)) +
+#  geom_line(aes(color = scenario, y = represented_features), size = 0.5)+
+#  geom_point(aes(shape = scenario, color = scenario,y = represented_features), size = 3) +
+#  scale_color_brewer(palette = "Set2") +
+#  xlab("Target (%)") + 
+#  ylab("adequately represented features") +
+#  theme(legend.position = "bottom") +
+#  theme_classic()
 #represented_features_plot
 
-smart_plans <- (cost_plot | represented_features_plot) / (percentarea_plot | protected_PUs_plot) +
+smart_plans <- (cost_plot | percentarea_plot) +
   plot_annotation(tag_levels = 'i', title = 'Results of climate-smart and -uninformed runs across targets') +
   plot_layout(guides = 'collect')
 #smart_plans
-#ggsave('pdfs/12_Stat/summary_IUCN_climate-smart+climate-uninformed.pdf', width = 29.7, height = 21)
+#ggsave('pdfs/12_Stat/summary_IUCN_climate-smart+climate-uninformed.pdf', width = 21, height = 15)
 #################################################
 ## Runs no-regret ##
 #################################################
@@ -207,8 +207,8 @@ cost_plot <- ggplot(data = summary_df, aes(x = reorder(target, total_cost), grou
 # RUNS FOR % area protected
 # plotting percent area
 percentarea_plot <- ggplot(data = summary_df, aes(x = reorder(target, percent_area), group = scenario)) +
-  geom_line(aes(color = scenario, y = log10(total_cost)), size = 0.5)+
-  geom_point(aes(shape = scenario, color = scenario,y = log10(total_cost)), size = 3) +
+  geom_line(aes(color = scenario, y = percent_area), size = 0.5)+
+  geom_point(aes(shape = scenario, color = scenario,y = percent_area), size = 3) +
   scale_color_brewer(palette = "Dark2") +
   xlab("Target (%)") + 
   ylab("log10(percent protected area)") +
@@ -239,8 +239,8 @@ represented_features_plot <- ggplot(data = summary_df, aes(x = reorder(target, p
   theme_classic()
 #represented_features_plot
 
-noregret_plans <- (cost_plot | represented_features_plot) / (percentarea_plot | protected_PUs_plot) +
+noregret_plans <- (cost_plot | percentarea_plot) +
   plot_annotation(tag_levels = 'i', title = 'Results of no-regret plans across targets') +
   plot_layout(guides = 'collect')
 #noregret_plans
-#ggsave('pdfs/12_Stat/summary_IUCN_noregret.pdf', width = 29.7, height = 21)
+#ggsave('pdfs/12_Stat/summary_IUCN_noregret.pdf', width = 21, height = 15)

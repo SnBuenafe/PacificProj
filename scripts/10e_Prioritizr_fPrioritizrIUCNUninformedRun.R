@@ -62,7 +62,7 @@ uninformed_target100_iucn1 <- ggplot() +
        subtitle = "Maximum Target 100% (0.1 - 1)") +
   theme_bw()
 uninformed_target100_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target100.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target100.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 90% (0.1 - 0.9) ##
 ###############################
@@ -90,7 +90,7 @@ uninformed_target90_iucn1 <- ggplot() +
        subtitle = "Maximum Target 90% (0.1 - 0.9)") +
   theme_bw()
 uninformed_target90_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target90.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target90.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 80% (0.1 - 0.8) ##
 ###############################
@@ -118,7 +118,7 @@ uninformed_target80_iucn1 <- ggplot() +
        subtitle = "Maximum Target 80% (0 .1- 0.8)") +
   theme_bw()
 uninformed_target80_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target80.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target80.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 70% (0.1 - 0.7) ##
 ###############################
@@ -146,7 +146,7 @@ uninformed_target70_iucn1 <- ggplot() +
        subtitle = "Maximum Target 70% (0.1 - 0.7)") +
   theme_bw()
 uninformed_target70_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target70.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target70.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 60% (0.1 - 0.6) ##
 ###############################
@@ -174,7 +174,7 @@ uninformed_target60_iucn1 <- ggplot() +
        subtitle = "Maximum Target 60% (0.1 - 0.6)") +
   theme_bw()
 uninformed_target60_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target60.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target60.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 50% (0.1 - 0.5) ##
 ###############################
@@ -202,7 +202,7 @@ uninformed_target50_iucn1 <- ggplot() +
        subtitle = "Maximum Target 50% (0.1 - 0.5)") +
   theme_bw()
 uninformed_target50_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target50.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target50.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 40% (0.1 - 0.4) ##
 ###############################
@@ -230,7 +230,7 @@ uninformed_target40_iucn1 <- ggplot() +
        subtitle = "Maximum Target 40% (0.1 - 0.4)") +
   theme_bw()
 uninformed_target40_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target40.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target40.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 30% (0.1 - 0.3) ##
 ###############################
@@ -258,7 +258,7 @@ uninformed_target30_iucn1 <- ggplot() +
        subtitle = "Maximum Target 30% (0.1 - 0.3)") +
   theme_bw()
 uninformed_target30_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target30.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target30.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 20% (0.1 - 0.2) ##
 ###############################
@@ -286,7 +286,7 @@ uninformed_target20_iucn1 <- ggplot() +
        subtitle = "Maximum Target 20% (0.1 - 0.2)") +
   theme_bw()
 uninformed_target20_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target20.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target20.pdf", width = 21, height = 29.7)
 ###############################
 ## Target 10% (0 - 0.1) ##
 ###############################
@@ -314,4 +314,4 @@ uninformed_target10_iucn1 <- ggplot() +
        subtitle = "Maximum Target 10% (0 - 0.1)") +
   theme_bw()
 uninformed_target10_iucn1
-ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target10.pdf", width = 21, height = 29.7)
+#ggsave("pdfs/10_Prioritizr/IUCN/Uninformed_Solutions_Target10.pdf", width = 21, height = 29.7)
