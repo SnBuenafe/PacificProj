@@ -158,11 +158,19 @@ library(patchwork)
 
 plot1 <- (circplot_target100 + circplot_target90 + circplot_target80) +
   plot_layout(guides = 'collect') & theme(legend.position = 'bottom')
+plot1
+ggsave('pdfs/12_Stat/representation_IUCN_page1.pdf', width = 29.7, height = 21)
+
 plot2 <- (circplot_target70 + circplot_target60 + circplot_target50) +
   plot_layout(guides = 'collect') & theme(legend.position = 'bottom')
+plot2
+ggsave('pdfs/12_Stat/representation_IUCN_page2.pdf', width = 29.7, height = 21)
+
 plot3 <- (circplot_target40 + circplot_target30 + circplot_target20) / 
   (plot_spacer() + circplot_target10 + plot_spacer()) +
   plot_layout(guides = 'collect') & theme(legend.position = 'bottom')
-plot1 / plot2 / plot3
+plot3
+ggsave('pdfs/12_Stat/representation_IUCN_page3.pdf', width = 29.7, height = 21)
 
-ggsave('pdfs/12_Stat/representation_IUCN.pdf', width = 21, height = 29.7)
+
+

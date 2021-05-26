@@ -64,7 +64,11 @@ fCreateCircBarPlot <- function(bycatch, commercial, target_inpdir, features.summ
       
       bycatch_file <- readRDS(paste0(target_inpdir, scenario_list[j], '/', bycatch.target_file)) %>% 
         as_tibble() %>% 
-        dplyr::select(new_features, target)
+        dplyr::select(new_features, target) 
+      if(str_detect(scenario_list[j], pattern = 'SSP') == TRUE){
+        bycatch_file <- bycatch_file %>% 
+        mutate(target = target*0.25)
+      } else { }
       
       # Commercial
       commercial.target_pattern <- paste0(commercial, scenario_list[j])
@@ -73,6 +77,10 @@ fCreateCircBarPlot <- function(bycatch, commercial, target_inpdir, features.summ
       commercial_file <- readRDS(paste0(target_inpdir, scenario_list[j], '/',commercial.target_file)) %>% 
         as_tibble() %>% 
         dplyr::select(new_features, target)
+      if(str_detect(scenario_list[j], pattern = 'SSP') == TRUE){
+        commercial_file <- commercial_file %>% 
+          mutate(target = target*0.25)
+      } else { }
         
       # Joining targets for Bycatch and Commercial
       targets <- full_join(bycatch_file, commercial_file) %>% 
@@ -204,22 +212,28 @@ fCreateCircBarPlot <- function(bycatch, commercial, target_inpdir, features.summ
     
     # Add text showing the value of each 100/75/50/25 lines
     geom_segment(data = grid_data, 
-                 aes(x = end, y = 100, xend = start, yend = 100), 
+                 aes(x = end, y = 5, xend = start, yend = 5), 
                  colour = "grey", 
                  alpha = 1, 
                  size = 0.5 , 
                  inherit.aes = FALSE ) +
     geom_segment(data = grid_data, 
-                 aes(x = end, y = 75, xend = start, yend = 75), 
+                 aes(x = end, y = 10, xend = start, yend = 10), 
                  colour = "grey", 
                  alpha = 1, 
                  size = 0.5 , 
                  inherit.aes = FALSE ) +
     geom_segment(data = grid_data, 
-                 aes(x = end, y = 50, xend = start, yend = 50), 
+                 aes(x = end, y = 15, xend = start, yend = 15), 
                  colour = "grey", 
                  alpha = 1, 
                  size = 0.5, 
+                 inherit.aes = FALSE ) +
+    geom_segment(data = grid_data, 
+                 aes(x = end, y = 20, xend = start, yend = 20), 
+                 colour = "grey", 
+                 alpha = 1,
+                 size = 0.5,
                  inherit.aes = FALSE ) +
     geom_segment(data = grid_data, 
                  aes(x = end, y = 25, xend = start, yend = 25), 
@@ -227,9 +241,9 @@ fCreateCircBarPlot <- function(bycatch, commercial, target_inpdir, features.summ
                  alpha = 1,
                  size = 0.5,
                  inherit.aes = FALSE ) +
-    annotate("text", x = rep(max(data$id),4), 
-             y = c(25, 50, 75, 100), 
-             label = c("25", "50", "75", "100"), 
+    annotate("text", x = rep(max(data$id),5), 
+             y = c(5, 10, 15, 20, 25), 
+             label = c('5','10','15','20','25'), 
              color = "grey", 
              size=4, 
              angle = -5, 
@@ -237,7 +251,7 @@ fCreateCircBarPlot <- function(bycatch, commercial, target_inpdir, features.summ
              hjust=0.5) +
     
     # setting limitations of actual plot
-    ylim(-100,120) +
+    ylim(-50,30) +
     theme_minimal() +
     coord_polar() + 
   
@@ -261,7 +275,7 @@ fCreateCircBarPlot <- function(bycatch, commercial, target_inpdir, features.summ
   
     # Adding the lines for the species
     geom_segment(data = species_data, 
-                 aes(x = start, y = 110, xend = end, yend = 110, color = individual), 
+                 aes(x = start, y = 30, xend = end, yend = 30, color = individual), 
                  alpha = 1, 
                  size = 5, 
                  inherit.aes = FALSE)  +
@@ -288,5 +302,3 @@ fCreateCircBarPlot <- function(bycatch, commercial, target_inpdir, features.summ
   
   return(p)
 }
-
-ggsave("pdfs/12_Stat/representation.pdf", height = 29.7, width = 21)

@@ -21,7 +21,7 @@ fSolutionSummary <- function(inpdir, outdir, plans, data, ...){
   ##################################
   
   # List of packages that we will use
-  list.of.packages <- c("tidyverse", "doParallel", "foreach")
+  list.of.packages <- c("tidyverse", "doParallel", "foreach", "magrittr")
   # If is not installed, install the pacakge
   new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
   if(length(new.packages)) install.packages(new.packages)
@@ -74,7 +74,7 @@ fSolutionSummary <- function(inpdir, outdir, plans, data, ...){
   # create an empty list
   table1 <- list()
   
-  table1 <- foreach(i = 1:length(temp_list), .packages = c("tidyverse")) %dopar% {
+  table1 <- foreach(i = 1:length(temp_list1), .packages = c("tidyverse")) %dopar% {
     temp_summary <- read_csv(paste0(inpdir,temp_list1[i]))
     x <- unlist(strsplit(temp_list1[i],"[.]"))[1]
     y <- unlist(strsplit(x,"_"))[1:4]
@@ -83,6 +83,10 @@ fSolutionSummary <- function(inpdir, outdir, plans, data, ...){
     if(plans == "climate-smart"){
     temp_summary1 <- temp_summary %>% 
       select(feature, relative_held)
+      if(str_detect(temp_list1[i], pattern = '_SSP') == TRUE){
+        temp_summary1 <- temp_summary1 %>% 
+          mutate(relative_held = relative_held*0.25)
+      }else{ }
     }else{
       temp_summary1 <- temp_summary %>% 
         select(features, relative) %>% 
