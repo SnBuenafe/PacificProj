@@ -22,10 +22,8 @@ source("scripts/01b_StudyArea_fCategProv.R")
 ###########################
 longhurst_run01 <- fCategProv(pu_file = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
                               province_file = "inputs/shapefiles/Longhurst/Longhurst_world_v4_2010.shp", 
-                              prov_name = "Longhurst",
-                              olayer = "surface",
                               outdir = "outputs/01_StudyArea/01b_Longhurst/")
-#longhurst_run01
+longhurst_run01
 
 ###############   
 ## PLOTTING ###
@@ -47,7 +45,7 @@ world_sf <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
 
 # Plotting
 longhurst <- ggplot()+
-  geom_sf(data = longhurst_run01, aes(fill = province), colour = "grey64", size = 0.1) +
+  geom_sf(data = longhurst_run01, aes(fill = ProvCode), colour = "grey64", size = 0.1) +
   scale_fill_manual(name = "Longhurst Provinces",
                     values = prov_code,
                     aesthetics = c("fill")) +

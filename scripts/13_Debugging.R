@@ -11,10 +11,14 @@ test <- cbind(c('180','0'))
 CnR <- proj4::project(test, proj = rob_pacific)
 
 # inputs
-feature1 <- readRDS('outputs/04_IUCN/04d_fFeaturesInt/bycatch_features.rds') %>% 
+velocity_ssp126 <- readRDS('outputs/07_Climate/Velocity/velocitySSP126.rds')
+feature1 <- readRDS('outputs/04_IUCN/04d_fFeaturesInt/bycatch_features.rds')
+feature1 <- st_intersection(feature1, velocity_ssp126) %>% 
+  filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON")) %>% 
   as_tibble() %>% 
-  filter(feature_names %in% c('Dermochelys_coriacea_IUCN', 'Chelonia_mydas_IUCN')) %>% 
+  filter(feature_names %in% c('Chelonia_mydas_IUCN')) %>%  #, )) %>% 'Dermochelys_coriacea_IUCN'
   rename(new_features = feature_names) %>% 
+#  filter(value <= quantile(velocity_ssp126$value, 0.25)) %>% 
   dplyr::select(-geometry)
 
 planning_region <- readRDS('outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds')
@@ -28,7 +32,7 @@ planning_region %<>%
   mutate(cellsID = 1:nrow(planning_region), 
          area_km2 = as.numeric(st_area(planning_region)/1e+06)) %>% 
   mutate(cost = case_when((y > CnR[1,1]) ~ 100,
-                          (y < CnR[1,1]) ~ 1)
+                          (y < CnR[1,1]) ~ 0)
          ) %>% 
   as_tibble()
 
@@ -50,7 +54,7 @@ x <- feature1 %>%
 
 p1 <- prioritizr::problem(x, features_list, 'cost') %>% 
   add_min_set_objective() %>%
-  add_relative_targets(c(0.5,0.5)) %>%
+  add_relative_targets(0.5) %>%
   add_binary_decisions() %>%
   add_gurobi_solver(gap = 0.1, verbose = TRUE) # using Gurobi Solver
 

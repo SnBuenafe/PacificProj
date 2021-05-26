@@ -1,4 +1,4 @@
-fConvert2PacificRobinson <- function(df){
+fConvert2PacificRobinson <- function(df, buff = 0){
   # Define a long & slim polygon that overlaps the meridian line & set its CRS to match 
   # that of world
   rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"
@@ -31,7 +31,7 @@ fConvert2PacificRobinson <- function(df){
   
   # Adding buffer 0
   df_robinson[crosses,] %<>%
-    st_buffer(0)
+    st_buffer(buff)
   
   return(df_robinson)
   

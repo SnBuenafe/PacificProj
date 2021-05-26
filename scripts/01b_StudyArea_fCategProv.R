@@ -9,13 +9,11 @@
 # Inputs include the following:
 # 1. pu_file: .shp or .rds file of the planning units
 # 2. province_file: .shp file of the Longhurst Provinces
-# 3. prov_name: Longhurst
-# 4. olayer: surface
 # 5. outdir: path of the output
 
 # Function is ran at 01c.
 
-fCategProv <- function(pu_file, province_file, prov_name, olayer, outdir, ...) {
+fCategProv <- function(pu_file, province_file, outdir, ...) {
   
   ##########################################
   ####### Defining the main packages #######
@@ -65,7 +63,8 @@ fCategProv <- function(pu_file, province_file, prov_name, olayer, outdir, ...) {
   ####### Creating Longhurst Province Pacific-Centered Shapefile #######
   ######################################################################
   bioprovince_rob <- bioprovince2 %>% 
-    fConvert2PacificRobinson()
+    st_make_valid() %>% 
+    fConvert2PacificRobinson(buff = 0.01)
   # check plot again
   #ggplot() +
   #  geom_sf(data = bioprovince_rob, aes(fill = ProvCode)) 
@@ -77,43 +76,13 @@ fCategProv <- function(pu_file, province_file, prov_name, olayer, outdir, ...) {
   ##########################################
   ####### Matching PUs with Province #######
   ##########################################
-  # Create a parallel loop
-  ncores <- 24
-  cl <- makeCluster(ncores)
-  registerDoParallel(cl)
+  PUs <- read_rds(pu_file)
   
-  # Get the indicator for the provinces
-  prov_code <- as.character(bioprovince_rob$ProvCode)
-  prov_list <- list() # to allocate results
+  nr <- st_nearest_feature(PUs, bioprovince_rob)
   
-  prov_par <- foreach(i = 1:length(prov_code), .packages = c("raster", "sf", "data.table", "dplyr")) %dopar% {
-    single <- bioprovince_rob %>% filter(ProvCode == prov_code[i])
-    dt1 <- st_intersection(pu_region, single) %>% 
-      filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON"))
-    if(nrow(dt1) > 0) { 
-      prov_list[[i]] <- dt1 %>% mutate(province = prov_code[i]) # save the output    
-    }
-  }
-  stopCluster(cl)
-  
-  pus_prov <- do.call(rbind, prov_par) %>% group_by(province)
-  
-  # Match and establish categories
-  pu_region$province <- pus_prov$province[match(pu_region$geometry, pus_prov$geometry)]
-  pu_region$prov_descr <- pus_prov$ProvDescr[match(pu_region$geometry, pus_prov$geometry)]
-  pu_region$province <- ifelse(is.na(pu_region$province), 
-                               paste("No-Category", sep = "_"), 
-                               paste(pu_region$province, sep = "_"))
-  pu_region$prov_descr <- ifelse(is.na(pu_region$prov_descr), 
-                               paste("No-Category", sep = "_"), 
-                               paste(pu_region$prov_descr, sep = "_"))
-  
-  pu_region <- as.data.frame(pu_region)
-  pu_csv <- paste(paste("pus", olayer, sep = "-"), prov_name, ".csv", sep = "_")
-  fwrite(dplyr::select(pu_region, -geometry), paste(outdir, pu_csv, sep = ""))
-  
-  pu_region <- pu_region %>% 
-    st_as_sf()
+  LPs <- PUs %>% 
+    mutate(province = bioprovince_rob$ProvCode[nr],
+           prov_descr = bioprovince_rob$ProvDescr[nr])
   
   ############################
   ####### Saving files #######
@@ -123,7 +92,7 @@ fCategProv <- function(pu_file, province_file, prov_name, olayer, outdir, ...) {
   #st_write(pu_region, dsn = "outputs/01_StudyArea/01b_Longhurst/PacificABNJGrid_05deg_Longhurst", driver = "ESRI Shapefile", append = FALSE)
   
   #saveRDS(pu_region, file = "inputs/rdsfiles/PacificABNJGrid_05deg_Longhurst.rds")
-  saveRDS(pu_region, file = "outputs/01_StudyArea/01b_Longhurst/PacificABNJGrid_05deg_Longhurst.rds")
+  saveRDS(LPs, file = "outputs/01_StudyArea/01b_Longhurst/PacificABNJGrid_05deg_Longhurst.rds")
   
-  return(pu_region)
+  return(LPs)
 }
