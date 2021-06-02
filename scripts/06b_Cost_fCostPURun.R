@@ -48,7 +48,8 @@ COST_largexmedium <- fCostPU(input = "inputs/rasterfiles/CostLayer/Cost_RasterSt
                       pu_shp = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds",
                       outdir = "outputs/06_Cost/Large_Medium/",
                       layer = "pelagics",
-                      stack_num = c(14,19)
+                      stack_num = c(14,19),
+                      window_size = 5
 )
 
 ###################################################

@@ -15,7 +15,7 @@
 
 # Function is run in 06b
   
-fCostPU <- function(input, pu_shp, outdir, layer, stack_num, ...) {
+fCostPU <- function(input, pu_shp, outdir, layer, stack_num, window_size, ...) {
 
   ########################################
   ####### Defining packages needed #######
@@ -64,7 +64,14 @@ fCostPU <- function(input, pu_shp, outdir, layer, stack_num, ...) {
     epi_cost <- readAll(raster(input))
   }
   
-    crs(epi_cost) <- CRS(longlat)
+  ###############
+  ## Smoothing ##
+  ###############
+
+  WindowSize = window_size
+  epi_cost <- focal(epi_cost, w = matrix(1, WindowSize, WindowSize), na.rm = TRUE, pad = TRUE, fun = mean)
+  
+  crs(epi_cost) <- CRS(longlat)
     
   #####################################
   ####### Intersecting with PUs #######
@@ -88,9 +95,37 @@ fCostPU <- function(input, pu_shp, outdir, layer, stack_num, ...) {
 
   # Getting cost value by planning unit
   cost_bypu <- exact_extract(cost_filef, shp_PU_sf1, "weighted_mean", weights = weight_rsf)
+  
   pu_file <- shp_PU_sf1 %>% 
     dplyr::mutate(cost = cost_bypu)
-      
+  
+  ####################################
+  ## 'Fixing' 180 deg longitude ##
+  ####################################
+  coord_df <- sf::st_centroid(pu_file) %>% 
+    st_coordinates() %>% 
+    as_tibble()
+  pu_file$x <- coord_df$X
+  pu_file$y <- coord_df$Y
+
+  test <- cbind(c('180','0.5'))
+  CnR <- proj4::project(test, proj = rob_pacific)
+  
+  temp <- pu_file %>% 
+    dplyr::filter(between(x, -CnR[1,2], CnR[1,2]))
+  temp1 <- pu_file %>% 
+    dplyr::filter(!between(x, -CnR[1,2], CnR[1,2]))
+  nr <- st_nearest_feature(temp, temp1)
+  
+  pu_file1 <- pu_file %>% 
+    mutate(cost = replace(cost, between(x, -CnR[1,2], CnR[1,2]), temp1$cost[nr]))
+  
+  pu_file <- pu_file1
+  
+  #################
+  ## Final edits ##
+  #################
+  
   small_value <- (min(pu_file$cost, na.rm = T))/2
 
   pu_filef <- pu_file %>% 
