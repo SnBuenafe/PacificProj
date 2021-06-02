@@ -107,8 +107,8 @@ cost_plot <- ggplot(data = summary_df, aes(x = reorder(target, total_cost), grou
 # test for normality 
 shapiro.test(summary_df$percent_area) # not normal
 # try log transforming
-hist(summary_df$percent_area)
-qqnorm(summary_df$percent_area) # looks normal in Q-Q plot !
+#hist(summary_df$percent_area)
+#qqnorm(summary_df$percent_area) # looks normal in Q-Q plot !
 # test differences across different targets and scenarios:
 percentarea_model <- aov(percent_area ~ as.factor(target) + as.factor(scenario), data = summary_df)
 summary(percentarea_model)
