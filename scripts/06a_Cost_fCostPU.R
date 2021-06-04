@@ -79,14 +79,6 @@ fCostPU <- function(input, pu_shp, outdir, layer, stack_num, window_size, ...) {
   # Creating layer of weights
   weight_rs <- raster::area(epi_cost)
       
-  # creating an empty raster
-  rs <- raster(ncol = 720, nrow = 360)
-  rs[] <- 1:ncell(rs)
-      
-  # projecting this to rob_pacific
-  rs_rob <- projectRaster(rs, crs = CRS(rob_pacific))
-  resolution <- res(rs_rob)
-      
   # Projecting the costs and weights into Robinson's (the same projection as the PUs)
   cost_filef <- projectRaster(epi_cost, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
   weight_rsf <- projectRaster(weight_rs, crs = CRS(rob_pacific), method = "ngb", over = FALSE, res = 2667.6)
