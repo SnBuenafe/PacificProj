@@ -37,7 +37,6 @@ source("scripts/04b_IUCN_fIUCNIntersectRun.R")
 ```{r, eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.width=10, fig.height=7}
 library(RColorBrewer)
 library(patchwork)
-pal_dist <- rev(brewer.pal(6, "Set3"))
 world_sf <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
 world_eez <- readRDS('outputs/01_StudyArea/01a_StudyArea/PacificCenterEEZ.rds')
 Boundary = "EEZ"
@@ -51,11 +50,10 @@ loggerhead <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Caretta_caretta_IUCN.r
 green <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Chelonia_mydas_IUCN.rds")
 leatherback <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Dermochelys_coriacea_IUCN.rds")
 hawksbill <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Eretmochelys_imbricata_IUCN.rds")
-kemp <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Lepidochelys_kempii_IUCN.rds")
 olive <- readRDS("outputs/04_IUCN/04b_fIUCNIntersect/Lepidochelys_olivacea_IUCN.rds")
 
 loggerhead_plot <- ggplot() + 
-                      geom_sf(data = loggerhead, colour = pal_dist[1]) + 
+                      geom_sf(data = loggerhead, colour = 'limegreen', size = 0.04) + 
                       geom_sf(data = world_sf, fill = "grey20", colour = NA) +
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -64,7 +62,7 @@ loggerhead_plot <- ggplot() +
                       theme_bw()
 
 green_plot <- ggplot() + 
-                  geom_sf(data = green, colour = pal_dist[2]) + 
+                  geom_sf(data = green, color = 'olivedrab', size = 0.04) + 
                   geom_sf(data = world_sf, fill = "grey20", colour = NA) +
                   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -73,7 +71,7 @@ green_plot <- ggplot() +
                   theme_bw()
 
 leatherback_plot <- ggplot() + 
-                        geom_sf(data = leatherback, colour = pal_dist[3]) + 
+                        geom_sf(data = leatherback, colour = 'darkseagreen', size = 0.04) + 
                         geom_sf(data = world_sf, fill = "grey20", colour = NA) +
                         coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                  ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -82,7 +80,7 @@ leatherback_plot <- ggplot() +
                         theme_bw()
 
 hawksbill_plot <- ggplot() + 
-                      geom_sf(data = hawksbill, colour = pal_dist[4]) + 
+                      geom_sf(data = hawksbill, colour = 'darkolivegreen3', size = 0.04) + 
                       geom_sf(data = world_sf, fill = "grey20", colour = NA) +
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -90,17 +88,8 @@ hawksbill_plot <- ggplot() +
                       labs(title = "Hawksbill sea turtles") +
                       theme_bw()
 
-kemp_plot <- ggplot() + 
-                geom_sf(data = kemp, colour = pal_dist[5]) + 
-                geom_sf(data = world_sf, fill = "grey20", colour = NA) +
-                coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
-                         ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
-                         expand = TRUE) +
-                labs(title = "Kemp's ridley sea turtles") +
-                theme_bw()
-
 olive_plot <- ggplot() + 
-                geom_sf(data = olive, colour = pal_dist[6]) + 
+                geom_sf(data = olive, colour = 'springgreen1', size = 0.04) + 
                 geom_sf(data = world_sf, fill = "grey20", colour = NA) +
                 coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                          ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -154,15 +143,8 @@ PRED_global_SWO <- readRDS('outputs/05_commercial/05b_fCommercialFeat/SWO.rds')
 PRED_global_SKP <- readRDS('outputs/05_commercial/05b_fCommercialFeat/SKP.rds')
 
 # YFT
-myPalette <- colorRampPalette(brewer.pal(9, "BuGn"))
-sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 
-                             colours = myPalette(100), 
-                             limits=c(0, 0.4), 
-                             aesthetics = c("color","fill"))
-
 p1 <- ggplot()+
-  geom_sf(data = PRED_global_YFT, aes(color = Prob, fill = Prob)) +
-  sc +
+  geom_sf(data = PRED_global_YFT, fill = 'paleturquoise3', size = 0.04) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -171,14 +153,8 @@ p1 <- ggplot()+
   theme_bw()
 
 # ALB
-sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 
-                             colours = myPalette(100), 
-                             limits=c(0, 0.8), 
-                             aesthetics = c("color","fill"))
-
 p2 <- ggplot()+
-  geom_sf(data = PRED_global_ALB, aes(color = Prob, fill = Prob)) +
-  sc +
+  geom_sf(data = PRED_global_ALB, fill = 'cornflowerblue', size = 0.04) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -187,14 +163,8 @@ p2 <- ggplot()+
   theme_bw()
 
 # SKP
-sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 
-                             colours = myPalette(100), 
-                             limits=c(0, 0.4), 
-                             aesthetics = c("color","fill"))
-
 p3 <- ggplot()+
-  geom_sf(data = PRED_global_SKP, aes(color = Prob, fill = Prob)) +
-  sc +
+  geom_sf(data = PRED_global_SKP, fill = 'cadetblue4', size = 0.04) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
@@ -203,14 +173,8 @@ p3 <- ggplot()+
   theme_bw()
 
 # SWO
-sc <- scale_colour_gradientn(name = "Probability of Spawning Area", 
-                             colours = myPalette(100), 
-                             limits=c(0, 0.4), 
-                             aesthetics = c("color","fill"))
-
 p4 <- ggplot()+
-  geom_sf(data = PRED_global_SWO, aes(color = Prob, fill = Prob)) +
-  sc +
+  geom_sf(data = PRED_global_SWO, fill = 'skyblue', size = 0.04) +
   geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),

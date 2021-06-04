@@ -71,7 +71,7 @@ head(commercial_uninformed)
 
 To determine the *relative targets* per subtyped feature, we checked each one's *IUCN category* (IUCN, 2015) using `rredlist()`. Threatened features (i.e. classified as vulnerable, endangered, threatened) were assigned a *fixed maximum target*. Features ($i$) that were not classified as threatened (e.g. classified as near-threatened, etc.) were assigned a *relative target* based on their distribution.
 
-  Relative target$_i$ $= Target_{max} \cdot \frac{PU_i}{PU_{total}} \cdot (Target_{max} - Target_{min})$
+  Relative target$_i$ $= Target_{max} - \frac{PU_i}{PU_{total}} \cdot (Target_{max} - Target_{min})$
   
   * `PU_i`: number of planning units of feature $i$
   * `PU_{total}`: total number of planning units in planning region
@@ -80,17 +80,17 @@ To determine the *relative targets* per subtyped feature, we checked each one's 
   
 Lower targets are assigned to features with broader distribution, and higher targets to features with more restricted distribution.
 
-We reran this step for an array of targets, for both climate-smart and climate-uninformed closures:
+We reran this step for an array of targets, for both climate-smart and climate-uninformed closures. We multiplied 0.25 to each of the maximum representative targets (%) to determine the percentage of area, also known as the **effective target (%)** that is actually conserved after taking only retaining PUs less than the 25th percentile of both climate metrics.
 
 ``` {r echo = FALSE, results = 'asis', message = FALSE}
 library(knitr)
 library(tidyverse)
 library(kableExtra)
 run <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
-max <- c(1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1)
-min <- c(0.1, 0.1, 0.1 , 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0)
-df <- cbind(run, max, min)
-colnames(df) <- c("Runs", "Maximum","Minimum")
+max <- c(100, 90, 80, 70, 60, 50, 40, 30, 20, 10)
+effective <- c(25, 22.5, 20 , 17.5, 15, 12.5, 10, 7.5, 5, 2.5)
+df <- cbind(run, max, effective)
+colnames(df) <- c("Runs", "Maximum representative target (%)","Effective target (%)")
 kable(df) %>% 
   kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 ```

@@ -7,7 +7,7 @@ output: html_document
 
 Since we ran *prioritizr* from 10 - 100% maximum target representation (in increments of 10%), we're showing a summary of how cost and percent protection varied with increasing target representation.
 
-```{r eval = TRUE, echo = TRUE, message = FALSE, fig.height = 8, fig.width = 10, fig.align = 'center'}
+```{r eval = TRUE, echo = TRUE, message = FALSE, fig.height = 8, fig.width = 20, fig.align = 'center'}
 source("scripts/12d_Stat_fCreateSummaryRuns.R")
 # showing the log(cost), log(% area protected), number of protected planning units, and number of adequately represented features.
 # this was done to determine which maximum representation targets to report/use in the runs
@@ -36,19 +36,22 @@ summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary
   filter(target == 90)
 summary
 ```
-```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 8, warning = FALSE}
-library(patchwork)
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 5, warning = FALSE, fig.align = 'center'}
 source("scripts/12e_Stat_fKappaCorrplot.R")
-source('scripts/12g_Stat_fCreateCircBarPlot.R')
 corrplot <- fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run3/",
   name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+corrplot
+
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 8, fig.width = 10, warning = FALSE, fig.align = 'center'}
+source('scripts/12g_Stat_fCreateCircBarPlot.R')
 circplot_target90 <- fCreateCircBarPlot(bycatch = 'bycatchIUCN',
                                         commercial = 'commercial',
                                         target_inpdir = 'outputs/09_Target/09d-e_TargetRuns/02_Target90/',
                                         features.summary_csv = 'outputs/12_Stat/12b_fSolutionSummary/NoProv/IUCN_features_rep_summary.csv',
                                         target = 'Target90')
-corrplot
-circplot_target90
+circplot_target90 +
+  theme(legend.position = 'right')
 ```
 
 **Summary for Run 5: Maximum Target = 60%**
@@ -58,19 +61,22 @@ summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary
   filter(target == 60)
 summary
 ```
-```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 8, warning = FALSE}
-library(patchwork)
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 5, warning = FALSE, fig.align = 'center'}
 source("scripts/12e_Stat_fKappaCorrplot.R")
-source("scripts/12g_Stat_fCreateCircBarPlot.R")
 corrplot <- fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run4/",
   name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+corrplot
+
+```
+``` {r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 8, fig.width = 10, warning = FALSE, fig.align = 'center'}
+source("scripts/12g_Stat_fCreateCircBarPlot.R")
 circplot_target60 <- fCreateCircBarPlot(bycatch = 'bycatchIUCN',
                                         commercial = 'commercial',
                                         target_inpdir = 'outputs/09_Target/09d-e_TargetRuns/05_Target60/',
                                         features.summary_csv = 'outputs/12_Stat/12b_fSolutionSummary/NoProv/IUCN_features_rep_summary.csv',
                                         target = 'Target60')
-corrplot
-circplot_target60
+circplot_target60 +
+  theme(legend.position = 'right')
 ```
 
 **Summary for Run 8: Maximum Target = 30%**
@@ -80,17 +86,18 @@ summary <- read_csv("outputs/12_Stat/12d_fCreateSummary/NoProv/IUCN_stat_summary
   filter(target == 30)
 summary
 ```
-```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 8, warning = FALSE}
-library(patchwork)
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 5, warning = FALSE, fig.align = 'center'}
 source("scripts/12e_Stat_fKappaCorrplot.R")
-source("scripts/12g_Stat_fCreateCircBarPlot.R")
 corrplot <- fKappaCorrplot(inpdir = "outputs/12_Stat/12e_Kappa/run5/",
   name_cols = c("SSP1-2.6", "SSP2-4.5", "SSP5-8.5", "Uninformed"))
+corrplot
+```
+```{r eval = TRUE, echo = FALSE, message = FALSE, results = FALSE, fig.height = 8, fig.width = 10, warning = FALSE, fig.align = 'center'}
+source("scripts/12g_Stat_fCreateCircBarPlot.R")
 circplot_target30 <- fCreateCircBarPlot(bycatch = 'bycatchIUCN',
                                         commercial = 'commercial',
                                         target_inpdir = 'outputs/09_Target/09d-e_TargetRuns/08_Target30/',
                                         features.summary_csv = 'outputs/12_Stat/12b_fSolutionSummary/NoProv/IUCN_features_rep_summary.csv',
                                         target = 'Target30')
-corrplot
-circplot_target30
+circplot_target30 + theme(legend.position = 'right')
 ```

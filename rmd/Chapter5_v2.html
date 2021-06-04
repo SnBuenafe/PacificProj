@@ -171,9 +171,9 @@ pre code {
 
 
 <div id="representation-targets" class="section level2">
-<h2>Representation Targets</h2>
+<h2>Representation targets</h2>
 <div id="filtering-and-retaining-pus" class="section level3">
-<h3>Filtering and Retaining PUs</h3>
+<h3>Filtering and retaining PUs</h3>
 <p>We join the climate-smart layer with the conservation features layer. Then, we only retain planning units that have RCE and/or climate-velocity values belonging to their lower 25th percentile range. This was how we priortized protection of areas that are predicted to have <em>lower exposure to climate warming</em> and <em>higher retention of biodiversity</em>.</p>
 <p>We used the function <code>fFilterQuartile()</code> and the scripts that are relevant for this step are found in <code>~/scripts/</code> with the prefix <code>08_Filter</code>.</p>
 <pre class="r"><code># function is found at:
@@ -212,12 +212,12 @@ head(commercialSSP585)</code></pre>
 <pre><code>## # A tibble: 6 x 7
 ##   cellsID new_features velocity velo_tvalue   RCE RCE_tvalue total_area
 ##     &lt;int&gt; &lt;chr&gt;           &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
-## 1      81 ALB              35.8        358.  2.29       1.32   4278830.
-## 2      84 ALB              37.1        371.  2.24       1.31   4278830.
-## 3      85 ALB              52.9        529.  2.34       1.33   4278830.
-## 4      86 ALB              38.7        387.  1.18       1.06   4278830.
-## 5      88 ALB              39.1        391.  2.19       1.30   4278830.
-## 6      89 ALB              46.5        465.  1.29       1.09   4278830.</code></pre>
+## 1      84 ALB              37.1        371.  2.24       1.31   5127127.
+## 2      86 ALB              38.7        387.  1.18       1.06   5127127.
+## 3      88 ALB              39.1        391.  2.19       1.30   5127127.
+## 4      89 ALB              46.5        465.  1.29       1.09   5127127.
+## 5      94 ALB              62.2        622.  1.40       1.12   5127127.
+## 6      95 ALB              42.7        427.  1.19       1.06   5127127.</code></pre>
 <p>Aside from these <strong>climate-smart</strong> closures, we also explored <strong>climate-uninformed</strong>, wherein the climate-smart features were not included in the analyses. Subsequently, the step of filtering and retention of planning units was also not included.</p>
 <pre class="r"><code>source(&quot;scripts/08e_Filter_fFilterQuartile100Run_NoProv.R&quot;)</code></pre>
 <p>This is how the data looks like:</p>
@@ -243,25 +243,25 @@ head(commercial_uninformed)</code></pre>
 <pre><code>## # A tibble: 6 x 3
 ##   cellsID new_features total_area
 ##     &lt;int&gt; &lt;chr&gt;             &lt;dbl&gt;
-## 1       1 ALB            9582019.
-## 2       2 ALB            9582019.
-## 3       3 ALB            9582019.
-## 4       4 ALB            9582019.
-## 5       5 ALB            9582019.
-## 6       6 ALB            9582019.</code></pre>
+## 1       1 ALB           11708096.
+## 2       2 ALB           11708096.
+## 3       3 ALB           11708096.
+## 4       4 ALB           11708096.
+## 5       5 ALB           11708096.
+## 6       6 ALB           11708096.</code></pre>
 </div>
 <div id="assigning-targets" class="section level3">
 <h3>Assigning targets</h3>
 <p>To determine the <em>relative targets</em> per subtyped feature, we checked each one’s <em>IUCN category</em> (IUCN, 2015) using <code>rredlist()</code>. Threatened features (i.e. classified as vulnerable, endangered, threatened) were assigned a <em>fixed maximum target</em>. Features (<span class="math inline">\(i\)</span>) that were not classified as threatened (e.g. classified as near-threatened, etc.) were assigned a <em>relative target</em> based on their distribution.</p>
-<p>Relative target<span class="math inline">\(_i\)</span> <span class="math inline">\(= Target_{max} \cdot \frac{PU_i}{PU_{total}} \cdot (Target_{max} - Target_{min})\)</span></p>
+<p>Relative target<span class="math inline">\(_i\)</span> <span class="math inline">\(= Target_{max} - \frac{PU_i}{PU_{total}} \cdot (Target_{max} - Target_{min})\)</span></p>
 <ul>
-<li><code>PU_i</code>: planning units of feature <span class="math inline">\(i\)</span></li>
-<li><code>PU_{total}</code>: total planning units</li>
+<li><code>PU_i</code>: number of planning units of feature <span class="math inline">\(i\)</span></li>
+<li><code>PU_{total}</code>: total number of planning units in planning region</li>
 <li><code>Target_{max}</code>: Maximum target / the fixed maximum target assigned to threatened features (e.g. 1)</li>
 <li><code>Target_{min}</code>: Minimum target (e.g. 0.1)</li>
 </ul>
 <p>Lower targets are assigned to features with broader distribution, and higher targets to features with more restricted distribution.</p>
-<p>We reran this step for an array of targets, for both climate-smart and climate-uninformed closures:</p>
+<p>We reran this step for an array of targets, for both climate-smart and climate-uninformed closures. We multiplied 0.25 to each of the maximum representative targets (%) to determine the percentage of area, also known as the <strong>effective target (%)</strong> that is actually conserved after taking only retaining PUs less than the 25th percentile of both climate metrics.</p>
 <table class="table table-striped" style="width: auto !important; ">
 <thead>
 <tr>
@@ -269,10 +269,10 @@ head(commercial_uninformed)</code></pre>
 Runs
 </th>
 <th style="text-align:left;">
-Maximum
+Maximum representative target (%)
 </th>
 <th style="text-align:left;">
-Minimum
+Effective target (%)
 </th>
 </tr>
 </thead>
@@ -282,10 +282,10 @@ Minimum
 1
 </td>
 <td style="text-align:left;">
-1
+100
 </td>
 <td style="text-align:left;">
-0.1
+25
 </td>
 </tr>
 <tr>
@@ -293,10 +293,10 @@ Minimum
 2
 </td>
 <td style="text-align:left;">
-0.9
+90
 </td>
 <td style="text-align:left;">
-0.1
+22.5
 </td>
 </tr>
 <tr>
@@ -304,10 +304,10 @@ Minimum
 3
 </td>
 <td style="text-align:left;">
-0.8
+80
 </td>
 <td style="text-align:left;">
-0.1
+20
 </td>
 </tr>
 <tr>
@@ -315,10 +315,10 @@ Minimum
 4
 </td>
 <td style="text-align:left;">
-0.7
+70
 </td>
 <td style="text-align:left;">
-0.1
+17.5
 </td>
 </tr>
 <tr>
@@ -326,10 +326,10 @@ Minimum
 5
 </td>
 <td style="text-align:left;">
-0.6
+60
 </td>
 <td style="text-align:left;">
-0.1
+15
 </td>
 </tr>
 <tr>
@@ -337,10 +337,10 @@ Minimum
 6
 </td>
 <td style="text-align:left;">
-0.5
+50
 </td>
 <td style="text-align:left;">
-0.1
+12.5
 </td>
 </tr>
 <tr>
@@ -348,10 +348,10 @@ Minimum
 7
 </td>
 <td style="text-align:left;">
-0.4
+40
 </td>
 <td style="text-align:left;">
-0.1
+10
 </td>
 </tr>
 <tr>
@@ -359,10 +359,10 @@ Minimum
 8
 </td>
 <td style="text-align:left;">
-0.3
+30
 </td>
 <td style="text-align:left;">
-0.1
+7.5
 </td>
 </tr>
 <tr>
@@ -370,10 +370,10 @@ Minimum
 9
 </td>
 <td style="text-align:left;">
-0.2
+20
 </td>
 <td style="text-align:left;">
-0.1
+5
 </td>
 </tr>
 <tr>
@@ -381,10 +381,10 @@ Minimum
 10
 </td>
 <td style="text-align:left;">
-0.1
+10
 </td>
 <td style="text-align:left;">
-0
+2.5
 </td>
 </tr>
 </tbody>
@@ -404,10 +404,10 @@ head(target90_commercial)</code></pre>
 <pre><code>## # A tibble: 4 x 5
 ##   new_features total_area category                               geometry target
 ##   &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;                        &lt;MULTIPOLYGON [m]&gt;  &lt;dbl&gt;
-## 1 ALB            3603928. NT       (((-2169566 -3772591, -2197317 -37565…   3.05
-## 2 SKP            2238116. LC       (((-2086316 -2859363, -2114066 -28433…   1.89
-## 3 SWO            4390870. LC       (((-1448063 -2907428, -1475813 -28914…   3.71
-## 4 YFT            3942713. NT       (((-948560.7 -696454.6, -976310.8 -68…   3.33</code></pre>
+## 1 ALB            3964054. NT       (((-2058566 -3772591, -2086316 -37565…   86.3
+## 2 SKP            2392837. LC       (((-1559064 -2715169, -1586814 -26991…   87.8
+## 3 SWO            4428216  LC       (((-2058566 -3772591, -2086316 -37565…   85.8
+## 4 YFT            3905366. NT       (((-671059.4 -696454.6, -698809.5 -68…   86.3</code></pre>
 <pre class="r"><code>target90_bycatch &lt;- readRDS(&quot;outputs/09_Target/09d-e_TargetRuns/02_Target90/SSP126/target_bycatchSSP126.rds&quot;) %&gt;% 
   as_tibble()
 head(target90_bycatch)</code></pre>
