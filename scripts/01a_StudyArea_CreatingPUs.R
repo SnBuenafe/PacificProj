@@ -128,6 +128,7 @@ study_area <- ggplot() +
             ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
             expand = TRUE) +
     theme_bw()
-study_area
+study_area +
+  labs(caption = 'shapefiles from Flanders Marine Institute (2019)')
 ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300)
 #ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)

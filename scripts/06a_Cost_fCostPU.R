@@ -2,7 +2,6 @@
 # email: tinbuenafe@gmail.com
 # Please do not distribute this code without permission.
 # There are no guarantees that this code will work perfectly.
-# most are modified from IBM's code.
 
 # This code intersects the cost layer and the study area (in PUs).
 # creates a .rds file and .shp files of the PUs x cost layer.
