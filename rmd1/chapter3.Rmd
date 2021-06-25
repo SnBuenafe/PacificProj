@@ -1,0 +1,215 @@
+## Climate-smart features
+
+To create climate-smart closures, we prioritized protection of areas with:
+
+1. low levels of **exposure** to climate warming, and
+2. high levels of potential **retention** of biodiversity.
+
+We determined these areas using the following metrics:
+
+1. **Relative Climate Exposure (RCE) index**
+
+    $\large RCE(yr^{-1}) = \frac{{\text Slope \hspace{2mm}} (^{\circ}Cyr^{-1} \hspace{2mm} 2050 - 2100)}{{\text             Seasonal \hspace{2mm} Range} \hspace{2mm} (^{\circ}C \hspace{2mm} 2015 - 2020)}$
+      
+  * numerator is the slope of the linear regression of projected mean annual temperatures
+  * denominator is the current mean seasonal temperature range
+
+Areas with low RCE index values are areas that will be exposed to low levels of warming relative to their current seasonal fluctuations of temperature. Areas of **low RCE index values** are prioritized for selection.
+
+2. **Climate velocity**
+
+    $\large Climate \hspace{2mm} velocity \hspace{2mm} (kmyr^{-1}) = 
+    \frac{{\text Slope \hspace{2mm}} (^{\circ}Cyr^{-1} \hspace{2mm} 2050 - 2100)}{{\text Spatial \hspace{2mm}             gradient} \hspace{2mm} (^{\circ}Ckm^{-1} \hspace{2mm} 2050 - 2100)}$
+  
+  * numerator is the slope of the linear regression of projected mean annual temperatures
+  * denominator is calculated from the vector sum of the latitudinal and longitudinal pairwise differences of the mean temperature at each focal cell using a *3 x 3 neighborhood window*
+  
+Areas of slow climate velocity are areas that are more likely to retain their current environmental conditions and consequentially, their biodiversity. Areas of **slow climate velocity** are prioritized for selection.
+
+The temperatures used to calculate the aforementioned metrics were derived from 12 Global Circulation Models (GCMs) from the Couple Model Intercomparison Project Phase 6 (CMIP6; https://esgf-node.llnl.gov). The GCMs are under these three climate scenarios:
+
+1. SSP1-2.6: optimistic scenario
+2. SSP2-4.5: intermediate scenario
+3. SSP5-8.5: pessimistic scenario
+
+``` {r eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.height=7, fig.width = 10}
+library(tidyverse)
+library(RColorBrewer)
+library(patchwork)
+library(sf)
+rob_pacific <- "+proj=robin +lon_0=180 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" # Best to define these first so you don't make mistakes below
+world_sf <- st_read("inputs/shapefiles/PacificCenterLand/PacificCenterLand.shp")
+
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
+
+# Defining palette and legends
+pal <- c("#313695","#4575b4","#74add1","#abd9e9","#e0f3f8","#fee090","#fdae61","#f46d43","#d73027","#a50026")
+RCE_cat <- c("min","","","","","","","","","max")
+velo_cat <- c("< -50", "-50 to -20", "-20 to -10", "-10 to -5", "-5 to 5", "5 to 10", "10 to 20", "20 to 50", "50 to 100", "100 to 200", "> 200")
+pal1 <- rev(brewer.pal(11, "RdYlBu"))
+
+RCE_SSP126 <- readRDS('outputs/05_Climate/RCE/RCESSP126.rds')
+RCE_SSP245 <- readRDS('outputs/05_Climate/RCE/RCESSP245.rds')
+RCE_SSP585 <- readRDS('outputs/05_Climate/RCE/RCESSP585.rds')
+
+plotRCE_SSP126 <- ggplot()+
+                      geom_sf(data = RCE_SSP126, aes(color = rce_categ)) +
+                      scale_color_gradientn(name = "RCE index",
+                                            colours = pal,
+                                            limits = c(1, 10),
+                                            breaks = seq(1, 10, 1),
+                                            labels = RCE_cat) +
+                      geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+                      coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                               ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                               expand = TRUE) +
+                      labs(title = "SSP 1-2.6") +
+                      theme_bw()
+plotRCE_SSP245 <- ggplot()+
+                      geom_sf(data = RCE_SSP245, aes(color = rce_categ)) +
+                      scale_color_gradientn(name = "RCE index",
+                                            colours = pal,
+                                            limits = c(1, 10),
+                                            breaks = seq(1, 10, 1),
+                                            labels = RCE_cat) +
+                      geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+                      coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                               ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                               expand = TRUE) +
+                      labs(title = "SSP 2-4.5") +
+                      theme_bw()
+plotRCE_SSP585 <- ggplot()+
+                      geom_sf(data = RCE_SSP585, aes(color = rce_categ)) +
+                      scale_color_gradientn(name = "RCE index",
+                                            colours = pal,
+                                            limits = c(1, 10),
+                                            breaks = seq(1, 10, 1),
+                                            aesthetics = c("color","fill"),
+                                            labels = RCE_cat) +
+                      geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+                      coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                               ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                               expand = TRUE) +
+                      labs(title = "SSP 5-8.5") +
+                      theme_bw()
+
+plot_RCE <- (plotRCE_SSP126 | plotRCE_SSP245 | plotRCE_SSP585) +
+  plot_annotation(title = 'RCE') +
+  plot_layout(guides = 'collect')
+```
+
+``` {r eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.height=7, fig.width = 10}
+velo_SSP126 <-readRDS('outputs/05_Climate/Velocity/velocitySSP126.rds')
+velo_SSP245 <-readRDS('outputs/05_Climate/Velocity/velocitySSP245.rds')
+velo_SSP585 <-readRDS('outputs/05_Climate/Velocity/velocitySSP585.rds')
+
+plotvelo_SSP126 <- ggplot()+
+                      geom_sf(data = velo_SSP126, aes(color = velo_categ)) +
+                      scale_color_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
+                                            colours = pal1,
+                                            limits = c(1, 11),
+                                            breaks = seq(1, 11, 1),
+                                            aesthetics = c("color","fill"),
+                                            labels = velo_cat) +
+                      geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+                      coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                               ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                               expand = TRUE) +
+                      labs(title = "SSP 1-2.6") +
+                      theme_bw()
+plotvelo_SSP245 <- ggplot()+
+                      geom_sf(data = velo_SSP245, aes(color = velo_categ)) +
+                      scale_color_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
+                                            colours = pal1,
+                                            limits = c(1, 11),
+                                            breaks = seq(1, 11, 1),
+                                            aesthetics = c("color","fill"),
+                                            labels = velo_cat) +
+                      geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+                      coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                               ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                               expand = TRUE) +
+                      labs(title = "SSP 2-4.5") +
+                      theme_bw()
+plotvelo_SSP585 <- ggplot()+
+                      geom_sf(data = velo_SSP585, aes(color = velo_categ)) +
+                      scale_color_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
+                                            colours = pal1,
+                                            limits = c(1, 11),
+                                            breaks = seq(1, 11, 1),
+                                            aesthetics = c("color","fill"),
+                                            labels = velo_cat) +
+                      geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+                      coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                               ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                               expand = TRUE) +
+                      labs(title = "SSP 5-8.5") +
+                      theme_bw()
+
+plot_velo <- (plotvelo_SSP126 | plotvelo_SSP245 | plotvelo_SSP585) +
+  plot_layout(guides = "collect") +
+  plot_annotation(title = 'Climate Velocity')
+climate_plots <- plot_RCE / plot_velo +
+  plot_annotation(tag_levels = 'A', tag_suffix = ')',
+                  caption = 'temperature data from GCMs of CMIP6')
+plot_RCE /plot_velo
+```
+
+We also tested for the correlation of the climate metrics across different climate scenarios. We used **Spearman Correlation** since the distribution of these metrics are right-skewed, and their Shapiro-Wilk tests are p < 0.05.
+
+RCE and velocity calculated for the same scenario are positively correlated (> 0.5), which could suggest that we can do with just using one of the two metrics. Correlations of climate metrics between scenarios are also positively correlated (> 0.3), with velocity showing higher correlation between metrics than RCE is. For both climate velocity and RCE, SSP 2-4.5 and SSP5-8.5 are also more positively correlated.
+
+``` {r val = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.width=8, fig.height=7}
+library(stats)
+library(Hmisc)
+library(corrplot)
+RCE_SSP126_temp <- RCE_SSP126 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(RCE_126 = value)
+RCE_SSP126_temp
+
+RCE_SSP245_temp <- RCE_SSP245 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(RCE_245 = value)
+RCE_SSP245_temp
+
+RCE_SSP585_temp <- RCE_SSP585 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(RCE_585 = value)
+RCE_SSP585_temp
+
+velo_SSP126_temp <- velo_SSP126 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(velo_126 = value)
+velo_SSP126_temp
+
+velo_SSP245_temp <- velo_SSP245 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(velo_245 = value)
+velo_SSP245_temp
+
+velo_SSP585_temp <- velo_SSP585 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(velo_585 = value)
+velo_SSP585_temp
+
+df <- left_join(RCE_SSP126_temp, RCE_SSP245_temp, by = 'cellsID') %>% 
+  left_join(RCE_SSP585_temp) %>% 
+  left_join(velo_SSP126_temp) %>% 
+  left_join(velo_SSP245_temp) %>% 
+  left_join(velo_SSP585_temp)
+df[,2:7]
+cor_df <- cor(df[,2:7], method = 'spearman')
+colnames(cor_df) <- c('RCE SSP 1-2.6', 'RCE SSP 2-4.5', 'RCE SSP 5-8.5', 'velocity SSP 1-2.6', 'velocity SSP 2-4.5', 'velocity SSP 5-8.5')
+rownames(cor_df) <- c('RCE SSP 1-2.6', 'RCE SSP 2-4.5', 'RCE SSP 5-8.5', 'velocity SSP 1-2.6', 'velocity SSP 2-4.5', 'velocity SSP 5-8.5')
+rcorr_df <- rcorr(as.matrix(df[,2:7]), type = 'spearman')
+corrplot(cor_df, type="upper",
+         col=brewer.pal(n=8, name="RdYlBu"), tl.col="black", tl.srt=45)
+```

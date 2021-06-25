@@ -1,0 +1,36 @@
+# Creating conservation-sensitive fisheries closures
+
+Here, we answer the *first objective* by creating fisheries closures using only the *fisheries conseration features* in creating (and solving) the *prioritizr* problem. Because we are not including climate-smart features, we call the resulting spatial plans **climate-uninformed fisheries closures**. 
+
+We decided decided to use the same fixed target for both the bycatch and the spawning grounds. All the bycatch included in this spatial prioritization project are threatened species (IUCN Red List, 2021), and we also argue that the spawning grounds of the commercially targeted species can be considered 'important areas' for fisheries. We ran *prioritizr* across different targets (5 - 25%, with increments of 2.5%), but only those with a target of <span style="text-decoration: underline">**22.5%**</span> are reported. The results and summaries of all of the resulting closures are reported in the *Supplementary*.
+
+The summary (e.g. total cost, % protected area) of this climate-uninformed closure will be reported below to compare it with the climate-smart closures.
+
+```{r eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.align = 'center', fig.height = 4}
+library(tidyverse)
+library(sf)
+library(RColorBrewer)
+library(patchwork)
+
+# defining plot generalities
+pal_rich <- c("FALSE" = "lightsteelblue2", "TRUE" = "steelblue4")
+solution <- c("Not selected PUs", "Selected PUs")
+world_sf <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
+
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
+
+uninformed <- readRDS('outputs/08_Prioritizr/08a_25perc/spatial_plans/solve_uninformed_target90.rds')
+
+ggplot() +
+  geom_sf(data = uninformed, aes(fill = as.logical(solution_1)), color = "grey64", size = 0.02) +
+      scale_fill_manual(name = "Solution",
+                        values = pal_rich,
+                        labels = solution) +
+      geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+      coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+               ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+               expand = TRUE) +
+      ggtitle('Climate-uninformed fisheries closures') +
+      theme_bw()
+```

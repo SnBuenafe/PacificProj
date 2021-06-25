@@ -1,0 +1,67 @@
+# Different methods of creating climate-smart closures
+
+Essentially, we included the two climate metrics in spatial prioritization to create climate-smart closures. These closures are termed 'climate-smart' because we incorporated the effects of climate change in the creation of these closures. Again, we want to protect areas of low RCE (low exposure to warming) and low climate velocity (high retention of biodiversity). We used three climate scenarios; hence, there are a total of three spatial plans for each method (one for each scenario). 
+
+Here, we explored three different methods of creating climate-smart closures by:
+
+1. using climate-smart features as **conservation features**
+* RCE and climate velocity were included in the spatial problem as feature layers with their own targets (just like the fisheries conservation features) by conserving x% of the lower 25th percentile for both climate metrics (e.g. 90% of the 25th percentile = 22.5%).
+
+2. intersecting climate-smart features with the fisheries conservation features and **retaining only planning units that are within the 25th percentile** of the climate metrics
+* We further restricted the planning region by retaining planning units (with species information from the fisheries conservation features) that intersected with the 25th percentile of RCE and climate velocity.
+
+Note: the reason why 22.5% was chosen to be presented was because if we chose the maximum that was tested (25%), we would be constricting *prioritizr* to choose all of the planning units in equal or less than the 25th percentile of the climate metrics.
+
+3. using climate-smart features as **linear penalties**
+* RCE and climate velocity were treated as *penalties* which modified the objective function used in spatial prioritization. Penalties were given to planning units that had higher RCE and climate velocity values. Hence, this constricted *prioritizr* to select planning units with lower values for the two climate metrics, while still minimizing the costs and meeting the set targets. 
+
+The weights of the RCE and climate velocity were both 30% of the cost, to give more weight on the cost than on the climate metrics when choosing planning units. This weight can be changed to increase or decrease the weight of the penalties relative to the cost, but we decided to use <span style="text-decoration: underline">**30%**</span> since there weren't any significant changes in resulting total cost and % protected area when using weights of 20, 30, 40 and 50% of the cost (see Supplement).
+
+First, here are the resulting climate-smart closures using the three methods outlined above. All of which had targets set at 22.5%.
+
+![](/Users/tinbuenafe/GitHub/PacificProj/rmd1/images/Fig2_spatial_plans.png)
+Their summaries are shown below:
+
+* A-D show the total cost, % protected area, median climate velocity and median RCE for each climate scenario across the different methods
+* E-G show the representation of each conservation feature across the different methods
+* H-J show the kappa correlation matrices of each closure (climate-smart and climate-uninformed) across the different methods
+
+Just some notable points:
+
+* as the percent of the protected area increases, the total cost of the closure also increases
+  * with that being said, climate-smart closures protect more area, but are more costly compared to climate-uninformed closures
+  * the least variation between climate-smart closures is in the third method (as penalties). This (I think) is because of the similarity in the scaling of the climate metrics (using 30% scaling for both RCE and velocity across *all scenarios*), and also because the metrics are positively correlated across the scenarios
+  * the method with the most % protected area (and the most costly) is the second method (25th percentile)
+* as for the median velocity and RCE, there is not a lot of difference between methods; however, we can definitely see that climate-smart closures have lower median RCE and lower median climate velocity
+  * we can say that these methods have successfully made climate-smart closures by allowing less exposure to warming and, possibly, more retention of biodiversity compared to climate-uninformed closures
+* *prioritizr* will meet the targets set for each feature, and this is seen in figures E-F (showing the % representation of each conservation features— bycatch and commercially targeted species)
+  * even though the second method offered the most % protected area, the first (as features) and the third methods (as penalties) had greater representation for some of the features (e.g. seen in some of the commercial species wherein target is exceeded by a significant amount)
+* the closures made using the third method (as penalties) also seem to have more coherent spatial plans (again, can be attributed to the scaling of the penalties) and, interestingly, has the greatest coherence with the climate-uninformed closure
+
+![](/Users/tinbuenafe/GitHub/PacificProj/rmd1/images/Fig3_summary.png)
+
+Every method presented here has its advantages and disadvantages. The main idea of presenting the results of these three methods is to show that there are multiple ways to create climate-smart closures with *prioritizr*. It is up to the objectives and the targets of the stakeholders involved in a spatial planning project to determine which method would be the best. I think the same can be said about the selected features as well.
+
+Nonetheless I present some of the advantages and disadvantages I see for each method.
+
+1. using climate-smart features as **conservation features**
+* This can be more appropriate if we want to set actual targets (e.g. 30% protection) to areas of low RCE and low climate velocity regardless of whether they actually have biodiversity in it or not
+* I think this is more appropriate for studies that can include benthic organisms
+* Using this method would be easier to explain to different stakeholders
+
+2. intersecting climate-smart features with the fisheries conservation features and **retaining only planning units that are within the 25th percentile** of the climate metrics
+* This is an updated version of the first method, wherein the climate metrics are not actually feature layers, but instead provide thresholds for each of the conservation features.
+* Here we wish to conserve biodiversity that intersect with equal to or less than 25th percentile of the climate metrics
+* So, we only conserve low RCE and low climate velocity areas that have biodiversity values (of course, this is also dependent on the conservation features we're using)
+* Using this method would be harder to explain to different stakeholders
+
+3. using climate-smart features as **linear penalties**
+* RCE and climate velocity are not involved in the feature layers; instead, they are used as penalties
+* Doing this tells *prioritizr* to penalize selection of areas with higher RCE and higher velocity
+* With this, constraints are further exerted on the minimum set objective function (aside from the cost)
+* This method, however, does not allow RCE and velocity to be termed as 'features' we wish to have targets of. The only 'target' they have is to be low enough to keep the cost (and the panlty) of the resulting closures low.
+
+Below are the results of the no-regret closures, which only show planning units that were selected across all the climate scenarios for each of the methods. In addition, their total costs and % protected area are shown. We also created maps showing the frequency of selection of the planning units, which can ultimately help managers and other stakeholders determine the more important planning units to protect.
+
+![](/Users/tinbuenafe/GitHub/PacificProj/rmd1/images/Fig4_noregret.png)
+

@@ -1,0 +1,57 @@
+---
+title: "Creating conservation-sensitive, climate-smart fisheries closures for the ABNJ of the Pacific Ocean"
+author: 'Tin Buenafe'
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+We wish to create **conservation-sensitive**, **climate-smart** fisheries closures for the ABNJ of the Pacific Ocean using *prioritizr*.
+
+*Prioritizr* (Hanson et al., 2018) is a spatial prioritization software (R package) that uses integer linear programming (ILP) allowing it to create exact solutions to large spatial planning problems faster than its heuristic counterparts (e.g. Marxan).
+
+This project has the following objectives:
+
+1. How can we design **conservation-sensitive fisheries closures** that can conserve critical fisheries spawning habitats as well as protect vulnerable, threatened, and endangered bycatch species?
+2. How can we best design **climate-smart fisheries closures** that can remain effective in the future?
+3. What are the **net benefits or costs** to fisheries of establishing conservation-sensitive, climate-smart closures?
+
+This file provides an overview of the project as well as the main results. This was made to streamline the numerous results that have been produced throughout the duration of the project. The scripts are found in [tinbuenafe/PacificProj](https://github.com/tinbuenafe/PacificProj), where the scripts are explained in greater detail.
+
+This spatial planning project uses the **minimum set objective function** wherein *prioritizr* aims to minimize the total cost of the resulting spatial plans, while still meeting the targets.
+
+# Assembling the data layers
+
+Before running *prioritizr*, we first had to assemble the following data layers:
+
+1. Study Area
+2. Fisheries conservation features
+3. Climate-smart features
+4. Cost layer
+
+```{r child = 'chapter1.Rmd', fig.width = 8}
+```
+
+```{r child = 'chapter2.Rmd'}
+```
+
+```{r child = 'chapter3.Rmd'}
+```
+
+```{r child = 'chapter4.Rmd'}
+```
+
+```{r child = 'chapter5.Rmd'}
+```
+
+```{r child = 'chapter6.Rmd'}
+```
+

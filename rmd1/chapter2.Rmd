@@ -1,0 +1,164 @@
+## Fisheries conservation features
+
+The following were used in this study:
+
+1. Distribution of selected bycatch species
+2. Distribution of larval spawning grounds of selected commercially targeted species
+
+### Bycatch distribution
+
+First, we compiled a list of bycatch reported in the Pacific ABNJ. Then, we used the **IUCN** distribution maps for these species. These polygons are from the IUCN Red List, showing the known ranges of the species (IUCN Red List, 2021).
+
+We limited the bycatch included in this study to **sea turtles**, but this workflow can be easily replicated and expanded to include more species.
+
+The following were the sea turtles reported as bycatch and intersected with the study area:
+
+* Loggerhead turtle (*Caretta caretta*)
+* Green turtle (*Chelonia mydas*)
+* Leatherback turtle (*Dermochelys coriacea*)
+* Hawksbill turtle (*Eretmochelys imbricata*)
+* Olive ridley turtle (*Lepidochelys olivacea*)
+
+```{r, eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.width=10, fig.height=7}
+library(RColorBrewer)
+library(patchwork)
+world_sf <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
+world_eez <- readRDS('outputs/01_StudyArea/01a_StudyArea/PacificCenterEEZ.rds')
+Boundary = "EEZ"
+world_eez <- cbind(world_eez,Boundary)
+
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
+
+# calling data
+loggerhead <- readRDS("outputs/03_IUCN/03b_fIUCNIntersect/Caretta_caretta_IUCN.rds")
+green <- readRDS("outputs/03_IUCN/03b_fIUCNIntersect/Chelonia_mydas_IUCN.rds")
+leatherback <- readRDS("outputs/03_IUCN/03b_fIUCNIntersect/Dermochelys_coriacea_IUCN.rds")
+hawksbill <- readRDS("outputs/03_IUCN/03b_fIUCNIntersect/Eretmochelys_imbricata_IUCN.rds")
+olive <- readRDS("outputs/03_IUCN/03b_fIUCNIntersect/Lepidochelys_olivacea_IUCN.rds")
+
+loggerhead_plot <- ggplot() + 
+                      geom_sf(data = loggerhead, fill = 'limegreen', size = 0.04, color = NA) + 
+                      geom_sf(data = world_sf, fill = "grey20", colour = NA) +
+                      coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                               ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                               expand = TRUE) +
+                      labs(title = "Loggerhead sea turtles") +
+                      theme_bw()
+
+green_plot <- ggplot() + 
+                  geom_sf(data = green, fill = 'olivedrab', size = 0.04, color = NA) + 
+                  geom_sf(data = world_sf, fill = "grey20", colour = NA) +
+                  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                           expand = TRUE) +
+                  labs(title = "Green sea turtles") +
+                  theme_bw()
+
+leatherback_plot <- ggplot() + 
+                        geom_sf(data = leatherback, fill = 'darkseagreen', size = 0.04, color = NA) + 
+                        geom_sf(data = world_sf, fill = "grey20", colour = NA) +
+                        coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                                 ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                                 expand = TRUE) +
+                        labs(title = "Leatherback sea turtles") +
+                        theme_bw()
+
+hawksbill_plot <- ggplot() + 
+                      geom_sf(data = hawksbill, fill = 'darkolivegreen3', size = 0.04, color = NA) + 
+                      geom_sf(data = world_sf, fill = "grey20", colour = NA) +
+                      coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                               ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                               expand = TRUE) +
+                      labs(title = "Hawksbill sea turtles") +
+                      theme_bw()
+
+olive_plot <- ggplot() + 
+                geom_sf(data = olive, fill = 'springgreen1', size = 0.04, color = NA) + 
+                geom_sf(data = world_sf, fill = "grey20", colour = NA) +
+                coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+                         ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+                         expand = TRUE) +
+                labs(title = "Olive ridley sea turtles") +
+                theme_bw()
+
+iucn_turtle_plots <- (loggerhead_plot | green_plot | leatherback_plot) / (hawksbill_plot | olive_plot) +
+  plot_annotation(tag_levels = "A",
+                  tag_suffix = ")",
+                  caption = "shapefiles from IUCN Red List (2021)")
+iucn_turtle_plots
+```
+
+### Spawning grounds of commercially targeted species
+
+Just like the bycatch layer, we compiled a list of commercially targeted large pelagic species managed in the Pacific from different sources. From this list, we have 4 species with available data on their global larval spawning grounds:
+
+* Yellowfin Tuna (*Thunnus albacares*)
+* Albacore (*Thunnus alalunga*)
+* Skipjack Tuna (*Katsuwonus pelamis*)
+* Swordfish (*Xiphias gladius*)
+
+The models for these species are from a report by Mercer (2019) where he created Generalized Additive Models (GAMs) to predict spawning grounds using (Nishikawa et al., 1985). He used mean seasonal abundance from a historical dataset of plankton tows of fish larvae (dated back to the 1950s), and oceanographic and environmental conditions from global databases.
+
+```{r, eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.width=10, fig.height=7}
+library(RColorBrewer)
+library(patchwork)
+pal_dist <- rev(brewer.pal(6, "Set3"))
+world_sf <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
+
+source("scripts/study_area/fCreateRobinsonBoundary.R")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
+
+# calling data
+PRED_global_YFT <- readRDS('outputs/04_commercial/04b_fCommercialFeat/YFT.rds')
+PRED_global_ALB <- readRDS('outputs/04_commercial/04b_fCommercialFeat/ALB.rds')
+PRED_global_SWO <- readRDS('outputs/04_commercial/04b_fCommercialFeat/SWO.rds')
+PRED_global_SKP <- readRDS('outputs/04_commercial/04b_fCommercialFeat/SKP.rds')
+
+# YFT
+p1 <- ggplot()+
+  geom_sf(data = PRED_global_YFT, fill = 'paleturquoise3', size = 0.04, color = NA) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Yellow Tuna") +
+  theme_bw()
+
+# ALB
+p2 <- ggplot()+
+  geom_sf(data = PRED_global_ALB, fill = 'cornflowerblue', size = 0.04, color = NA) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Albacore") +
+  theme_bw()
+
+# SKP
+p3 <- ggplot()+
+  geom_sf(data = PRED_global_SKP, fill = 'cadetblue4', size = 0.04, color = NA) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Skipjack Tuna") +
+  theme_bw()
+
+# SWO
+p4 <- ggplot()+
+  geom_sf(data = PRED_global_SWO, fill = 'skyblue', size = 0.04, color = NA) +
+  geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  labs(title = "Swordfish") +
+  theme_bw()
+
+global_plots <- (p1 + p2) / (p3 + p4) +
+  plot_annotation(tag_levels = "A",
+                  tag_suffix = ')',
+                  caption = 'GAMs from Mercer (2019)')
+global_plots
+
+```

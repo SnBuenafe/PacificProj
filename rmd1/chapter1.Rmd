@@ -1,0 +1,30 @@
+## Study Area
+
+The study area has the following characteristics:
+
+* Pacific ABNJ
+* Limited boundaries to areal jurisdiction of RFMOs responsible for managing large pelagic fisheries (IATTC and WCPFC)
+* Robinson projection
+
+We ran the following code using polygons from `rnaturalearth` package and the EEZ `.shp` files from Marine Regions (Flanders Marine Institute, 2019) to create a Pacific-centered map of the global ABNJs.
+
+We created equal-area hexagonal planning units, or PUs, (0.5$^\circ$ x 0.5$^\circ$ at the equator) of the study area. This represented the grain size of the spatial plan. There 31,917 PUs in the entire planning region.
+```{r, eval = TRUE, echo = FALSE, error = FALSE, warning = FALSE, message = FALSE, results = FALSE, fig.align = 'center'}
+# define objects for plotting; objects are the result of running 01_StudyArea
+source('scripts/study_area/fCreateRobinsonBoundary.R')
+pacific_robinson <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterABNJ.rds")
+PUsPac <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg.rds")
+Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60) # coordinates in degrees
+world_robinson <- readRDS('outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds')
+
+study_area <- ggplot() +
+    geom_sf(data = pacific_robinson, colour = NA, fill = NA, size = 0.2, show.legend = "line") +
+    geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
+    geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = TRUE) + 
+    scale_fill_manual(name = "Study Area", values = c("ABNJ" = "steelblue4")) +
+    coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
+            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+            expand = TRUE) +
+    theme_bw()
+study_area
+```
