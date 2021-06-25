@@ -123,7 +123,7 @@ study_area <- ggplot() +
     geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
     geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = TRUE) + 
     scale_fill_manual(name = "Study Area",
-      values = c("ABNJ" = "coral3")) +
+      values = c("ABNJ" = "steelblue4")) +
     coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
             ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
             expand = TRUE) +
@@ -131,4 +131,4 @@ study_area <- ggplot() +
 study_area +
   labs(caption = 'shapefiles from Flanders Marine Institute (2019)')
 ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300)
-#ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg.jpg", width = 20, height = 15, dpi = 300)
+ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg.png", width = 20, height = 15, dpi = 300)

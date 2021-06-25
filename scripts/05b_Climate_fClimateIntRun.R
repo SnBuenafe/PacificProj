@@ -185,3 +185,77 @@ plot_velo +
   plot_annotation(tag_levels = 'A', tag_suffix = ')') +
   labs(caption = 'temperature data from GCMs of CMIP6')
 ggsave("pdfs/05_Climate/ClimateVelo.pdf", width = 20, height = 10, dpi = 300)  
+
+#################
+# Correlation
+################
+library(stats)
+library(Hmisc)
+RCE_SSP126_temp <- RCE_SSP126 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(RCE_126 = value)
+RCE_SSP126_temp
+
+RCE_SSP245_temp <- RCE_SSP245 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(RCE_245 = value)
+RCE_SSP245_temp
+
+RCE_SSP585_temp <- RCE_SSP585 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(RCE_585 = value)
+RCE_SSP585_temp
+
+velo_SSP126_temp <- velo_SSP126 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(velo_126 = value)
+velo_SSP126_temp
+
+velo_SSP245_temp <- velo_SSP245 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(velo_245 = value)
+velo_SSP245_temp
+
+velo_SSP585_temp <- velo_SSP585 %>% 
+  as_tibble() %>% 
+  select(cellsID, value) %>% 
+  rename(velo_585 = value)
+velo_SSP585_temp
+
+df <- left_join(RCE_SSP126_temp, RCE_SSP245_temp, by = 'cellsID') %>% 
+  left_join(RCE_SSP585_temp) %>% 
+  left_join(velo_SSP126_temp) %>% 
+  left_join(velo_SSP245_temp) %>% 
+  left_join(velo_SSP585_temp)
+df[,2:7]
+
+# subsample for shapiro test
+sub_RCE126 <- sample(df$RCE_126, size = 5000, replace = FALSE)
+shapiro.test(sub_RCE126)
+
+sub_RCE245 <- sample(df$RCE_245, size = 5000, replace = FALSE)
+shapiro.test(sub_RCE245)
+
+sub_RCE585 <- sample(df$RCE_585, size = 5000, replace = FALSE)
+shapiro.test(sub_RCE585)
+
+sub_velo126 <- sample(df$velo_126, size = 5000, replace = FALSE)
+shapiro.test(sub_velo126)
+
+sub_velo245 <- sample(df$velo_245, size = 5000, replace = FALSE)
+shapiro.test(sub_velo245)
+
+sub_velo585 <- sample(df$velo_585, size = 5000, replace = FALSE)
+shapiro.test(sub_velo585)
+# all are not normal ! therefore use spearman
+
+cor_df <- cor(df[,2:7], method = 'spearman')
+cor_df
+
+rcorr_df <- rcorr(as.matrix(df[,2:7]), type = 'spearman')
+rcorr_df

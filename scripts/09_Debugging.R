@@ -138,9 +138,9 @@ shapiro.test(sub_velo245)
 
 sub_velo585 <- sample(df$velo_585, size = 5000, replace = FALSE)
 shapiro.test(sub_velo585)
-# all are normal ! therefore use pearson
+# all are not normal ! therefore use spearman
 
-cor_df <- cor(df[,2:7], method = 'pearson')
+cor_df <- cor(df[,2:7], method = 'spearman')
 cor_df
 
 rcorr_df <- rcorr(as.matrix(df[,2:7]), type = 'pearson')

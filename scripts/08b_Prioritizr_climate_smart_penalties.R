@@ -1,3 +1,22 @@
+# This code was written by Tin Buenafe (2021)
+# email: tinbuenafe@gmail.com
+# Please do not distribute this code without permission.
+# There are no guarantees that this code will work perfectly.
+
+# This code employs the method of creating climate-smart plans by using the climate metrics as a linear 
+# penalty adding this to the problem() of prioritizr using the function add_linear_penalties()
+
+# loading packages
+#install.packages("pacman", "BiocManager", 'slam)
+#pacman::p_load(BiocManager)
+#devtools::install_github("prioritizr/prioritizr")
+#BiocManager::install("lpsymphony")
+#install.packages("/Library/gurobi911/mac64/R/gurobi_9.1-1_R_4.0.2.tgz", repos = NULL)
+
+pacman::p_load(sf, dplyr, sp, raster, prioritizr, prioritizrdata, BiocManager, tidyverse, fasterize, 
+               doParallel, patchwork, magrittr, irr, corrplot, patchwork)
+pacman::p_load(lpsymphony, prioritizr, gurobi, slam)
+
 #######################################################
 ## Calling recurring directories/functions/libraries ##
 #######################################################
@@ -16,7 +35,7 @@ cost <- readRDS('outputs/06_Cost/Large_Medium/costlayer.rds') %>%
   dplyr::select(-x, -y, -cost_log, -cost_categ)
 
 # create target list
-target <- seq(10, 100, by = 10) %>% 
+target <- seq(20, 100, by = 10) %>% 
   as_tibble() %>% 
   dplyr::rename(target = value) %>% 
   dplyr::mutate(eff_target = target*0.25)
@@ -30,23 +49,12 @@ source('scripts/07_Summary_create_kappacorrplot.R')
 # defining plot generalities
 library(RColorBrewer)
 library(patchwork)
-pal_rich <- c("FALSE" = "lightsteelblue2", "TRUE" = "sienna3")
+pal_rich <- c("FALSE" = "lightsteelblue2", "TRUE" = "steelblue4")
 solution <- c("Not selected PUs", "Selected PUs")
 world_sf <- readRDS("outputs/01_StudyArea/01a_StudyArea/PacificCenterLand.rds")
 
 source("scripts/study_area/fCreateRobinsonBoundary.R")
 Bndry <- fCreateRobinsonBoundary(west = 78, east = 140, north = 51, south = 60)
-
-# loading packages
-#install.packages("pacman", "BiocManager", 'slam)
-#pacman::p_load(BiocManager)
-#devtools::install_github("prioritizr/prioritizr")
-#BiocManager::install("lpsymphony")
-#install.packages("/Library/gurobi911/mac64/R/gurobi_9.1-1_R_4.0.2.tgz", repos = NULL)
-
-pacman::p_load(sf, dplyr, sp, raster, prioritizr, prioritizrdata, BiocManager, tidyverse, fasterize, 
-               doParallel, patchwork, magrittr, irr, corrplot, patchwork)
-pacman::p_load(lpsymphony, prioritizr, gurobi, slam)
 
 ##################################
 ### Creating plans ###
@@ -84,7 +92,7 @@ bycatch <-  filter_bycatch_uninformed %>%
   as_tibble()
 conservation_features <- full_join(commercial, bycatch)
 assign(paste0('joined_conservationfeat_uninformed'), conservation_features)
-features_list = unique(conservation_features$new_features) %>% 
+features_list <- unique(conservation_features$new_features) %>% 
   str_sort() # to make sure they are sorted alphabetically.
 assign(paste0('features_list_uninformed'), features_list)
 rm(conservation_features, features_list)
@@ -135,6 +143,7 @@ for(k in 1:nrow(target)){
     st_as_sf(sf_column_name = 'geometry')
   assign(paste0('prob_', scenario_list[i], '_target',target[k,1]),p)
   assign(paste0('solve_', scenario_list[i], '_target',target[k,1]),s)
+  saveRDS(s, paste0('outputs/08_Prioritizr/08c_penalty/spatial_plans/', 'solve_', scenario_list[i], '_target', target[k,1], '.rds'))
   rm(x,p,s)
   }
 }
@@ -160,9 +169,9 @@ for(k in 1:nrow(target)) {
   feat.nested[[k]] <- feat
 }
 feat.nested #[[k]][[i]], with k for each target and i for each scenario
-represent_feat <- bind_cols(features_list_uninformed, feat.nested) #just using features_list_SSP126, since it's the same for every climate scenario anynway.
-colnames(represent_feat)[1] <- 'features'
-write_csv(represent_feat, 'outputs/08_Prioritizr/08c_penalty/summary_represent_feat.csv')
+represent_feat_b <- bind_cols(features_list_uninformed, feat.nested) #just using features_list_SSP126, since it's the same for every climate scenario anynway.
+colnames(represent_feat_b)[1] <- 'features'
+write_csv(represent_feat_b, 'outputs/08_Prioritizr/08c_penalty/summary_represent_feat.csv')
 
 # summary stats!
 total_area = 31917*2667.6
@@ -190,8 +199,8 @@ for(k in 1:nrow(target)) {
   summary.nested[[k]] <- summary
 }
 summary.nested #[[k]][[i]], with k for each target and i for each scenario
-summary_stat <- bind_rows(summary.nested)
-write_csv(summary_stat, 'outputs/08_Prioritizr/08c_penalty/summary_stat.csv')
+summary_stat_b <- bind_rows(summary.nested)
+write_csv(summary_stat_b, 'outputs/08_Prioritizr/08c_penalty/summary_stat.csv')
 
 ##################################
 ## Plotting all solutions ##
@@ -212,14 +221,14 @@ for(k in 1:nrow(target)) {
                expand = TRUE) +
       ggtitle(scenario_list[i]) +
       theme_bw()
-    assign(paste0('gg_',scenario_list[i],'_',target[k,1]), gg)
+    assign(paste0('gg_b_',scenario_list[i],'_',target[k,1]), gg)
     
     rm(s, gg)
   }
-  gg1 <- get(paste0('gg_', scenario_list[1], '_', target[k,1]))
-  gg2 <- get(paste0('gg_', scenario_list[2], '_', target[k,1]))
-  gg3 <- get(paste0('gg_', scenario_list[3], '_', target[k,1]))
-  gg4 <- get(paste0('gg_', scenario_list[4], '_', target[k,1]))
+  gg1 <- get(paste0('gg_b_', scenario_list[1], '_', target[k,1]))
+  gg2 <- get(paste0('gg_b_', scenario_list[2], '_', target[k,1]))
+  gg3 <- get(paste0('gg_b_', scenario_list[3], '_', target[k,1]))
+  gg4 <- get(paste0('gg_b_', scenario_list[4], '_', target[k,1]))
   
   gg_targ <- gg1 + gg2 + gg3 + gg4 +
     plot_layout(ncol = 2, nrow = 2, guides = "collect") +
@@ -228,14 +237,14 @@ for(k in 1:nrow(target)) {
   ggsave(filename = paste0('plan_target', target[k,1], '.pdf'),
          plot = gg_targ, width = 21, height = 29.7, dpi = 300,
          path = 'pdfs/08_Prioritizr/08c_penalty/')
-  assign(paste0('gg_full_', target[k,1]), gg_targ)
+  assign(paste0('gg_full_b_', target[k,1]), gg_targ)
   rm(gg1, gg2, gg3, gg4)
 }
 
 # create plots subsetting 90, 60, 30; columns will be the scenarios and rows will be the targets
-gg_subset <- gg_SSP126_90 + gg_SSP245_90 + gg_SSP585_90 + gg_uninformed_90 +
-  gg_SSP126_60 + gg_SSP245_60 + gg_SSP585_60 + gg_uninformed_60 +
-  gg_SSP126_30 + gg_SSP245_30 + gg_SSP585_30 + gg_uninformed_30 +
+gg_subset <- gg_b_SSP126_90 + gg_b_SSP245_90 + gg_b_SSP585_90 + gg_b_uninformed_90 +
+  gg_b_SSP126_60 + gg_b_SSP245_60 + gg_b_SSP585_60 + gg_b_uninformed_60 +
+  gg_b_SSP126_30 + gg_b_SSP245_30 + gg_b_SSP585_30 + gg_b_uninformed_30 +
   plot_layout(ncol = 4, nrow = 3, guides = 'collect') & theme(title = element_blank())
 ggsave('outputs/08_Prioritizr/08c_penalty/subset_plans.png', gg_subset, width = 29.7, height = 21, dpi = 300)
 
@@ -243,32 +252,31 @@ ggsave('outputs/08_Prioritizr/08c_penalty/subset_plans.png', gg_subset, width = 
 ###### Creating stat figures ######
 ###################################
 # representation of features (not much differences between the % protection per feature)
-represent_feat.summary <- represent_feat %>% 
+represent_feat.summary_b <- represent_feat_b %>% 
   pivot_longer(cols = starts_with('target_'), names_to = 'plan', values_to = 'representation')
 
 # subset according to target and loop through it
 for(k in 1:nrow(target)) {
-  subsetted <- subset(represent_feat.summary, str_detect(plan, pattern = paste0('_', target[k,1], '_')))
+  subsetted <- subset(represent_feat.summary_b, str_detect(plan, pattern = paste0('_', target[k,1], '_')))
   circbplot <- create_circularbplot(subsetted, target[k,2])
-  assign(paste0('circbplot_target_', target[k,1]), circbplot)
+  assign(paste0('circbplot_b_target_', target[k,1]), circbplot)
   rm(subsetted, circbplot)
 }
 
 # saving circular barplots
-plot1 <- (circbplot_target_100 + circbplot_target_90 + circbplot_target_80) +
+plot1 <- (circbplot_b_target_100 + circbplot_b_target_90 + circbplot_b_target_80) +
   plot_layout(guides = 'collect') & theme(legend.position = 'bottom')
 ggsave('pdfs/08_Prioritizr/08c_penalty/circbplot_page1.pdf', plot1, width = 29.7, height = 21)
 
-plot2 <- (circbplot_target_70 + circbplot_target_60 + circbplot_target_50) +
+plot2 <- (circbplot_b_target_70 + circbplot_b_target_60 + circbplot_b_target_50) +
   plot_layout(guides = 'collect') & theme(legend.position = 'bottom')
 ggsave('pdfs/08_Prioritizr/08c_penalty/circbplot_page2.pdf', plot2, width = 29.7, height = 21)
 
-plot3 <- (circbplot_target_40 + circbplot_target_30 + circbplot_target_20) / 
-  (plot_spacer() + circbplot_target_10 + plot_spacer()) +
+plot3 <- (circbplot_b_target_40 + circbplot_b_target_30 + circbplot_b_target_20) +
   plot_layout(guides = 'collect') & theme(legend.position = 'bottom')
 ggsave('pdfs/08_Prioritizr/08c_penalty/circbplot_page3.pdf', plot3, width = 29.7, height = 21)
 
-plot_subset <- (circbplot_target_90 + circbplot_target_60 + circbplot_target_30) +
+plot_subset <- (circbplot_b_target_90 + circbplot_b_target_60 + circbplot_b_target_30) +
   plot_layout(guides = 'collect', nrow = 1) & theme(legend.position = 'bottom')
 ggsave('pdfs/08_Prioritizr/08c_penalty/circbplot_subset.pdf', plot_subset, width = 29.7, height = 10)
 ggsave('outputs/08_Prioritizr/08c_penalty/circbplot_subset.png', plot_subset, width = 29.7, height = 10)
@@ -277,7 +285,7 @@ ggsave('outputs/08_Prioritizr/08c_penalty/circbplot_subset.png', plot_subset, wi
 # plot total cost for all plans across climate scenarios
 scenario.legend_color <- c('SSP126' = 'yellow3', 'SSP245' = 'orange2', 
                            'SSP585' = 'salmon4', 'uninformed' = 'lightslategray', 'NA' = NA)
-cost_all <- ggplot(data = summary_stat, aes(x = target*0.25, group = scenario)) +
+cost_all_b <- ggplot(data = summary_stat_b, aes(x = target*0.25, group = scenario)) +
   geom_line(aes(color = scenario, y = log10(total_cost)), size = 0.8) +
   geom_point(aes(color = scenario, y = log10(total_cost))) +
   scale_color_manual(name = 'Climate scenario',
@@ -286,7 +294,7 @@ cost_all <- ggplot(data = summary_stat, aes(x = target*0.25, group = scenario)) 
   ylab("log10(cost)") +
   theme(legend.position = "bottom") +
   theme_classic()
-protected.area_all <- ggplot(data = summary_stat, aes(x = target*0.25, group = scenario)) +
+protected.area_all_b <- ggplot(data = summary_stat_b, aes(x = target*0.25, group = scenario)) +
   geom_line(aes(color = scenario, y = percent_area), size = 0.8) +
   geom_point(aes(color = scenario, y = percent_area)) +
   scale_color_manual(name = 'Climate scenario',
@@ -295,7 +303,7 @@ protected.area_all <- ggplot(data = summary_stat, aes(x = target*0.25, group = s
   ylab("Protected area (%)") +
   theme(legend.position = "bottom") +
   theme_classic()
-med.RCE_all <- ggplot(data = summary_stat %>% filter(scenario != 'uninformed'), aes(x = target*0.25, group = scenario)) +
+med.RCE_all_b <- ggplot(data = summary_stat_b %>% filter(scenario != 'uninformed'), aes(x = target*0.25, group = scenario)) +
   geom_line(aes(color = scenario, y = median_RCE), size = 0.8, show.legend = FALSE) +
   geom_point(aes(color = scenario, y = median_RCE), show.legend = FALSE) +
   scale_color_manual(name = 'Climate scenario',
@@ -304,7 +312,7 @@ med.RCE_all <- ggplot(data = summary_stat %>% filter(scenario != 'uninformed'), 
   ylab("Median RCE") +
   theme(legend.position = "bottom") +
   theme_classic()
-med.velocity_all <- ggplot(data = summary_stat %>% filter(scenario != 'uninformed'), aes(x = target*0.25, group = scenario)) +
+med.velocity_all_b <- ggplot(data = summary_stat_b %>% filter(scenario != 'uninformed'), aes(x = target*0.25, group = scenario)) +
   geom_line(aes(color = scenario, y = median_velocity), size = 0.8, show.legend = FALSE) +
   geom_point(aes(color = scenario, y = median_velocity), show.legend = FALSE) +
   scale_color_manual(name = 'Climate scenario',
@@ -314,52 +322,102 @@ med.velocity_all <- ggplot(data = summary_stat %>% filter(scenario != 'uninforme
   theme(legend.position = "bottom") +
   theme_classic()
 
-summary.all <- cost_all + protected.area_all + med.RCE_all + med.velocity_all +
+summary.all <- cost_all_b + protected.area_all_b + med.RCE_all_b + med.velocity_all_b +
   plot_layout(guides = 'collect', width = 15, height = 10, ncol = 2, nrow = 2) +
   plot_annotation(tag_level = 'A', tag_suffix = ')')
 ggsave('pdfs/08_Prioritizr/08c_penalty/summary_all.pdf', summary.all, width = 8, height = 5, dpi = 300)
 
 # plotting cost, protected area, median RCE and median velocity for runs that will be reported in the main body
-subset <- summary_stat %>% 
+subset_b <- summary_stat_b %>% 
   filter(target %in% c('30','60','90'))
 
-cost_subset <- ggplot(data = subset, aes(x = as.factor(target*0.25), group = scenario)) +
+# intersecting RCE and velocity with uninformed plans across all climate scenarios
+stack <- list()
+target_stack <- list()
+for(k in 1:nrow(target)) {
+  for(i in 1:length(scenario_list)) { # only until 3rd
+    num = as.numeric(target[k,1])
+    sumstat <- summary_stat_b %>% 
+      dplyr::filter(target == num)
+    if(i < 4){
+      RCE_temp <- readRDS(paste0(RCE_directory, 'RCE', scenario_list[i], '.rds')) %>% 
+        as_tibble() %>% 
+        dplyr::select(-area_km2, -trans_value, -rce_categ) %>% 
+        rename(RCE = value)
+      velocity_temp <- readRDS(paste0(velocity_directory, 'velocity', scenario_list[i], '.rds')) %>% 
+        as_tibble() %>% 
+        dplyr::select(-area_km2, -trans_value, -velo_categ) %>% 
+        rename(velocity = value)
+      xx <- get(paste0('solve_uninformed_target',target[k,1])) %>% 
+        as_tibble() %>% 
+        dplyr::select(cellsID, geometry, solution_1)
+      yy <- full_join(xx, RCE_temp, by = c('cellsID','geometry')) %>% 
+        full_join(velocity_temp, by = c('cellsID','geometry')) %>% 
+        dplyr::filter(solution_1 == 1) %>% 
+        dplyr::summarise(median_RCE = median(RCE), median_velocity = median(velocity)) %>% 
+        dplyr::mutate(scenario = 'uninformed', uninformed = scenario_list[i])
+      yy$target <- num
+      zz <- sumstat %>% 
+        filter(scenario == scenario_list[i]) %>% 
+        dplyr::select(median_velocity, median_RCE, target, scenario) %>% 
+        dplyr::mutate(uninformed = scenario_list[i])
+      stack[[i]] <- bind_rows(yy, zz)
+      rm(RCE_temp, velocity_temp, xx, yy, zz, sumstat, num)
+    }else{}
+  }
+  target_stack[[k]] <- stack
+}
+stack_df <- bind_rows(target_stack)
+
+stack_df.summary_b <- stack_df %>% 
+  filter(target %in% c('30','60','90')) %>% 
+  dplyr::mutate(target = ifelse(target == 30, 7.5,
+                                ifelse(target == 60, 15,
+                                       ifelse(target == 90, 22.5, NA))))
+
+med.RCE_subset_b <- ggplot(data = stack_df.summary_b, aes(x = as.factor(uninformed), group = scenario)) +
+  geom_bar(aes(y = median_RCE, fill = scenario), stat = 'identity', position = 'stack') +
+  scale_fill_manual(name = 'Climate scenario',
+                    values = scenario.legend_color) +
+  xlab("Climate Scenario") + 
+  ylab("Median RCE") +
+  facet_grid(.~target) +
+  theme_classic() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+med.velocity_subset_b <- ggplot(data = stack_df.summary_b, aes(x = as.factor(uninformed), group = scenario)) +
+  geom_bar(aes(y = median_velocity, fill = scenario), stat = 'identity', position = 'stack') +
+  scale_fill_manual(name = 'Climate scenario',
+                    values = scenario.legend_color) +
+  xlab("Climate Scenario") + 
+  ylab("Median Climate Velocity") +
+  facet_grid(.~target) +
+  theme_classic() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+
+cost_subset_b <- ggplot(data = subset_b, aes(x = as.factor(target*0.25), group = scenario)) +
   geom_bar(aes(y = log10(total_cost), fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
-  xlab(" ") + 
+  xlab("Target (%)") + 
   ylab("log10(cost") +
   theme(legend.position = "bottom") +
   theme_classic()
 
-protected.area_subset <- ggplot(data = subset, aes(x = as.factor(target*0.25), group = scenario)) +
+protected.area_subset_b <- ggplot(data = subset_b, aes(x = as.factor(target*0.25), group = scenario)) +
   geom_bar(aes(y = percent_area, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
-  xlab(" ") + 
+  xlab("Target (%)") + 
   ylab("Protected Area (%)") +
   theme(legend.position = "bottom") +
   theme_classic()
 
-med.RCE_subset <- ggplot(data = subset, aes(x = as.factor(target*0.25), group = scenario)) +
-  geom_bar(aes(y = median_RCE, fill = scenario), stat = 'identity', position = position_dodge()) +
-  scale_fill_manual(name = 'Climate scenario',
-                    values = scenario.legend_color) +
-  xlab("Target (%)") + 
-  ylab("Median RCE") +
-  theme(legend.position = "bottom") +
-  theme_classic()
-
-med.velocity_subset <- ggplot(data = subset, aes(x = as.factor(target*0.25), group = scenario)) +
-  geom_bar(aes(y = median_velocity, fill = scenario), stat = 'identity', position = position_dodge()) +
-  scale_fill_manual(name = 'Climate scenario',
-                    values = scenario.legend_color) +
-  xlab("Target (%)") + 
-  ylab("Median Climate Velocity") +
-  theme(legend.position = "bottom") +
-  theme_classic()
-
-summary.subset <- cost_subset + protected.area_subset + med.RCE_subset + med.velocity_subset +
+summary.subset <- cost_subset_b + protected.area_subset_b + med.RCE_subset_b + med.velocity_subset_b +
   plot_layout(guides = 'collect', width = 15, height = 10, ncol = 2, nrow = 2) +
   plot_annotation(tag_level = 'A', tag_suffix = ')')
 ggsave('pdfs/08_Prioritizr/08c_penalty/summary_subset.pdf', summary.subset, width = 8, height = 5, dpi = 300)
@@ -390,7 +448,7 @@ for(k in 1:nrow(target)){
   
   # s_no.regret shows the full data of the no-regret
   s_no.regret <- joined_solutions %>% 
-    dplyr::mutate(final_solution = case_when(solution_1_1 == TRUE & solution_1_2 == TRUE & solution_1_3 == TRUE & solution_1_4 == TRUE ~ TRUE, 
+    dplyr::mutate(final_solution = case_when(solution_1_1 == TRUE & solution_1_2 == TRUE & solution_1_3 == TRUE ~ TRUE, 
                                              TRUE ~ FALSE))
   assign(paste0('s_no.regret_target_', target[k,1]), s_no.regret)
   
@@ -420,23 +478,22 @@ for(k in 1:nrow(target)) {
     labs(title = paste0('Target: ', target[k,2], '%')) + 
     theme_bw()
   
-  assign(paste0('ggfreq_no.regret_target_',target[k,1]), g)
+  assign(paste0('ggfreq_b_no.regret_target_',target[k,1]), g)
   rm(s, g)
 }
 # all
-gg_freq_no.regret_all <- ggfreq_no.regret_target_100 + ggfreq_no.regret_target_90 + ggfreq_no.regret_target_80 +
-  ggfreq_no.regret_target_70 + ggfreq_no.regret_target_60 + ggfreq_no.regret_target_50 + ggfreq_no.regret_target_40 +
-  ggfreq_no.regret_target_30 + ggfreq_no.regret_target_20 + ggfreq_no.regret_target_10 +
-  plot_layout(ncol = 2, nrow = 5, guides = 'collect') +
+gg_freq_no.regret_all <- ggfreq_b_no.regret_target_100 + ggfreq_b_no.regret_target_90 + ggfreq_b_no.regret_target_80 +
+  ggfreq_b_no.regret_target_70 + ggfreq_b_no.regret_target_60 + ggfreq_b_no.regret_target_50 + ggfreq_b_no.regret_target_40 +
+  ggfreq_b_no.regret_target_30 + ggfreq_b_no.regret_target_20 + 
+  plot_layout(ncol = 3, nrow = 3, guides = 'collect') +
   plot_annotation(tag_levels = 'A', tag_suffix = ')')
 ggsave('pdfs/08_Prioritizr/08c_penalty/freq_no.regret.plan_all.pdf', gg_freq_no.regret_all, width = 21, height = 29.7, dpi = 300)
 # subset
-gg_freq_no.regret_subset <- ggfreq_no.regret_target_90 + ggfreq_no.regret_target_60 + ggfreq_no.regret_target_30 +
+gg_freq_no.regret_subset <- ggfreq_b_no.regret_target_90 + ggfreq_b_no.regret_target_60 + ggfreq_b_no.regret_target_30 +
   plot_layout(nrow = 1, guides = 'collect') +
   plot_annotation(tag_levels = 'A', tag_suffix = ')')
 ggsave('pdfs/08_Prioritizr/08c_penalty/freq_no.regret.plan_subset.pdf', gg_freq_no.regret_subset, width = 15, height = 5, dpi = 300)
 ggsave('outputs/08_Prioritizr/08c_penalty/freq_no.regret.plan_subset.png', gg_freq_no.regret_subset, width = 15, height = 5, dpi = 300)
-
 
 # no-regret plans
 for(k in 1:nrow(target)){
@@ -452,22 +509,22 @@ for(k in 1:nrow(target)){
              expand = TRUE) +
     labs(title = paste0('Target: ', target[k,2], '%')) + 
     theme_bw()
-  assign(paste0('gg_no.regret_target_',target[k,1]), g)
+  assign(paste0('gg_b_no.regret_target_',target[k,1]), g)
   rm(s, g)
 }
 # all
-gg_no.regret_all <- gg_no.regret_target_100 + gg_no.regret_target_90 + gg_no.regret_target_80 + gg_no.regret_target_70 +
-  gg_no.regret_target_60 + gg_no.regret_target_50 + gg_no.regret_target_40 + gg_no.regret_target_30 + gg_no.regret_target_20 +
-  gg_no.regret_target_10 +
-  plot_layout(ncol = 2, nrow = 5, guides = 'collect') +
+gg_no.regret_all <- gg_b_no.regret_target_100 + gg_b_no.regret_target_90 + gg_b_no.regret_target_80 + gg_b_no.regret_target_70 +
+  gg_b_no.regret_target_60 + gg_b_no.regret_target_50 + gg_b_no.regret_target_40 + gg_b_no.regret_target_30 + gg_b_no.regret_target_20 +
+  plot_layout(ncol = 3, nrow = 3, guides = 'collect') +
   plot_annotation(tag_levels = 'A', tag_suffix = ')')
 ggsave('pdfs/08_Prioritizr/08c_penalty/no.regret.plan_all.pdf', gg_no.regret_all, width = 21, height = 29.7, dpi = 300)
 # subset
-gg_no.regret_subset <- gg_no.regret_target_90 + gg_no.regret_target_60 + gg_no.regret_target_30 +
-  plot_layout(nrow = 1, guides = 'collect') +
+gg_no.regret_subset <- gg_b_no.regret_target_90 + gg_b_no.regret_target_60 + gg_b_no.regret_target_30 + cost_noregret_b +
+  protected.area_noregret_b +
+  plot_layout(nrow = 2, ncol = 3, guides = 'collect') +
   plot_annotation(tag_levels = 'A', tag_suffix = ')')
-ggsave('pdfs/08_Prioritizr/08c_penalty/no.regret.plan_subset.pdf', gg_no.regret_subset, width = 15, height = 5, dpi = 300)
-ggsave('outputs/08_Prioritizr/08c_penalty/no.regret.plan_subset.png', gg_no.regret_subset, width = 15, height = 5, dpi = 300)
+ggsave('pdfs/08_Prioritizr/08c_penalty/no.regret.plan_subset.pdf', gg_no.regret_subset, width = 10, height = 5, dpi = 300)
+ggsave('outputs/08_Prioritizr/08c_penalty/no.regret.plan_subset.png', gg_no.regret_subset, width = 10, height = 5, dpi = 300)
 
 ###################################
 ###### Creating stat figures ######
@@ -485,10 +542,25 @@ for(k in 1:nrow(target)) {
     mutate(target = as.numeric(target[k,1])) %>% 
     as_tibble()
 }
-no.regret_summary <- bind_rows(no.regret_list) %>% 
+no.regret_summary_b <- bind_rows(no.regret_list) %>% 
   as_tibble() %>% 
   dplyr::select(-geometry)
-write_csv(no.regret_summary, 'outputs/08_Prioritizr/08c_penalty/summary_noregret.csv')
+write_csv(no.regret_summary_b, 'outputs/08_Prioritizr/08c_penalty/summary_noregret.csv')
+
+cost_noregret_b <- ggplot(data = no.regret_summary_b %>% filter(target %in% c('30','60','90')), aes(x = as.factor(target*0.25))) +
+  geom_bar(aes(y = log10(total_cost)), stat = 'identity', position = position_dodge(), fill = 'thistle3') +
+  xlab("Target (%)") + 
+  ylab("log10(cost)") +
+  theme(legend.position = "bottom") +
+  theme_classic()
+
+protected.area_noregret_b <- ggplot(data = no.regret_summary_b %>% filter(target %in% c('30','60','90')), aes(x = as.factor(target*0.25))) +
+  geom_bar(aes(y = percent_area), stat = 'identity', position = position_dodge(), fill = 'indianred2') +
+  xlab("Target (%)") + 
+  ylab("Protected Area (%)") +
+  theme(legend.position = "bottom") +
+  theme_classic()
+# add these two objects to summaries of noregret subsets above!
 
 ##########################################################################
 ###### Creating Kappa Corrplots for selected spatial plan solutions ######
