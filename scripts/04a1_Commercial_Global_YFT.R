@@ -107,20 +107,47 @@ write_csv(yft, file = "inputs/mercer/yft.csv")
 
 # Plotting model effects
 MaxPA <- 0.25
-plot1 <- PlotVisreg(model4, "SST", Ylab = " Probability occurrence", Xlab = "SST", MaxPA)
+plot1 <- PlotVisreg(model4, "SST", Ylab = " Probability occurrence", Xlab = "SST", MaxPA) +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
 plot1
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a1_YFT/bestmodel_SST.png', plot1, width = 10, height = 10, dpi = 600)
 
-plot2 <- PlotVisreg(model4, "Season2", Ylab = " ", Xlab = "Season", MaxPA)
+plot2 <- PlotVisreg(model4, "Season2", Ylab = " ", Xlab = "Season", MaxPA) +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
 plot2
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a1_YFT/bestmodel_seasons.png', plot2, width = 10, height = 10, dpi = 600)
 
-plot3 <- PlotVisreg(model4, "MLD", Ylab = " ", Xlab = "MLD", MaxPA)
+
+plot3 <- PlotVisreg(model4, "MLD", Ylab = " ", Xlab = "MLD", MaxPA) +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) 
 plot3
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a1_YFT/bestmodel_MLD.png', plot3, width = 10, height = 10, dpi = 600)
 
-plot4 <- PlotVisreg(model4, "Dist2Coast", Ylab = " Probability occurrence", Xlab = "Distance to coast", MaxPA)
+
+plot4 <- PlotVisreg(model4, "Dist2Coast", Ylab = " Probability occurrence", Xlab = "Distance to coast", MaxPA) +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) 
 plot4
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a1_YFT/bestmodel_dist2coast.png', plot4, width = 10, height = 10, dpi = 600)
 
-plot5 <- PlotVisreg(model4, "Chl", Ylab = " ", Xlab = "Chl", MaxPA)
+plot5 <- PlotVisreg(model4, "Chl", Ylab = " ", Xlab = "Chl", MaxPA)  +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank()) 
 plot5
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a1_YFT/bestmodel_Chl.png', plot5, width = 10, height = 10, dpi = 600)
 
 # plot6 <- visreg2d(model4, yvar = "Latitude", xvar = "Longitude", scale = "response", 
 #          plot.type = "persp", theta = 45, phi = 10, r = 100, 
@@ -129,8 +156,17 @@ plot5
 #          color = "deepskyblue2")
 # plot6
 # NOTE: Can't convert visreg2d to a gg object (which is needed to use patchwork easily) when using plot.type = "persp", so use contour plot
-plot6 <- visreg2d(model4, yvar = "Latitude", xvar = "Longitude", scale = "response", plot.type = "gg")
+plot6 <- visreg2d(model4, yvar = "Latitude", xvar = "Longitude", scale = "response", plot.type = "gg") +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.key.width = unit(1,"cm"),
+        legend.text = element_text(size = 20),
+        legend.title = element_blank()) 
 plot6
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a1_YFT/bestmodel_LatLong.png', plot6, width = 10, height = 10, dpi = 600)
+
 
 # Combine plots for yft
 (plot1 | plot2 | plot3) / (plot4 | plot5 | plot6) +
@@ -145,7 +181,14 @@ p <- PlotMap(df, "Preds")
 p
 ggsave("outputs/04_Commercial/04a_GAMPlots/04a1_YFT/YFT_map.png", p, dpi = 1200)
 
-p <- PlotMap(df, "Preds2")
+p <- PlotMap(df, "Preds2") +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.key.width = unit(1,"cm"),
+        legend.text = element_text(size = 15),
+        legend.title = element_blank()) 
 p
 ggsave("outputs/04_Commercial/04a_GAMPlots/04a1_YFT/YFT_map_presence.png", p, dpi = 600)
 

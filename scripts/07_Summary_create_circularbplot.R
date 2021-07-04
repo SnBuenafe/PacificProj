@@ -1,7 +1,7 @@
 create_circularbplot <- function(df, target) {
   # colors
-  scenario.legend_color <- c('SSP126' = 'yellow3', 'SSP245' = 'orange2', 
-                             'SSP585' = 'salmon4', 'uninformed' = 'lightslategray', 'NA' = NA)
+  scenario.legend_color <- c('SSP126' = 'darkseagreen', 'SSP245' = 'tan3', 
+                             'SSP585' = 'salmon4', 'uninformed' = 'grey30', 'NA' = NA)
   scenario.legend_list <- c('SSP126', 'SSP245', 'SSP585', 'uninformed', ' ')
   species.legend_color <- c('Albacore tuna' = 'cornflowerblue', 'Skipjack tuna' = 'cadetblue4', 
                             'Swordfish' = 'skyblue', 'Yellowfin tuna' = 'paleturquoise3',
@@ -34,8 +34,31 @@ create_circularbplot <- function(df, target) {
                                 str_detect(features, pattern = "YFT") ~ "Yellowfin tuna")) %>% 
     dplyr::rename(value = representation)
   
-  data <- df.manip
- 
+  # adding NA rows for each feature
+  ALB <- data.frame(features = 'ALB', plan = NA, value = 0, scenario = NA, group = 'commercial', individual = 'Albacore tuna')
+  Caretta <- data.frame(features = 'Caretta_caretta_IUCN', plan = NA, value = 0, scenario = NA, group = 'bycatch')
+  Chelonia <- data.frame(features = 'Chelonia_mydas_IUCN', plan = NA, value = 0, scenario = NA, group = 'bycatch')
+  Dermochelys <- data.frame(features  = 'Dermochelys_coriacea_IUCN', plan = NA, value = 0, scenario = NA, group = 'bycatch')
+  Eretmochelys <- data.frame(features  = 'Eretmochelys_imbricata_IUCN', plan = NA, value = 0, scenario = NA, group = 'bycatch')
+  Lepidochelys <- data.frame(features  = 'Lepidochelys_olivacea_IUCN', plan = NA, value = 0, scenario = NA, group = 'bycatch')
+  SKP <- data.frame(features  = 'SKP', plan = NA, value = 0, scenario = NA, group = 'commercial')
+  SWO <- data.frame(features  = 'SWO', plan = NA, value = 0, scenario = NA, group = 'commercial')
+  YFT <- data.frame(features  = 'YFT', plan = NA, value = 0, scenario = NA, group = 'commercial')
+  
+
+  data <- df.manip %>% 
+    bind_rows(ALB) %>% 
+    bind_rows(Caretta) %>% 
+    bind_rows(Chelonia) %>% 
+    bind_rows(Dermochelys) %>% 
+    bind_rows(Eretmochelys) %>% 
+    bind_rows(Lepidochelys) %>% 
+    bind_rows(SKP) %>% 
+    bind_rows(SWO) %>% 
+    bind_rows(YFT) %>% 
+    group_by(group) %>% 
+    arrange(features)
+  
   # creating plot
   # Set a number of 'empty bar' to add at the end of each group
   empty_bar <- 1
@@ -61,6 +84,8 @@ create_circularbplot <- function(df, target) {
     dplyr::summarize(start = min(id), end = max(id)) %>% 
     dplyr::mutate(title = mean(c(start, end)))
   
+  species_data[1,3] <- 30
+
   # Get the name and the y position of each label for the species
   label_sp <- data %>% 
     group_by(individual) %>% 
@@ -82,8 +107,7 @@ create_circularbplot <- function(df, target) {
     # plotting the bars
     geom_bar(aes(x = as.factor(id), y = value, fill = scenario), 
              stat = "identity", 
-             position = 'dodge', 
-             alpha = 0.5) +
+             position = 'dodge') +
     
     # defining colors of the bars
     scale_fill_manual(name = "Solution",
@@ -92,52 +116,46 @@ create_circularbplot <- function(df, target) {
     
     # Add text showing the value of each 100/75/50/25 lines
     geom_segment(data = grid_data, 
-                 aes(x = end, y = 5, xend = start, yend = 5), 
-                 colour = "grey", 
-                 alpha = 1, 
-                 size = 0.5 , 
-                 inherit.aes = FALSE ) +
-    geom_segment(data = grid_data, 
                  aes(x = end, y = 10, xend = start, yend = 10), 
-                 colour = "grey", 
+                 colour = "grey50", 
                  alpha = 1, 
                  size = 0.5 , 
-                 inherit.aes = FALSE ) +
-    geom_segment(data = grid_data, 
-                 aes(x = end, y = 15, xend = start, yend = 15), 
-                 colour = "grey", 
-                 alpha = 1, 
-                 size = 0.5, 
                  inherit.aes = FALSE ) +
     geom_segment(data = grid_data, 
                  aes(x = end, y = 20, xend = start, yend = 20), 
-                 colour = "grey", 
-                 alpha = 1,
-                 size = 0.5,
-                 inherit.aes = FALSE ) +
-    geom_segment(data = grid_data, 
-                 aes(x = end, y = 25, xend = start, yend = 25), 
-                 colour = "grey", 
+                 colour = "grey50", 
                  alpha = 1,
                  size = 0.5,
                  inherit.aes = FALSE ) +
     geom_segment(data = grid_data, 
                  aes(x = end, y = 30, xend = start, yend = 30), 
-                 colour = "grey", 
+                 colour = "grey50", 
                  alpha = 1,
                  size = 0.5,
                  inherit.aes = FALSE ) +
-    annotate("text", x = rep(max(data$id),6), 
-             y = c(5, 10, 15, 20, 25, 30), 
-             label = c('5','10','15','20','25', '30'), 
-             color = "grey", 
+    geom_segment(data = grid_data, 
+                 aes(x = end, y = 40, xend = start, yend = 40), 
+                 colour = "grey50", 
+                 alpha = 1,
+                 size = 0.5,
+                 inherit.aes = FALSE ) +
+    geom_segment(data = grid_data, 
+                 aes(x = end, y = 50, xend = start, yend = 50), 
+                 colour = "grey50", 
+                 alpha = 1,
+                 size = 0.5,
+                 inherit.aes = FALSE ) +
+    annotate("text", x = rep(max(data$id),5), 
+             y = c(10, 20, 30, 40, 50), 
+             label = c('10','20','30','40','50'), 
+             color = "grey50", 
              size=4, 
              angle = -5, 
              fontface = "bold", 
              hjust=0.5) +
     
     # setting limitations of actual plot
-    ylim(-50,40) +
+    ylim(-50,55) +
     theme_minimal() +
     coord_polar() + 
     
@@ -161,7 +179,7 @@ create_circularbplot <- function(df, target) {
     
     # Adding the lines for the species
     geom_segment(data = species_data, 
-                 aes(x = start, y = 35, xend = end, yend = 35, color = individual), 
+                 aes(x = start, y = 55, xend = end, yend = 55, color = individual), 
                  alpha = 1, 
                  size = 5, 
                  inherit.aes = FALSE)  +
@@ -174,7 +192,7 @@ create_circularbplot <- function(df, target) {
     geom_errorbar(aes(y = target, ymax = target, ymin = target), 
                   color = 'red', 
                   linetype = 'dashed', 
-                  size = 1) +
+                  size = 0.8) +
     
     theme(
       legend.position = "bottom",

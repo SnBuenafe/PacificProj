@@ -119,16 +119,30 @@ saveRDS(PUsPac, file = "outputs/01_StudyArea/01a_StudyArea/PacificABNJGrid_05deg
 ## Plotting ##
 ##############
 study_area <- ggplot() +
-    geom_sf(data = pacific_robinson, colour = NA, fill = NA, size = 0.2, show.legend = "line") +
-    geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = "line") +
-    geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = TRUE) + 
+    geom_sf(data = pacific_robinson, colour = NA, fill = NA, size = 0.2, show.legend = FALSE) +
+    geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = FALSE) +
+    geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = FALSE) + 
     scale_fill_manual(name = "Study Area",
       values = c("ABNJ" = "steelblue4")) +
     coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
             ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
             expand = TRUE) +
-    theme_bw()
+    theme_bw() +
+    theme(axis.text.x = element_text(size = 25),
+          axis.text.y = element_text(size = 25))
 study_area +
   labs(caption = 'shapefiles from Flanders Marine Institute (2019)')
 ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg.pdf", width = 20, height = 15, dpi = 300)
-ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg.png", width = 20, height = 15, dpi = 300)
+ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg.png", width = 20, height = 10, dpi = 600)
+
+inset_studyarea <- ggplot() +
+  geom_sf(data = pacific_robinson, colour = NA, fill = NA, size = 0.2, show.legend = FALSE) +
+  geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = FALSE) +
+  geom_sf(data = PUsPac, colour = "grey64", aes(fill = "ABNJ"), size = 0.1, show.legend = FALSE) + 
+  scale_fill_manual(name = "Study Area",
+                    values = c("ABNJ" = "steelblue4")) +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin/5, st_bbox(Bndry)$xmax/5), # Set limits based on Bndry bbox
+           ylim = c(st_bbox(Bndry)$ymin/5, st_bbox(Bndry)$ymax/5),
+           expand = TRUE) +
+  theme_bw()
+ggsave("pdfs/01_StudyArea/PacificABNJGrid_05deg_inset.png", width = 20, height = 15, dpi = 600)

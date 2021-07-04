@@ -89,3 +89,32 @@ iucn_turtle_plots <- (loggerhead_plot | green_plot | leatherback_plot) / (hawksb
                   caption = 'shapefiles from IUCN Red List (2021)')
 iucn_turtle_plots
 ggsave("pdfs/03_IUCN/PacificTurtles_IUCN.pdf", width = 29.7, height = 21, dpi = 300)
+
+## plotting richness
+IUCN_FeatInt_run01 <- readRDS("outputs/03_IUCN/03d_fFeaturesInt/bycatch_features.rds")
+temp_bycatch <- IUCN_FeatInt_run01 %>% 
+  group_by(cellsID) %>% 
+  dplyr::summarise(freq = length(unique(feature_names)))
+temp_bycatch
+
+bycatch_richness <- ggplot() +
+  geom_sf(data = world_robinson, color = "grey20", fill="grey20", size = 0.1, show.legend = FALSE) +
+  geom_sf(data = temp_bycatch, aes(fill = as.factor(freq)), colour = "grey64", size = 0.1) + 
+  scale_fill_brewer(name = 'Bycatch richness',
+                    type = 'seq',
+                    palette = 'BuGn',
+                    aesthetics = 'fill') +
+  coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), # Set limits based on Bndry bbox
+           ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
+           expand = TRUE) +
+  theme_bw() +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        legend.title = element_text(size = 25),
+        legend.text = element_text(size = 25),
+        legend.key.width = unit(1,"cm"))
+bycatch_richness
+ggsave("pdfs/03_IUCN/PacificTurtles_IUCN_richness.png", width = 20, height = 10, dpi = 600)
+
+
+

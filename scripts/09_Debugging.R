@@ -145,3 +145,21 @@ cor_df
 
 rcorr_df <- rcorr(as.matrix(df[,2:7]), type = 'pearson')
 rcorr_df
+
+
+# check skewness as well
+library(moments)
+
+# for cost
+cost <- readRDS('outputs/06_Cost/Large_Medium/costlayer.rds') %>% 
+  as_tibble() %>% 
+  dplyr::select(-x, -y, -cost_log, -cost_categ, -geometry)
+sub_cost <- sample(cost$cost, size = 5000, replace = FALSE)
+
+skewness(sub_cost) # positive
+skewness(sub_RCE126)
+skewness(sub_RCE245)
+skewness(sub_RCE585)
+skewness(sub_velo126)
+skewness(sub_velo245)
+skewness(sub_velo585)

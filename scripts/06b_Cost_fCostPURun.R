@@ -56,7 +56,14 @@ costplot_largexmedium <- ggplot()+
                             coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                      ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                      expand = TRUE) +
-                            theme_bw()
+                            theme_bw() +
+                            theme(axis.text.x = element_text(size = 25),
+                                  axis.text.y = element_text(size = 25),
+                                  legend.title = element_text(size = 25),
+                                  legend.text = element_text(size = 25),
+                                  legend.key.width = unit(1,"cm"))
+  
 costplot_largexmedium +
   labs(caption = "2006 - 2015 catch data from Watson (2017) and ex-vessel prices from Tai et al. (2017)")
 ggsave("pdfs/06_Cost/CostLayer_LargexMedium.pdf", width = 20, height = 10, dpi = 300)
+ggsave("pdfs/06_Cost/CostLayer_LargexMedium.png", width = 20, height = 10, dpi = 600)

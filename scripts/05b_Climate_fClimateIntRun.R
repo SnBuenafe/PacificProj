@@ -61,8 +61,8 @@ RCE_SSP585 <- fClimateInt(input = "RCE",
 
 # plots for RCE
 plotRCE_SSP126 <- ggplot()+
-                      geom_sf(data = RCE_SSP126, aes(color = rce_categ)) +
-                      scale_color_gradientn(name = "RCE index",
+                      geom_sf(data = RCE_SSP126, aes(fill = rce_categ), colour = "grey64", size = 0.1, show.legend = FALSE) +
+                      scale_fill_gradientn(name = "RCE index",
                                             colours = pal,
                                             limits = c(1, 10),
                                             breaks = seq(1, 10, 1),
@@ -71,11 +71,17 @@ plotRCE_SSP126 <- ggplot()+
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                expand = TRUE) +
-                      labs(title = "SSP-1.26") +
-                      theme_bw()
+#                      labs(title = "SSP-1.26") +
+                      theme_bw() +
+                      theme(axis.text.x = element_text(size = 25),
+                            axis.text.y = element_text(size = 25),
+                            legend.title = element_text(size = 25),
+                            legend.text = element_text(size = 25),
+                            legend.key.width = unit(1,"cm"))
+ggsave('pdfs/05_Climate/RCE_SSP126.png', width = 20, height = 10, dpi = 600)
 plotRCE_SSP245 <- ggplot()+
-                      geom_sf(data = RCE_SSP245, aes(color = rce_categ)) +
-                      scale_color_gradientn(name = "RCE index",
+                      geom_sf(data = RCE_SSP245, aes(fill = rce_categ), colour = "grey64", size = 0.1, show.legend = FALSE) +
+                      scale_fill_gradientn(name = "RCE index",
                                             colours = pal,
                                             limits = c(1, 10),
                                             breaks = seq(1, 10, 1),
@@ -84,22 +90,33 @@ plotRCE_SSP245 <- ggplot()+
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                expand = TRUE) +
-                      labs(title = "SSP-2.45") +
-                      theme_bw()
+#                      labs(title = "SSP-2.45") +
+                      theme_bw() +
+                      theme(axis.text.x = element_text(size = 25),
+                            axis.text.y = element_text(size = 25),
+                            legend.title = element_text(size = 25),
+                            legend.text = element_text(size = 25),
+                            legend.key.width = unit(1,"cm"))
+ggsave('pdfs/05_Climate/RCE_SSP245.png', width = 20, height = 10, dpi = 600)
 plotRCE_SSP585 <- ggplot()+
-                      geom_sf(data = RCE_SSP585, aes(color = rce_categ)) +
-                      scale_color_gradientn(name = "RCE index",
+                      geom_sf(data = RCE_SSP585, aes(fill = rce_categ), colour = "grey64", size = 0.1) +
+                      scale_fill_gradientn(name = "RCE index",
                                             colours = pal,
                                             limits = c(1, 10),
                                             breaks = seq(1, 10, 1),
-                                            aesthetics = c("color","fill"),
                                             labels = RCE_cat) +
                       geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                expand = TRUE) +
-                      labs(title = "SSP-5.85") +
-                      theme_bw()
+#                      labs(title = "SSP-5.85") +
+                      theme_bw() +
+                      theme(axis.text.x = element_text(size = 25),
+                            axis.text.y = element_text(size = 25),
+                            legend.title = element_text(size = 25),
+                            legend.text = element_text(size = 25),
+                            legend.key.width = unit(1,"cm"))
+ggsave('pdfs/05_Climate/RCE_SSP585.png', width = 20, height = 10, dpi = 600)
 
 ##############################
 #### Running for Velocity ####
@@ -125,8 +142,8 @@ velo_SSP585 <- fClimateInt(input = "velocity",
 
 # plots for climate velocity
 plotvelo_SSP126 <- ggplot()+
-                      geom_sf(data = velo_SSP126, aes(color = velo_categ)) +
-                      scale_color_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
+                      geom_sf(data = velo_SSP126, aes(fill = velo_categ), colour = "grey64", size = 0.1, show.legend = FALSE) +
+                      scale_fill_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
                                             colours = pal1,
                                             limits = c(1, 11),
                                             breaks = seq(1, 11, 1),
@@ -136,11 +153,17 @@ plotvelo_SSP126 <- ggplot()+
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                expand = TRUE) +
-                      labs(title = "SSP-1.26") +
-                      theme_bw()
+#                      labs(title = "SSP-1.26") +
+                      theme_bw() +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        legend.title = element_text(size = 25),
+        legend.text = element_text(size = 25),
+        legend.key.width = unit(1,"cm"))
+ggsave('pdfs/05_Climate/velocity_SSP126.png', width = 20, height = 10, dpi = 600)
 plotvelo_SSP245 <- ggplot()+
-                      geom_sf(data = velo_SSP245, aes(color = velo_categ)) +
-                      scale_color_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
+                      geom_sf(data = velo_SSP245, aes(fill = velo_categ), colour = "grey64", size = 0.1, show.legend = FALSE) +
+                      scale_fill_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
                                             colours = pal1,
                                             limits = c(1, 11),
                                             breaks = seq(1, 11, 1),
@@ -150,33 +173,48 @@ plotvelo_SSP245 <- ggplot()+
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                expand = TRUE) +
-                      labs(title = "SSP-2.45") +
-                      theme_bw()
+#                      labs(title = "SSP-2.45") +
+                      theme_bw() +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        legend.title = element_text(size = 25),
+        legend.text = element_text(size = 25),
+        legend.key.width = unit(1,"cm"))
+ggsave('pdfs/05_Climate/velocity_SSP245.png', width = 20, height = 10, dpi = 600)
+
 plotvelo_SSP585 <- ggplot()+
-                      geom_sf(data = velo_SSP585, aes(color = velo_categ)) +
-                      scale_color_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
+                      geom_sf(data = velo_SSP585, aes(fill = velo_categ), colour = "grey64", size = 0.1, show.legend = FALSE) +
+                      scale_fill_gradientn(name = expression('Climate velocity (km yr'^"-1"*')'),
                                             colours = pal1,
                                             limits = c(1, 11),
                                             breaks = seq(1, 11, 1),
-                                            aesthetics = c("color","fill"),
                                             labels = velo_cat) +
                       geom_sf(data = world_sf, size = 0.05, fill = "grey20") +
                       coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
                                ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
                                expand = TRUE) +
-                      labs(title = "SSP-5.85") +
-                      theme_bw()
+#                      labs(title = "SSP-5.85") +
+                      theme_bw() +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        legend.title = element_text(size = 25),
+        legend.text = element_text(size = 25),
+        legend.key.width = unit(1,"cm"),
+        legend.key.height = unit(3,'cm'))
+ggsave('pdfs/05_Climate/velocity_SSP585.png', width = 20, height = 10, dpi = 600)
+
 
 ###################################
 #### Plotting RCE and velocity ####
 ###################################
 # Plotting RCE
-plot_RCE <- (plotRCE_SSP126 | plotRCE_SSP245 | plotRCE_SSP585)
+plot_RCE <- (plotRCE_SSP126 | plotRCE_SSP245 | plotRCE_SSP585) +
+  plot_layout(guides = "collect")
 plot_RCE +
-  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = 'A', tag_suffix = ')') +
   labs(caption = 'temperature data from GCMs of CMIP6')
 ggsave("pdfs/05_Climate/RCE.pdf", width = 20, height = 10, dpi = 300)  
+ggsave('pdfs/05_Climate/RCE.png', width = 20, height = 10, dpi = 600)
 
 # Plotting Climate Velocity
 plot_velo <- (plotvelo_SSP126 | plotvelo_SSP245 | plotvelo_SSP585)
@@ -193,37 +231,37 @@ library(stats)
 library(Hmisc)
 RCE_SSP126_temp <- RCE_SSP126 %>% 
   as_tibble() %>% 
-  select(cellsID, value) %>% 
+  dplyr::select(cellsID, value) %>% 
   rename(RCE_126 = value)
 RCE_SSP126_temp
 
 RCE_SSP245_temp <- RCE_SSP245 %>% 
   as_tibble() %>% 
-  select(cellsID, value) %>% 
+  dplyr::select(cellsID, value) %>% 
   rename(RCE_245 = value)
 RCE_SSP245_temp
 
 RCE_SSP585_temp <- RCE_SSP585 %>% 
   as_tibble() %>% 
-  select(cellsID, value) %>% 
+  dplyr::select(cellsID, value) %>% 
   rename(RCE_585 = value)
 RCE_SSP585_temp
 
 velo_SSP126_temp <- velo_SSP126 %>% 
   as_tibble() %>% 
-  select(cellsID, value) %>% 
+  dplyr::select(cellsID, value) %>% 
   rename(velo_126 = value)
 velo_SSP126_temp
 
 velo_SSP245_temp <- velo_SSP245 %>% 
   as_tibble() %>% 
-  select(cellsID, value) %>% 
+  dplyr::select(cellsID, value) %>% 
   rename(velo_245 = value)
 velo_SSP245_temp
 
 velo_SSP585_temp <- velo_SSP585 %>% 
   as_tibble() %>% 
-  select(cellsID, value) %>% 
+  dplyr::select(cellsID, value) %>% 
   rename(velo_585 = value)
 velo_SSP585_temp
 

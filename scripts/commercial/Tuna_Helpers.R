@@ -24,6 +24,11 @@ fOrganizedf <- function(species, predictions){
 }
 
 ### PlotMap
+
+WorldData <- map_data('world')
+WorldData %>% filter(region != "Antarctica") -> WorldData
+WorldData <- fortify(WorldData)
+
 PlotMap <- function(df, Y){
   p <- ggplot(data = df, aes(x = Longitude, y = Latitude)) +
     geom_raster(aes_string(fill = Y)) +

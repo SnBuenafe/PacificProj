@@ -50,20 +50,51 @@ write_csv(swo, file = "inputs/mercer/sword.csv")
 #######################################
 
 MaxPA <- 0.50
-plot1 <- PlotVisreg(model4, "SST", Ylab = " Probability occurrence", Xlab = "SST", MaxPA)
+plot1 <- PlotVisreg(model4, "SST", Ylab = " Probability occurrence", Xlab = "SST", MaxPA) +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
 plot1
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a3_SWO/bestmodel_SST.png', plot1, width = 10, height = 10, dpi = 600)
 
-plot2 <- PlotVisreg(model4, "Season2", Ylab = " ", Xlab = "Season", MaxPA)
+plot2 <- PlotVisreg(model4, "Season2", Ylab = " ", Xlab = "Season", MaxPA) +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
 plot2
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a3_SWO/bestmodel_season.png', plot2, width = 10, height = 10, dpi = 600)
 
-plot3 <- PlotVisreg(model4, "Chl", Ylab = " ", Xlab = "Chlorophyll", MaxPA)
+
+plot3 <- PlotVisreg(model4, "Chl", Ylab = " ", Xlab = "Chlorophyll", MaxPA) +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
 plot3
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a3_SWO/bestmodel_Chl.png', plot3, width = 10, height = 10, dpi = 600)
 
-plot4 <- PlotVisreg(model4, "Nitrate", Ylab = " ", Xlab = "Nitrate", MaxPA)
+
+plot4 <- PlotVisreg(model4, "Nitrate", Ylab = " ", Xlab = "Nitrate", MaxPA) +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank())
 plot4
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a3_SWO/bestmodel_nitrate.png', plot4, width = 10, height = 10, dpi = 600)
 
-plot5 <- visreg2d(model4, yvar = "Latitude", xvar = "Longitude", scale = "response", plot.type = "gg")
+
+plot5 <- visreg2d(model4, yvar = "Latitude", xvar = "Longitude", scale = "response", plot.type = "gg") +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.key.width = unit(1,"cm"),
+        legend.text = element_text(size = 20),
+        legend.title = element_blank()) 
 plot5
+ggsave('outputs/04_Commercial/04a_GAMPlots/04a3_SWO/bestmodel_longlat.png', plot5, width = 10, height = 10, dpi = 600)
 
 # Combine plots for swordfish
 (plot1 | plot2 | plot3) / (plot4 | plot_spacer() | plot5) +
@@ -78,7 +109,14 @@ p <- PlotMap(df, "Preds")
 p
 ggsave("outputs/04_Commercial/04a_GAMPlots/04a3_SWO/SWO_map.png", p, dpi = 1200)
 
-p <- PlotMap(df, "Preds2")
+p <- PlotMap(df, "Preds2") +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.key.width = unit(1,"cm"),
+        legend.text = element_text(size = 15),
+        legend.title = element_blank()) 
 p
 ggsave("outputs/04_Commercial/04a_GAMPlots/04a3_SWO/SWO_map_presence.png", p, dpi = 600)
 

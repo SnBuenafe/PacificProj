@@ -33,7 +33,7 @@ commercial_directory <- 'outputs/04_Commercial/04d_fFeaturesInt/Global/'
 # cost file with PU
 cost <- readRDS('outputs/06_Cost/Large_Medium/costlayer.rds') %>% 
   as_tibble() %>% 
-  select(-x, -y, -cost_log, -cost_categ)
+  dplyr::select(-x, -y, -cost_log, -cost_categ)
 
 # create target list
 target <- seq(20, 100, by = 10) %>% 
