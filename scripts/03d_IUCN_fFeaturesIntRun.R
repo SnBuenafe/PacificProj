@@ -38,49 +38,75 @@ hawksbill <- filter(IUCN_FeatInt_run01, feature_names == 'Eretmochelys_imbricata
 olive <- filter(IUCN_FeatInt_run01, feature_names == 'Lepidochelys_olivacea_IUCN')
 
 loggerhead_plot <- ggplot() + 
-  geom_sf(data = loggerhead, fill = 'limegreen', size = 0.08, color = 'grey20') + 
+  geom_sf(data = loggerhead, fill = 'limegreen', size = 0.1, color = 'grey64') + 
   geom_sf(data = world_sf, fill = "grey20", colour = NA) +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
   labs(title = "Loggerhead sea turtles") +
-  theme_bw()
+  theme_bw() + 
+  theme(legend.position = 'none', 
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+ggsave('pdfs/03_IUCN/loggerhead.png', loggerhead_plot, width = 10, height = 10, dpi = 600)
 
 green_plot <- ggplot() + 
-  geom_sf(data = green, fill = 'olivedrab', size = 0.08, color = 'grey20') + 
+  geom_sf(data = green, fill = 'olivedrab', size = 0.1, color = 'grey64') + 
   geom_sf(data = world_sf, fill = "grey20", colour = NA) +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
   labs(title = "Green sea turtles") +
-  theme_bw()
+  theme_bw() + 
+  theme(legend.position = 'none', 
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+ggsave('pdfs/03_IUCN/green.png', green_plot, width = 10, height = 10, dpi = 600)
 
 leatherback_plot <- ggplot() + 
-  geom_sf(data = leatherback, fill = 'darkseagreen', size = 0.08, color = 'grey20') + 
+  geom_sf(data = leatherback, fill = 'darkseagreen', size = 0.1, color = 'grey64') + 
   geom_sf(data = world_sf, fill = "grey20", colour = NA) +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
   labs(title = "Leatherback sea turtles") +
-  theme_bw()
+  theme_bw() + 
+  theme(legend.position = 'none', 
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+ggsave('pdfs/03_IUCN/leatherback.png', leatherback_plot, width = 10, height = 10, dpi = 600)
 
 hawksbill_plot <- ggplot() + 
-  geom_sf(data = hawksbill, fill = 'darkolivegreen3', size = 0.08, color = 'grey20') + 
+  geom_sf(data = hawksbill, fill = 'darkolivegreen3', size = 0.1, color = 'grey64') + 
   geom_sf(data = world_sf, fill = "grey20", colour = NA) +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
   labs(title = "Hawksbill sea turtles") +
-  theme_bw()
+  theme_bw() + 
+  theme(legend.position = 'none', 
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+ggsave('pdfs/03_IUCN/hawksbill.png', hawksbill_plot, width = 10, height = 10, dpi = 600)
 
 olive_plot <- ggplot() + 
-  geom_sf(data = olive, fill = 'springgreen1', size = 0.08, color = 'grey20') + 
+  geom_sf(data = olive, fill = 'springgreen1', size = 0.1, color = 'grey64') + 
   geom_sf(data = world_sf, fill = "grey20", colour = NA) +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
   labs(title = "Olive ridley sea turtles") +
-  theme_bw()
+  theme_bw() + 
+  theme(legend.position = 'none', 
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+ggsave('pdfs/03_IUCN/olive.png', olive_plot, width = 10, height = 10, dpi = 600)
+
 
 # plotting all the plots using patchwork
 iucn_turtle_plots <- (loggerhead_plot | green_plot | leatherback_plot) / (hawksbill_plot | olive_plot) +

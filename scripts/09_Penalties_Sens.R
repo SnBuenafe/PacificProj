@@ -5,6 +5,151 @@
 # SSP245 max's for: RCE = 211.538 (x1), velocity = 184.4885 (x1.5)
 # SSP585 max's for: RCE = 1006.79 (x0.2), velocity = 731.6799 (x0.3)
 
+# 50%: 1-2.6: RCE = 3.518, velocity = 8.123;
+# 50%: 2-4.5: RCE = 0.017, velocity = 2.204;
+# 50%: 5-8.5: RCE = 1.65E-05, velocity = 5.56E-01
+# 40%: 1-2.6: RCE = 2.814, velocity = 6.498;
+# 40%: 2-4.5: RCE = 0.013, velocity = 1.764;
+# 40%: 5-8.5: RCE = 1.32E-05, velocity = 4.45E-01;
+# 30%: 1-2.6: RCE = 2.111, velocity = 4.874;
+# 30%: 2-4.5: RCE = 0.010, velocity = 1.323;
+# 30%: 5-8.5: RCE = 9.91E-06, velocity = 3.33E-01;
+# 20%: 1-2.6: RCE = 1.407, velocity = 3.249;
+# 20%: 2-4.5: RCE = 0.007, velocity = 0.882;
+# 20%: 5-8.5: RCE = 6.61E-06, velocity = 2.22E-01
+
+p_temp <- problem(x_SSP585, features_list_uninformed, 'cost') %>% 
+  add_min_set_objective() %>% 
+  add_binary_decisions() %>% 
+  add_gurobi_solver(gap = 0, verbose = FALSE) %>% 
+  add_relative_targets(0.25) %>% 
+  add_linear_penalties(RCE_sens[1,3], 'RCE') %>% 
+  add_linear_penalties(velocity_sens[1,3], 'velocity')
+
+s_temp <- solve(p_temp) %>% 
+  st_as_sf(sf_column_name = 'geometry')
+s_temp %>% filter(solution_1 == 1) %>% 
+  as_tibble() %>% 
+  dplyr::summarize(median = median(velocity))
+
+
+########################
+## creating summaries ##
+########################
+# create sens tables (1 for RCE and 1 for velocity), columns are the scenarios & rows are the sens
+RCE_sens <- rbind(c(3.518, 0.017, 1.65E-05),
+                  c(2.814, 0.013, 1.32E-05),
+                  c(2.111, 0.010, 9.91E-06),
+                  c(1.407, 0.007, 6.61E-06))
+colnames(RCE_sens) <- c('SSP126','SSP245','SSP585')
+rownames(RCE_sens) <- c(50, 40, 30, 20)
+
+velocity_sens <- rbind(c(8.123, 2.204, 5.56E-01),
+                       c(6.498, 1.764, 4.45E-01),
+                       c(4.874, 1.323, 3.33E-01),
+                       c(3.249, 0.882, 2.22E-01))
+colnames(velocity_sens) <- c('SSP126','SSP245','SSP585')
+rownames(velocity_sens) <- c(50, 40, 30, 20)
+
+# creating problems and solutions across climate-scenarios (as i) and across sensitivities (as j)
+scenario_list <- c('SSP126', 'SSP245', 'SSP585')
+sens_list <- c(50, 40, 30, 20)
+for(i in 1:length(scenario_list)){
+  for(j in 1:length(sens_list)){
+    x <- get(paste0('x_',scenario_list[i])) # run 08b first to get the problems 'x'
+    p <- problem(x, features_list_uninformed, 'cost') %>% 
+      add_min_set_objective() %>% 
+      add_binary_decisions() %>% 
+      add_gurobi_solver(gap = 0, verbose = FALSE) %>% 
+      add_relative_targets(0.25) %>% 
+      add_linear_penalties(RCE_sens[j,i], 'RCE') %>% 
+      add_linear_penalties(velocity_sens[j,i], 'velocity')
+    
+    s <- solve(p) %>% 
+      st_as_sf(sf_column_name = 'geometry')
+    assign(paste0('prob_sens_', scenario_list[i], '_', sens_list[j]),p)
+    assign(paste0('solve_sens_', scenario_list[i], '_', sens_list[j]),s)
+    rm(x,p,s)
+  }
+}
+
+# summary statistics for cost, area, median velocity and median RCE
+total_area = 31917*2667.6
+summary <- list()
+x = 1
+for(i in 1:length(scenario_list)){
+  for(j in 1:length(sens_list)){
+    s <- get(paste0('solve_sens_', scenario_list[i], '_', sens_list[j]))
+    temp_sol <- s %>% 
+      filter(solution_1 == 1)
+    summary[[x]] <- temp_sol %>% 
+      dplyr::select(-geometry) %>% as_tibble() %>% 
+      dplyr::summarize(sum_area = sum(area_km2, na.rm = TRUE), total_cost = sum(cost), median_velocity = median(velocity), median_RCE = median(RCE)) %>% 
+        dplyr::mutate(percent_area = sum_area*100/total_area, num_pu = length(st_geometry(temp_sol))) %>% 
+        dplyr::mutate(sens = sens_list[j], scenario = scenario_list[i])
+    x = x + 1
+  }
+}
+summary
+summary_stat <- bind_rows(summary)
+
+
+scenario.legend_color <- c('SSP126' = 'yellow3', 'SSP245' = 'orange2', 
+                           'SSP585' = 'salmon4', 'uninformed' = 'lightslategray', 'NA' = NA)
+cost <- ggplot(data = summary_stat, aes(x = sens, color = scenario)) +
+  scale_color_manual(name = 'Scenario',
+                     values = scenario.legend_color) +
+  geom_line(aes(y = log10(total_cost)), size = 0.5) +
+  geom_point(aes(y = log10(total_cost), shape = scenario), size = 3) +
+  theme_bw() +
+  theme(legend.position = 'none',
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+cost
+ggsave('outputs/08_Prioritizr/08e_supplementary/cost_sens.png', cost, width = 7, height = 5, dpi = 600)
+
+area <- ggplot(data = summary_stat, aes(x = sens, color = scenario)) +
+  scale_color_manual(name = 'Scenario',
+                     values = scenario.legend_color) +
+  geom_line(aes(y = percent_area), size = 0.5) +
+  geom_point(aes(y = percent_area, shape = scenario), size = 3) +
+  theme_bw() +
+  theme(legend.position = 'none',
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+area
+ggsave('outputs/08_Prioritizr/08e_supplementary/area_sens.png', area, width = 7, height = 5, dpi = 600)
+
+
+RCE <- ggplot(data = summary_stat, aes(x = sens, color = scenario)) +
+  scale_color_manual(name = 'Scenario',
+                     values = scenario.legend_color) +
+  geom_line(aes(y = median_RCE), size = 0.5) +
+  geom_point(aes(y = median_RCE, shape = scenario), size = 3) +
+  theme_bw() +
+  theme(legend.position = 'none',
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+RCE
+ggsave('outputs/08_Prioritizr/08e_supplementary/RCE_sens.png', RCE, width = 7, height = 5, dpi = 600)
+
+velocity <- ggplot(data = summary_stat, aes(x = sens, color = scenario)) +
+  scale_color_manual(name = 'Scenario',
+                     values = scenario.legend_color) +
+  geom_line(aes(y = median_velocity), size = 0.5) +
+  geom_point(aes(y = median_velocity, shape = scenario), size = 3) +
+  theme_bw() +
+  theme(legend.position = 'none',
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+velocity
+ggsave('outputs/08_Prioritizr/08e_supplementary/velocity_sens.png', velocity, width = 7, height = 5, dpi = 600)
+
+
 ##################################################
 ## Run for 50% weight for both RCE and velocity ##
 ##################################################
@@ -16,7 +161,7 @@ for(i in 1:length(scenario_list)){
       add_min_set_objective() %>% 
       add_binary_decisions() %>% 
       add_gurobi_solver(gap = 0, verbose = FALSE) %>% 
-      add_relative_targets(as.numeric(target[k,2]/100))
+      add_relative_targets(0.5)
     if(i == 1){
       p %<>% add_linear_penalties(3.518, 'RCE') %>% 
         add_linear_penalties(8.123, 'velocity')
@@ -90,7 +235,7 @@ summary <- list()
     rm(temp_sol,s, x)
   }
 summary #[[i]], with i for each scenario
-summary_stat <- bind_rows(summary)
+summary_stat_50 <- bind_rows(summary)
 
 scenario.legend_color <- c('SSP126' = 'yellow3', 'SSP245' = 'orange2', 
                            'SSP585' = 'salmon4', 'uninformed' = 'lightslategray', 'NA' = NA)
@@ -127,11 +272,11 @@ for(i in 1:length(scenario_list)) { # only until 3rd
   }
 stack_df <- bind_rows(stack)
 
-stack_df <- stack_df %>% 
+stack_df_50 <- stack_df %>% 
   dplyr::mutate(target = ifelse(target == 100, 25, NA))
 
-med.RCE_subset_50 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), group = scenario)) +
-  geom_bar(aes(y = median_RCE, fill = scenario), stat = 'identity', position = 'stack') +
+med.RCE_subset_50 <- ggplot(data = stack_df_50, aes(x = as.factor(uninformed), group = scenario)) +
+  geom_bar(aes(y = median_RCE, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
   xlab("Climate Scenario") + 
@@ -141,8 +286,8 @@ med.RCE_subset_50 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), grou
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
 
-med.velocity_subset_50 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), group = scenario)) +
-  geom_bar(aes(y = median_velocity, fill = scenario), stat = 'identity', position = 'stack') +
+med.velocity_subset_50 <- ggplot(data = stack_df_50, aes(x = as.factor(uninformed), group = scenario)) +
+  geom_bar(aes(y = median_velocity, fill = scenario), stat = 'identity', position = ) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
   xlab("Climate Scenario") + 
@@ -152,7 +297,7 @@ med.velocity_subset_50 <- ggplot(data = stack_df, aes(x = as.factor(uninformed),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
 
-cost_subset_50 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), group = scenario)) +
+cost_subset_50 <- ggplot(data = summary_stat_50, aes(x = as.factor(target*0.25), group = scenario)) +
   geom_bar(aes(y = log10(total_cost), fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
@@ -161,7 +306,7 @@ cost_subset_50 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), gr
   theme(legend.position = "bottom") +
   theme_classic()
 
-protected.area_subset_50 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), group = scenario)) +
+protected.area_subset_50 <- ggplot(data = summary_stat_50, aes(x = as.factor(target*0.25), group = scenario)) +
   geom_bar(aes(y = percent_area, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
@@ -262,7 +407,7 @@ for(i in 1:length(scenario_list)) {
   rm(temp_sol,s, x)
 }
 summary #[[i]], with i for each scenario
-summary_stat <- bind_rows(summary)
+summary_stat_40 <- bind_rows(summary)
 
 scenario.legend_color <- c('SSP126' = 'yellow3', 'SSP245' = 'orange2', 
                            'SSP585' = 'salmon4', 'uninformed' = 'lightslategray', 'NA' = NA)
@@ -299,11 +444,11 @@ for(i in 1:length(scenario_list)) { # only until 3rd
 }
 stack_df <- bind_rows(stack)
 
-stack_df <- stack_df %>% 
+stack_df_40 <- stack_df %>% 
   dplyr::mutate(target = ifelse(target == 100, 25, NA))
 
-med.RCE_subset_40 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), group = scenario)) +
-  geom_bar(aes(y = median_RCE, fill = scenario), stat = 'identity', position = 'stack') +
+med.RCE_subset_40 <- ggplot(data = stack_df_40, aes(x = as.factor(uninformed), group = scenario)) +
+  geom_bar(aes(y = median_RCE, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
   xlab("Climate Scenario") + 
@@ -313,8 +458,8 @@ med.RCE_subset_40 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), grou
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
 
-med.velocity_subset_40 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), group = scenario)) +
-  geom_bar(aes(y = median_velocity, fill = scenario), stat = 'identity', position = 'stack') +
+med.velocity_subset_40 <- ggplot(data = stack_df_40, aes(x = as.factor(uninformed), group = scenario)) +
+  geom_bar(aes(y = median_velocity, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
   xlab("Climate Scenario") + 
@@ -324,7 +469,7 @@ med.velocity_subset_40 <- ggplot(data = stack_df, aes(x = as.factor(uninformed),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
 
-cost_subset_40 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), group = scenario)) +
+cost_subset_40 <- ggplot(data = summary_stat_40, aes(x = as.factor(target*0.25), group = scenario)) +
   geom_bar(aes(y = log10(total_cost), fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
@@ -333,7 +478,7 @@ cost_subset_40 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), gr
   theme(legend.position = "bottom") +
   theme_classic()
 
-protected.area_subset_40 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), group = scenario)) +
+protected.area_subset_40 <- ggplot(data = summary_stat_40, aes(x = as.factor(target*0.25), group = scenario)) +
   geom_bar(aes(y = percent_area, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
@@ -434,7 +579,7 @@ for(i in 1:length(scenario_list)) {
   rm(temp_sol,s, x)
 }
 summary #[[i]], with i for each scenario
-summary_stat <- bind_rows(summary)
+summary_stat_30 <- bind_rows(summary)
 
 scenario.legend_color <- c('SSP126' = 'yellow3', 'SSP245' = 'orange2', 
                            'SSP585' = 'salmon4', 'uninformed' = 'lightslategray', 'NA' = NA)
@@ -471,11 +616,11 @@ for(i in 1:length(scenario_list)) { # only until 3rd
 }
 stack_df <- bind_rows(stack)
 
-stack_df <- stack_df %>% 
+stack_df_30 <- stack_df %>% 
   dplyr::mutate(target = ifelse(target == 100, 25, NA))
 
-med.RCE_subset_30 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), group = scenario)) +
-  geom_bar(aes(y = median_RCE, fill = scenario), stat = 'identity', position = 'stack') +
+med.RCE_subset_30 <- ggplot(data = stack_df_30, aes(x = as.factor(uninformed), group = scenario)) +
+  geom_bar(aes(y = median_RCE, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
   xlab("Climate Scenario") + 
@@ -485,8 +630,8 @@ med.RCE_subset_30 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), grou
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
 
-med.velocity_subset_30 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), group = scenario)) +
-  geom_bar(aes(y = median_velocity, fill = scenario), stat = 'identity', position = 'stack') +
+med.velocity_subset_30 <- ggplot(data = stack_df_30, aes(x = as.factor(uninformed), group = scenario)) +
+  geom_bar(aes(y = median_velocity, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
   xlab("Climate Scenario") + 
@@ -496,7 +641,7 @@ med.velocity_subset_30 <- ggplot(data = stack_df, aes(x = as.factor(uninformed),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
 
-cost_subset_30 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), group = scenario)) +
+cost_subset_30 <- ggplot(data = summary_stat_30, aes(x = as.factor(target*0.25), group = scenario)) +
   geom_bar(aes(y = log10(total_cost), fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
@@ -505,7 +650,7 @@ cost_subset_30 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), gr
   theme(legend.position = "bottom") +
   theme_classic()
 
-protected.area_subset_30 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), group = scenario)) +
+protected.area_subset_30 <- ggplot(data = summary_stat_30, aes(x = as.factor(target*0.25), group = scenario)) +
   geom_bar(aes(y = percent_area, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
@@ -606,7 +751,7 @@ for(i in 1:length(scenario_list)) {
   rm(temp_sol,s, x)
 }
 summary #[[i]], with i for each scenario
-summary_stat <- bind_rows(summary)
+summary_stat_20 <- bind_rows(summary)
 
 scenario.legend_color <- c('SSP126' = 'yellow3', 'SSP245' = 'orange2', 
                            'SSP585' = 'salmon4', 'uninformed' = 'lightslategray', 'NA' = NA)
@@ -643,11 +788,11 @@ for(i in 1:length(scenario_list)) { # only until 3rd
 }
 stack_df <- bind_rows(stack)
 
-stack_df <- stack_df %>% 
+stack_df_20 <- stack_df %>% 
   dplyr::mutate(target = ifelse(target == 100, 25, NA))
 
-med.RCE_subset_20 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), group = scenario)) +
-  geom_bar(aes(y = median_RCE, fill = scenario), stat = 'identity', position = 'stack') +
+med.RCE_subset_20 <- ggplot(data = stack_df_20, aes(x = as.factor(uninformed), group = scenario)) +
+  geom_bar(aes(y = median_RCE, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
   xlab("Climate Scenario") + 
@@ -657,8 +802,8 @@ med.RCE_subset_20 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), grou
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
 
-med.velocity_subset_20 <- ggplot(data = stack_df, aes(x = as.factor(uninformed), group = scenario)) +
-  geom_bar(aes(y = median_velocity, fill = scenario), stat = 'identity', position = 'stack') +
+med.velocity_subset_20 <- ggplot(data = stack_df_20, aes(x = as.factor(uninformed), group = scenario)) +
+  geom_bar(aes(y = median_velocity, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
   xlab("Climate Scenario") + 
@@ -668,7 +813,7 @@ med.velocity_subset_20 <- ggplot(data = stack_df, aes(x = as.factor(uninformed),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank())
 
-cost_subset_20 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), group = scenario)) +
+cost_subset_20 <- ggplot(data = summary_stat_20, aes(x = as.factor(target*0.25), group = scenario)) +
   geom_bar(aes(y = log10(total_cost), fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
@@ -677,7 +822,7 @@ cost_subset_20 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), gr
   theme(legend.position = "bottom") +
   theme_classic()
 
-protected.area_subset_20 <- ggplot(data = summary_stat, aes(x = as.factor(target*0.25), group = scenario)) +
+protected.area_subset_20 <- ggplot(data = summary_stat_20, aes(x = as.factor(target*0.25), group = scenario)) +
   geom_bar(aes(y = percent_area, fill = scenario), stat = 'identity', position = position_dodge()) +
   scale_fill_manual(name = 'Climate scenario',
                     values = scenario.legend_color) +
@@ -710,3 +855,9 @@ gg_all <- `gg_sensSSP126_50%`+`gg_sensSSP245_50%`+`gg_sensSSP585_50%`+`gg_sensun
   `gg_sensSSP126_20%`+`gg_sensSSP245_20%`+`gg_sensSSP585_20%`+`gg_sensuninformed_20%` +
   plot_layout(guides = 'collect', nrow = 4, ncol = 4)
 ggsave('outputs/09_Tests/plans_all.png', gg_all, width = 29.7, height = 21, dpi = 300)
+
+
+
+
+
+

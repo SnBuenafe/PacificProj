@@ -67,43 +67,63 @@ PRED_global_SWO <- fCommercialFeat(input = "SWO",
 #####################################
 # YFT
 yft <- ggplot()+
-  geom_sf(data = PRED_global_YFT, fill = 'paleturquoise3', size = 0.04) +
+  geom_sf(data = PRED_global_YFT, fill = 'paleturquoise3', size = 0.1, color = 'grey64') +
   geom_sf(data = world_sf, size = 0.04, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
   labs(title = "Yellowfin Tuna") +
-  theme_bw()
+  theme_bw() + 
+  theme(legend.position = 'none', 
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+ggsave('pdfs/04_Commercial/yft.png', yft, width = 10, height = 10, dpi = 600)
 
 # ALB
 alb <- ggplot()+
-  geom_sf(data = PRED_global_ALB, fill = 'cornflowerblue', size = 0.04) +
+  geom_sf(data = PRED_global_ALB, fill = 'cornflowerblue', size = 0.1, color = 'grey64') +
   geom_sf(data = world_sf, size = 0.04, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
   labs(title = "Albacore") +
-  theme_bw()
+  theme_bw() + 
+  theme(legend.position = 'none', 
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+ggsave('pdfs/04_Commercial/alb.png', alb, width = 10, height = 10, dpi = 600)
 
 # SKP
 skp <- ggplot()+
-  geom_sf(data = PRED_global_SKP, fill = 'cadetblue4', size = 0.04) +
+  geom_sf(data = PRED_global_SKP, fill = 'cadetblue4', size = 0.1, color = 'grey64') +
   geom_sf(data = world_sf, size = 0.04, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
   labs(title = "Skipjack Tuna") +
-  theme_bw()
+  theme_bw() + 
+  theme(legend.position = 'none', 
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+ggsave('pdfs/04_Commercial/skp.png', skp, width = 10, height = 10, dpi = 600)
 
 # SWO
 swo <- ggplot()+
-  geom_sf(data = PRED_global_SWO, fill = 'skyblue', size = 0.04) +
+  geom_sf(data = PRED_global_SWO, fill = 'skyblue', size = 0.1, color = 'grey64') +
   geom_sf(data = world_sf, size = 0.04, fill = "grey20") +
   coord_sf(xlim = c(st_bbox(Bndry)$xmin, st_bbox(Bndry)$xmax), 
            ylim = c(st_bbox(Bndry)$ymin, st_bbox(Bndry)$ymax),
            expand = TRUE) +
   labs(title = "Swordfish") +
-  theme_bw()
+  theme_bw() + 
+  theme(legend.position = 'none', 
+        title = element_blank(),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25))
+ggsave('pdfs/04_Commercial/swo.png', swo, width = 10, height = 10, dpi = 600)
 
 global_plots <- (yft + alb) / (skp + swo) +
   plot_annotation(tag_levels = "A",
