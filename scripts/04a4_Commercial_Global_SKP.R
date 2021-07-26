@@ -108,9 +108,16 @@ ggsave("outputs/04_Commercial/04a_GAMPlots/04a4_SKP/SKP_BestModel.pdf", width = 
 x11(width = 14, height = 7)
 
 df <- fOrganizedf('skipjack tuna', skp_preds)
-p <- PlotMap(df, "Preds")
+p <- PlotMap(df, "Preds") +
+  theme(axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25),
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        legend.key.width = unit(1,"cm"),
+        legend.text = element_text(size = 15),
+        legend.title = element_blank()) 
 p
-ggsave("outputs/04_Commercial/04a_GAMPlots/04a4_SKP/SKP_map.png", p, dpi = 1200)
+ggsave("outputs/04_Commercial/04a_GAMPlots/04a4_SKP/SKP_predmap.png", p, dpi = 600)
 
 p <- PlotMap(df, "Preds2") +
   theme(axis.text.x = element_text(size = 25),
