@@ -32,6 +32,7 @@ summary(model3)
 model4 <- update(model3, ~ . -s(MLD))
 BIC(model3, model4) # model4 has lower BIC (i.e. Remove MLD)
 summary(model4)
+gam.check(model4)
 
 # Try removing Nitrate - it's now got the lowest p-level
 model5 <- update(model4, ~ . -s(Nitrate))

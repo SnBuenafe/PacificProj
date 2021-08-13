@@ -36,6 +36,7 @@ summary(model4)
 model5 <- update(model4, ~ . -s(Nitrate))
 BIC(model4, model5) # model5 has lower BIC (i.e. Remove MLD)
 summary(model5)
+gam.check(model5)
 
 # Saving predictions
 alb_preds <- as.numeric(predict.gam(model5, type = "response"))

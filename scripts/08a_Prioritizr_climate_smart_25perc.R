@@ -381,6 +381,7 @@ for(k in 1:nrow(target)) {
   target_stack[[k]] <- stack
 }
 stack_df <- bind_rows(target_stack)
+write_csv(stack_df, 'outputs/08_Prioritizr/08a_25perc/summary_climate_stat.csv')
 
 stack_df.summary_a <- stack_df %>% 
   filter(target %in% c('30','60','90')) %>% 

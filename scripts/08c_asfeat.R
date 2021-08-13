@@ -33,7 +33,7 @@ commercial_directory <- 'outputs/04_Commercial/04d_fFeaturesInt/Global/'
 # cost file with PU
 cost <- readRDS('outputs/06_Cost/Large_Medium/costlayer.rds') %>% 
   as_tibble() %>% 
-  select(-x, -y, -cost_log, -cost_categ)
+  dplyr::select(-x, -y, -cost_log, -cost_categ)
 
 # create target list
 target <- seq(20, 100, by = 10) %>% 
@@ -382,6 +382,7 @@ for(k in 1:nrow(target)) {
   target_stack[[k]] <- stack
 }
 stack_df <- bind_rows(target_stack)
+write_csv(stack_df, 'outputs/08_Prioritizr/08b_asfeat/summary_climate_stat.csv')
 
 stack_df.summary_c <- stack_df %>% 
   filter(target %in% c('30','60','90')) %>% 

@@ -92,6 +92,8 @@ summary(model3)
 model4 <- update(model2, ~ . -s(Nitrate))
 BIC(model2, model4) # model4 has lower BIC (i.e. Nitrate n.s.) # model4 seems to be the best model
 summary(model4)
+par(mfrow = c(2,2))
+gam.check(model4)
 
 # Saving predictions
 yft_preds <- as.numeric(predict.gam(model4, type = "response"))

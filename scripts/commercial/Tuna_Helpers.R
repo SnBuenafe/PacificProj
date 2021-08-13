@@ -24,7 +24,7 @@ fOrganizedf <- function(species, predictions){
 }
 
 ### PlotMap
-
+library(tidyverse)
 WorldData <- map_data('world')
 WorldData %>% filter(region != "Antarctica") -> WorldData
 WorldData <- fortify(WorldData)
